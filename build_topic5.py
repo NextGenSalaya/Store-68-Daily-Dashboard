@@ -386,7 +386,8 @@ for r in sheet(f, "Adj").iter_rows(min_row=2, max_col=15, values_only=True):
     k = f"{txt(r[2])}|{txt(r[14])}"
     o = adj.setdefault(k, {"key": k, "reason": txt(r[2]) or "(ว่าง)", "status": txt(r[14]) or "(ว่าง)", "lines": 0, "qty": 0.0, "value": 0.0})
     o["lines"] += 1; o["qty"] = round(o["qty"] + (num(r[12]) or 0), 2); o["value"] = round(o["value"] + (num(r[13]) or 0), 2)
-save("t5_neg_adj", list(adj.values()))
+# the page does not show adjustments yet; they are summed only so the sheet is checked to read cleanly
+print(f"t5_neg_adj: {len(adj)} groups (not saved)")
 
 # ---------- Gone Forever / Discontinue ----------
 
