@@ -16,19 +16,21 @@ Dashboard ประจำวันของ Makro สาขา 68 Salaya (Distri
 
 ## อัปเดตข้อมูลทุกวัน
 
-1. วาง File Excel ของวันนี้ไว้ในโฟลเดอร์นี้ (อยู่ในโฟลเดอร์ย่อยก็ได้)
-2. ดับเบิลคลิก `update.bat`
-3. รอประมาณ 1 นาที แล้วกด Refresh หน้าเว็บ
+1. วาง File Excel ของวันนี้ไว้ในโฟลเดอร์งาน (อยู่ในโฟลเดอร์ย่อยก็ได้)
+2. ดับเบิลคลิก `update.bat` จะเปิดโฟลเดอร์ `publish` และหน้า Upload files ของ GitHub ให้
+3. ใน `publish` กด Ctrl+A ลากทุกไฟล์ (index.html และ .json เท่านั้น) ไปวางในหน้า GitHub
+4. รอให้ขึ้นครบ แล้วกด **Commit changes** ประมาณ 1 นาทีต่อมากด Refresh หน้าเว็บ
 
-`update.bat` จะอ่าน Excel ด้วย `build_*.py` → สร้างเว็บใน `docs/` ด้วย `make_site.py` → Push ขึ้น GitHub
+**ห้ามลากไฟล์ .xlsx / .xlsm / .xls / .xlsb ขึ้น GitHub** เพราะมีชื่อลูกค้า พนักงาน และอีเมล
 
 ## ไฟล์ใน Repository
 
 | ไฟล์ | หน้าที่ |
 |---|---|
+| `index.html` + `*.json` | เว็บที่ GitHub Pages เปิดให้ดู (หน้าเว็บ และข้อมูลแต่ละชุด) |
 | `board/index.html` | หน้า Dashboard (ต้นฉบับ) |
 | `build_all_dashboard.py`, `build_topic2.py` … `build_topic5.py` | อ่าน Excel แต่ละเรื่องแล้วสร้างข้อมูล JSON |
-| `make_site.py` | รวมหน้าและข้อมูลเป็นเว็บใน `docs/` |
-| `docs/` | เว็บที่ GitHub Pages เปิดให้ดู (`docs/data/` คือข้อมูล) |
+| `make_site.py` | รวมหน้าและข้อมูลเป็นเว็บในโฟลเดอร์ `publish` |
+| `docs/` | เว็บรุ่นเดิม (ไม่ได้ใช้แล้ว) |
 
-File Excel ต้นฉบับไม่ถูกอัปโหลด (`.gitignore` กันไว้) ชื่อลูกค้า เลขสมาชิก ชื่อพนักงาน และอีเมล ไม่อยู่ในข้อมูล
+ชื่อลูกค้า เลขสมาชิก ชื่อพนักงาน และอีเมล ไม่อยู่ในข้อมูล JSON

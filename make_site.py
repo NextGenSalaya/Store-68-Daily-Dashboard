@@ -100,6 +100,21 @@ body { padding: 0; }
 <div class="site-loading" hidden>กำลังโหลดข้อมูล…</div>
 """
 page = open(os.path.join(HERE, "board", "index.html"), encoding="utf-8").read()
-open(os.path.join(SITE, "index.html"), "w", encoding="utf-8").write(RUNTIME + page + "\n</body>\n</html>\n")
+html = RUNTIME + page + "\n</body>\n</html>\n"
+open(os.path.join(SITE, "index.html"), "w", encoding="utf-8").write(html)
 open(os.path.join(SITE, ".nojekyll"), "w").close()
 print(f"docs/index.html written; {n} data files in docs/data")
+
+# publish/ = the same site laid out flat (index.html and the JSON files side by side), as GitHub Pages serves it from
+# the repository's top level. For the daily update by web: drag everything in publish/ onto the repo's Upload files page.
+PUB = os.path.join(HERE, "publish")
+if os.path.isdir(PUB):
+    shutil.rmtree(PUB)
+os.makedirs(PUB)
+for f in glob.glob(os.path.join(DATA, "*.json")):
+    shutil.copy2(f, PUB)
+flat = html.replace("fetch(`data/${encodeURIComponent(id)}.json`", "fetch(`${encodeURIComponent(id)}.json`")
+assert flat != html, "data path not found in the runtime"
+open(os.path.join(PUB, "index.html"), "w", encoding="utf-8").write(flat)
+open(os.path.join(PUB, ".nojekyll"), "w").close()
+print(f"publish/ written: index.html + {n} data files (flat)")
