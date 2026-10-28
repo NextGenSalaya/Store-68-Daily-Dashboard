@@ -1,0 +1,25 @@
+# Allowlist: only the page, the extractor scripts and the built website are published.
+# The store's Excel exports and every other working file stay on this computer.
+*
+!*/
+!.gitignore
+!README.md
+!update.bat
+!make_site.py
+!build_all_dashboard.py
+!build_topic2.py
+!build_topic3.py
+!build_topic4.py
+!build_topic5.py
+!board/
+!board/index.html
+!docs/
+!docs/index.html
+!docs/.nojekyll
+!docs/data/
+!docs/data/*.json
+# never publish source spreadsheets, even if one is copied into an allowed folder
+*.xls
+*.xlsx
+*.xlsm
+*.xlsb
