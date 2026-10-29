@@ -1209,7 +1209,7 @@ body { padding: 0; }
   dash.calc('t3_ff_tot', {
     inputs: ['t3_ff_sum'],
     title: 'Fresh Food รวมทุกแผนก',
-    description: 'ผลรวม Sale, Profit, EM Sale, EM Profit, C52, TT Sale, TT Profit, Loss Margin ของทุกแผนก Fresh Food แยก Daily / MTD และ % Profit = Profit / Sale × 100',
+    description: 'ผลรวม Sale, Profit, EM Sale, EM Profit, C52, TT Sale, TT Profit, Loss Margin ของทุกแผนก Fresh Food แยก Daily / MTD เป็นพันบาท และ % Profit = Profit / Sale × 100',
     fn: (t3_ff_sum) => ['Daily', 'MTD'].map((p) => {
       const rs = t3_ff_sum.filter((r) => r.period === p);
       const s = (f) => Math.round(rs.reduce((a, r) => a + (r[f] || 0), 0) * 100) / 100;
@@ -1219,6 +1219,7 @@ body { padding: 0; }
       o.em_pct = o.em_sale ? Math.round(o.em_profit / o.em_sale * 10000) / 100 : null;
       o.c52_pct = o.tt_sale ? Math.round(o.c52 / o.tt_sale * 10000) / 100 : null;
       o.tt_pct = o.tt_sale ? Math.round(o.tt_profit / o.tt_sale * 10000) / 100 : null;
+      ['sale', 'profit', 'em_sale', 'em_profit', 'c52', 'tt_sale', 'tt_profit', 'loss_margin'].forEach((f) => { o[f] = Math.round(o[f] / 10) / 100; });
       return o;
     }),
   });
@@ -2393,16 +2394,16 @@ body { padding: 0; }
     const w = `key=${per}`;
     const L = per === 'Daily' ? 'วันนี้' : 'MTD';
     cards('#cards-t3ff', [
-      { title: `TT Sale FF · ${L} (บาท)`, v: n0(t.tt_sale), src: 't3_ff_tot', field: 'tt_sale', where: w, subs: [
-        { label: 'Sale ปกติ', v: n0(t.sale), src: 't3_ff_tot', field: 'sale', where: w },
+      { title: `TT Sale FF · ${L} (พันบาท)`, v: n0(t.tt_sale), src: 't3_ff_tot', field: 'tt_sale', where: w, subs: [
+        { label: 'Normal Sale', v: n0(t.sale), src: 't3_ff_tot', field: 'sale', where: w },
         { label: 'EM Sale', v: n0(t.em_sale), src: 't3_ff_tot', field: 'em_sale', where: w }] },
       { title: '%TT Profit', v: pc(t.tt_pct), cls: tone(t.tt_pct), src: 't3_ff_tot', field: 'tt_pct', where: w, subs: [
-        { label: '%Profit ปกติ', v: pc(t.profit_pct), src: 't3_ff_tot', field: 'profit_pct', where: w },
+        { label: '% Normal Profit', v: pc(t.profit_pct), cls: tone(t.profit_pct), src: 't3_ff_tot', field: 'profit_pct', where: w },
         { label: '%Profit EM', v: pc(t.em_pct), cls: tone(t.em_pct), src: 't3_ff_tot', field: 'em_pct', where: w }] },
-      { title: 'Code 52 (บาท)', v: n0(t.c52), cls: tone(t.c52), src: 't3_ff_tot', field: 'c52', where: w, subs: [
-        { label: '% ต่อยอดขาย', v: pc(t.c52_pct), src: 't3_ff_tot', field: 'c52_pct', where: w }] },
-      { title: 'Loss Margin (บาท)', v: n0(t.loss_margin), cls: tone(t.loss_margin), src: 't3_ff_tot', field: 'loss_margin', where: w, subs: [
-        { label: 'TT Profit', v: n0(t.tt_profit), src: 't3_ff_tot', field: 'tt_profit', where: w }] },
+      { title: 'Code 52 (พันบาท)', v: n0(t.c52), cls: tone(t.c52), src: 't3_ff_tot', field: 'c52', where: w, subs: [
+        { label: '% to Sale', v: pc(t.c52_pct), cls: tone(t.c52_pct), src: 't3_ff_tot', field: 'c52_pct', where: w }] },
+      { title: 'Loss Margin (พันบาท)', v: n0(t.loss_margin), cls: tone(t.loss_margin), src: 't3_ff_tot', field: 'loss_margin', where: w, subs: [
+        { label: 'TT Profit', v: n0(t.tt_profit), cls: tone(t.tt_profit), src: 't3_ff_tot', field: 'tt_profit', where: w }] },
     ]);
     const fs = (ok('t3_ff_sum') || []).filter((r) => r.period === per);
     const box = $('#ch-t3ff');
@@ -2628,17 +2629,18 @@ body { padding: 0; }
     },
   });
   // item lists shown in thousand baht: cy, ly, var / 1,000 (2 decimals)
-  const kOf = (id, src) => dash.calc(id, {
+  const kOf = (id, src, fs = ['cy', 'ly', 'var']) => dash.calc(id, {
     inputs: [src],
     title: `${src} (พันบาท)`,
-    description: `${src} ที่ช่อง cy, ly, var หาร 1,000 เป็นพันบาท ช่องอื่นเหมือนเดิม`,
-    fn: (rows) => rows.map((r) => ({ ...r, cy: Math.round((r.cy || 0) / 10) / 100, ly: Math.round((r.ly || 0) / 10) / 100, var: Math.round((r.var || 0) / 10) / 100 })),
+    description: `${src} ที่ช่อง ${fs.join(', ')} หาร 1,000 เป็นพันบาท ช่องอื่นเหมือนเดิม`,
+    fn: (rows) => rows.map((r) => ({ ...r, ...Object.fromEntries(fs.map((f) => [f, Math.round((r[f] || 0) / 10) / 100])) })),
   });
   ['t5_sale_item', 't5_drop_type', 't5_drop_item', 't5_drop_cust'].forEach((s) => kOf(s + '_k', s));
+  kOf('t5_top50_k', 't5_top50', ['amount', 'mtd', 'lmtd', 'diff']);
   t5tot('t5_mu13_tot', 't5_mu13', ['qty', 'cost', 'on_order'], 'Stock 1-3 MU รวม');
   t5tot('t5_mu15_tot', 't5_mu15', ['stock', 'amount', 'on_order'], 'Stock 1-5 MU รวม');
   t5tot('t5_aging_tot', 't5_aging_items', ['cost', 'qty'], 'Aging items รวม');
-  t5tot('t5_top50_tot', 't5_top50', ['qty', 'amount', 'mtd', 'lmtd', 'diff'], 'Top 50 FF รวม');
+  t5tot('t5_top50_tot', 't5_top50', ['qty', 'amount', 'mtd', 'lmtd', 'diff'], 'Top 50 FF รวม', ['amount', 'mtd', 'lmtd', 'diff']);
   t5tot('t5_sale_tot', 't5_sale_item', ['cy', 'ly', 'var'], 'Sale by item รวม', ['cy', 'ly', 'var']);
   t5tot('t5_drop_tot', 't5_drop_type', ['customers', 'lost', 'cy', 'ly', 'var'], 'Top drop customer รวม', ['cy', 'ly', 'var']);
   t5tot('t5_shk_tot', 't5_shk_code', ['c10', 'c11', 'c20', 'c21', 'c52', 'c53', 'c60', 'c61', 'tc41', 'qty', 'shrink', 'sale'], 'Shrinkage by code รวม');
@@ -2761,20 +2763,20 @@ body { padding: 0; }
             ['on_order', 'On Order', 'n2'], ['flag', 'สถานะ', 'txt', { tone: (v) => (v !== 'มีของ' ? 'down' : '') }], ['last_sold', 'ขายล่าสุด', 'txt']] }],
     },
     t5top50: {
-      title: 'Top 50 Fresh Food', intro: () => `สินค้าขายดีของแต่ละ Section ใน Fresh Food · ยอดวันนี้ ราคา Stock ยอด MTD เทียบปีก่อน · ข้อมูล ณ ${metaT5('Top 50 FF date')} · File St.68 Top50FF · หน้านี้มีเฉพาะ FRESH FOOD`,
+      title: 'Top 50 Fresh Food', intro: () => `สินค้าขายดีของแต่ละ Section ใน Fresh Food · ยอดวันนี้ ราคา Stock ยอด MTD เทียบ LY (พันบาท) · ข้อมูล ณ ${metaT5('Top 50 FF date')} · File St.68 Top50FF · หน้านี้มีเฉพาะ FRESH FOOD`,
       cards: () => {
         const t = byKey('t5_top50_tot').get('ALL') || {};
         return [{ title: 'สินค้าใน Top 50 ทุก Section', v: n0(t.n), src: 't5_top50_tot', field: 'n', where: 'key=ALL' },
-          { title: 'ยอดขายวันนี้ (บาท)', v: n0(t.amount), src: 't5_top50_tot', field: 'amount', where: 'key=ALL' },
-          { title: 'ยอดขาย MTD (บาท)', v: n0(t.mtd), src: 't5_top50_tot', field: 'mtd', where: 'key=ALL', subs: [{ label: 'ปีก่อน', v: n0(t.lmtd), src: 't5_top50_tot', field: 'lmtd', where: 'key=ALL' }] },
-          { title: 'ส่วนต่างจากปีก่อน (บาท)', v: n0(t.diff), cls: tone(t.diff), src: 't5_top50_tot', field: 'diff', where: 'key=ALL' }];
+          { title: 'ยอดขายวันนี้ (พันบาท)', v: n0(t.amount), src: 't5_top50_tot', field: 'amount', where: 'key=ALL' },
+          { title: 'ยอดขาย MTD (พันบาท)', v: n0(t.mtd), src: 't5_top50_tot', field: 'mtd', where: 'key=ALL', subs: [{ label: 'LY', v: n0(t.lmtd), src: 't5_top50_tot', field: 'lmtd', where: 'key=ALL' }] },
+          { title: 'ส่วนต่าง LY (พันบาท)', v: sg(t.diff, 0), cls: tone(t.diff), src: 't5_top50_tot', field: 'diff', where: 'key=ALL' }];
       },
-      charts: [{ id: 'ch-t5t50', band: 'ยอด MTD ตาม Section (บาท) · ขีดดำ = ปีก่อน', src: 't5_top50',
-        data: () => { const d = ok('t5_top50') || []; const ly = new Map(sumBy(d, (r) => r.section, 'lmtd')); return sumBy(d, (r) => r.section, 'mtd').map(([k, v]) => ({ label: k, v, ref: ly.get(k), color: cssv('--b-cy'), tip: [['ปีก่อน', n0(ly.get(k))]] })); }, fmt: n0 }],
-      tables: [{ id: 'tb-t5t50', band: 'รายการ', src: 't5_top50', nodiv: true, filters: [['section', 'Section']], q: ['item', 'desc'],
-        sorts: [['ตามอันดับ', (a, b) => (a.section < b.section ? -1 : a.section > b.section ? 1 : a.no - b.no)], ['ลดลงจากปีก่อนมากสุด', (a, b) => (a.diff || 0) - (b.diff || 0)]],
-        cols: [['section', 'Section', 'txt'], ['no', 'No', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['qty', 'ขายวันนี้', 'n2'], ['amount', 'บาท', 'n0'], ['price', 'ราคา', 'n2'],
-          ['stock', 'Stock', 'n2'], ['avg28', 'Avg 28 วัน', 'n2'], ['mtd', 'MTD', 'n0'], ['lmtd', 'MTD ปีก่อน', 'n0'], ['diff', 'Diff', 'n0', { tone: TONE.sign }], ['pct', '%', 'pc', { tone: TONE.sign }], ['reorder', 'Reorder', 'txt']] }],
+      charts: [{ id: 'ch-t5t50', band: 'ยอด MTD ตาม Section (พันบาท) · ขีดดำ = LY (Last Year)', src: 't5_top50_k',
+        data: () => { const d = ok('t5_top50_k') || []; const ly = new Map(sumBy(d, (r) => r.section, 'lmtd')); return sumBy(d, (r) => r.section, 'mtd').map(([k, v]) => ({ label: k, v, ref: ly.get(k), color: cssv('--b-cy'), tip: [['LY', n0(ly.get(k))]] })); }, fmt: n0 }],
+      tables: [{ id: 'tb-t5t50', band: 'รายการ (พันบาท)', src: 't5_top50_k', nodiv: true, filters: [['section', 'Section']], q: ['item', 'desc'],
+        sorts: [['ตามอันดับ', (a, b) => (a.section < b.section ? -1 : a.section > b.section ? 1 : a.no - b.no)], ['ลดลงจาก LY มากสุด', (a, b) => (a.diff || 0) - (b.diff || 0)]],
+        cols: [['section', 'Section', 'txt'], ['no', 'No', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['qty', 'ขายวันนี้', 'n2'], ['amount', 'ยอดขายวันนี้', 'n1'], ['price', 'ราคา', 'n2'],
+          ['stock', 'Stock', 'n2'], ['avg28', 'Avg 28 วัน', 'n2'], ['mtd', 'MTD', 'n1'], ['lmtd', 'MTD LY', 'n1'], ['diff', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }], ['pct', '%', 'pc', { tone: TONE.sign }], ['reorder', 'Reorder', 'txt']] }],
     },
     t5cat: {
       title: 'Sales by Category', seg: { k: 'per', def: 'm', opts: [['d', 'วันนี้'], ['m', 'MTD'], ['y', 'YTD']] },
@@ -2898,22 +2900,22 @@ body { padding: 0; }
           cols: [['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['on_order', 'On Order', 'n0'], ['stock_qty', 'Stock', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'], ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0'], ['last_sale', 'ขายล่าสุด', 'txt']] }],
     },
     t5hamper: {
-      title: 'Hamper 2026', intro: () => `กระเช้า / ของขวัญปีใหม่ ช่วง ${metaT5('Hamper period')} · Stock และยอดขาย 2026 เทียบ 2025 ตาม Supplier และรายสินค้า · File Sales_Hamper 2026`,
+      title: 'Hamper 2026', intro: () => `กระเช้า / ของขวัญปีใหม่ ช่วง ${metaT5('Hamper period')} · Stock และ Sale 2026 เทียบ LY (2025) ตาม Supplier และรายสินค้า · File Sales_Hamper 2026`,
       cards: () => {
         const t = (ok('t5_hamper_sup') || []).find((r) => r.is_total) || {};
         const w = `key=${t.key}`;
-        return [{ title: 'ยอดขาย 2026 (บาท)', v: n0(t.cy_amt), src: 't5_hamper_sup', field: 'cy_amt', where: w, subs: [{ label: '2025', v: n0(t.ly_amt), src: 't5_hamper_sup', field: 'ly_amt', where: w }] },
-          { title: 'จำนวนที่ขาย 2026 (ชิ้น)', v: n0(t.cy_qty), src: 't5_hamper_sup', field: 'cy_qty', where: w, subs: [{ label: '2025', v: n0(t.ly_qty), src: 't5_hamper_sup', field: 'ly_qty', where: w }] },
+        return [{ title: 'Sale 2026 (บาท)', v: n0(t.cy_amt), src: 't5_hamper_sup', field: 'cy_amt', where: w, subs: [{ label: 'LY (Last Year)', v: n0(t.ly_amt), src: 't5_hamper_sup', field: 'ly_amt', where: w }] },
+          { title: 'QTY 2026 (ชิ้น)', v: n0(t.cy_qty), src: 't5_hamper_sup', field: 'cy_qty', where: w, subs: [{ label: 'LY (Last Year)', v: n0(t.ly_qty), src: 't5_hamper_sup', field: 'ly_qty', where: w }] },
           { title: 'Stock คงเหลือ (บาท)', v: n0(t.stock_amt), src: 't5_hamper_sup', field: 'stock_amt', where: w, subs: [{ label: 'ชิ้น', v: n0(t.stock_qty), src: 't5_hamper_sup', field: 'stock_qty', where: w }] }];
       },
       charts: [{ id: 'ch-t5hd', band: 'ยอดขาย Hamper รายวัน (บาท)', src: 't5_hamper_day', kind: 'bic',
         data: () => (ok('t5_hamper_day') || []).map((r) => ({ x: r.date, label: r.date.slice(8), cy: r.amount })) }],
       tables: [
         { id: 'tb-t5hs', band: 'ตาม Supplier', src: 't5_hamper_sup', nodiv: true,
-          cols: [['supplier', 'Supplier', 'txt', { wrap: true }], ['stock_qty', 'Stock (ชิ้น)', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'], ['ly_qty', '2025 ชิ้น', 'n0'], ['ly_amt', '2025 บาท', 'n0'], ['cy_qty', '2026 ชิ้น', 'n0'], ['cy_amt', '2026 บาท', 'n0']] },
-        { id: 'tb-t5hi', band: 'รายสินค้า', src: 't5_hamper_items', nodiv: true, q: ['item', 'desc'], sorts: [['ขาย 2026 สูงสุด', (a, b) => (b.cy_amt || 0) - (a.cy_amt || 0)], ['Stock มากสุด', (a, b) => (b.soh_cost || 0) - (a.soh_cost || 0)]],
-          cols: [['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['ly_qty', '2025 ชิ้น', 'n0'], ['ly_amt', '2025 บาท', 'n0'], ['cy_qty', '2026 ชิ้น', 'n0'], ['cy_amt', '2026 บาท', 'n0'], ['cy_profit', 'กำไร 2026', 'n0', { tone: TONE.sign }],
-            ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }], ['soh', 'SOH', 'n0'], ['soh_cost', 'SOH Cost', 'n0'], ['on_order', 'On Order', 'n0']] }],
+          cols: [['supplier', 'Supplier', 'txt', { wrap: true }], ['stock_qty', 'Stock (ชิ้น)', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'], ['ly_qty', 'QTY LY', 'n0'], ['ly_amt', 'Sale LY', 'n0'], ['cy_qty', 'QTY 2026', 'n0'], ['cy_amt', 'Sale 2026', 'n0']] },
+        { id: 'tb-t5hi', band: 'รายสินค้า', src: 't5_hamper_items', nodiv: true, q: ['item', 'desc'], sorts: [['Sale 2026 สูงสุด', (a, b) => (b.cy_amt || 0) - (a.cy_amt || 0)], ['Stock มากสุด', (a, b) => (b.soh_cost || 0) - (a.soh_cost || 0)]],
+          cols: [['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['ly_qty', 'QTY LY', 'n0'], ['ly_amt', 'Sale LY', 'n0'], ['cy_qty', 'QTY 2026', 'n0'], ['cy_amt', 'Sale 2026', 'n0'], ['cy_profit', 'Profit 2026', 'n0', { tone: TONE.sign }],
+            ['var', 'ส่วนต่าง LY', 'n0', { tone: TONE.sign }], ['soh', 'SOH', 'n0'], ['soh_cost', 'SOH Cost', 'n0'], ['on_order', 'On Order', 'n0']] }],
     },
     t5soft: {
       title: 'Soft-serve & Rotisserie', intro: () => 'ยอดขายไอศกรีม Soft-serve ไก่อบ Rotisserie และทุเรียน รายวัน (จำนวนและบาท) · File St.68 Soft-servers Rotisserie chicken sales (Sheet Sum)',
