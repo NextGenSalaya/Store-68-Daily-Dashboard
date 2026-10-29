@@ -1985,9 +1985,9 @@ body { padding: 0; }
       { title: 'สินค้า Aging ทั้งร้าน (พันบาท)', v: n0(agT.stock_k), src: 'aging_status', field: 'stock_k', where: 'status=Total', subs: [
         { label: '', after: 'Items', v: n0(agT.items), src: 'aging_status', field: 'items', where: 'status=Total' },
         { label: '', after: 'จาก Total Stock', v: n2(agT.pct_stock) + '%', src: 'aging_status', field: 'pct_stock', where: 'status=Total' }] },
-      { title: `Top 4000 Stock ติดลบ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus), cls: 'down',
+      { title: `Top 4000 Stock ติดลบ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus),
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Negative Stock' },
-      { title: `Top 4000 Stock เป็นศูนย์ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus), cls: 'down',
+      { title: `Top 4000 Stock เป็นศูนย์ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus),
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Zero Stock' },
     ]);
     fillTable('#tb-stockdiv', sdv && sdv.filter((r) => inDiv(r.division)), 'division', [
