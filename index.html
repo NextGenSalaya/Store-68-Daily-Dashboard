@@ -537,7 +537,7 @@ body { padding: 0; }
         <div class="b68-panel">
           <div class="b68-band">Stock Amount FF-DF-NF (บาท)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-stockdiv" data-source="stock_div" data-row-key="division">
-            <thead><tr><th class="l" data-field="division">Division</th><th data-field="sales">Net Sales วันนี้</th><th data-field="avg_sales">Avg Sales/วัน</th><th data-field="stock">Stock Amount</th><th data-field="stock_day">Stock Day</th></tr></thead><tbody></tbody>
+            <thead><tr><th class="l" data-field="division">Division</th><th data-field="sales">Daily Sale</th><th data-field="avg_sales">Avg Sale per Day</th><th data-field="stock">Stock Amount</th><th data-field="stock_day">Stock Day</th></tr></thead><tbody></tbody>
           </table></div>
           <div class="b68-band" style="margin-top:8px">KPI Table 2</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-kpi" data-source="kpi" data-row-key="metric">
@@ -554,6 +554,7 @@ body { padding: 0; }
       </div>
       <div class="b68-panel">
         <div class="b68-band">Top 10 Aging Provision by Division (บาท)</div>
+        <div class="b68-tools"><label class="b68-f" for="f-agst">Status <select class="b68-select" id="f-agst"></select></label></div>
         <div class="b68-wrap"><table class="b68-t" id="tb-agingitems" data-source="aging_items" data-row-key="key">
           <thead><tr><th class="l" data-field="division">Division</th><th data-field="rank">#</th><th class="l" data-field="status">Status</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th data-field="price">Price</th><th data-field="qty">EOH Qty</th><th data-field="cost">EOH Cost</th><th class="l" data-field="last_sold">Last Sold</th><th class="l" data-field="last_received">Last Received</th></tr></thead><tbody></tbody>
         </table></div>
@@ -1051,7 +1052,7 @@ body { padding: 0; }
   const division = () => dash.params().div || 'ALL';
   // Rows of the chosen division; with "ทั้งหมด" every row stays
   const inDiv = (d) => division() === 'ALL' || d === division();
-  const PICK0 = { profitList: 'กำไรสูงสุด', shk: 'MTD', catgrp: 'ทั้งหมด', o2o: 'ทั้งหมด', shkdept: 'ทั้งหมด',
+  const PICK0 = { profitList: 'กำไรสูงสุด', shk: 'MTD', catgrp: 'ทั้งหมด', o2o: 'ทั้งหมด', shkdept: 'ทั้งหมด', agst: 'ทั้งหมด',
     t2view: 'ทุกรายการ', t2status: 'ทั้งหมด', t2item: 'ทั้งหมด', t2kdiv: 'ทั้งหมด', t2ktype: 'ทั้งหมด', t2pgrp: 'ทั้งหมด',
     catdiv: 'ALL', catb: 'ทั้งหมด', catly: 'ทั้งหมด', catsort: 'grp',
     dptdiv: 'ALL', dptper: 'p', dptdept: 'ทั้งหมด', dptb: 'ทั้งหมด', dptly: 'ทั้งหมด', dptsort: 'dept',
@@ -1438,6 +1439,7 @@ body { padding: 0; }
       if (c.cls) v.classList.add(c.cls);
       mark(v, c);
       box.append(h, v);
+      if (c.after) { const u = document.createElement('span'); u.style.cssText = 'font-size:.45em;font-weight:500;margin-left:6px'; u.textContent = c.after; v.append(u); }
       (c.subs || []).forEach((s) => {
         const p = document.createElement('div'); p.className = 's';
         if (s.label) p.append(document.createTextNode(s.label + ' '));
@@ -1676,6 +1678,7 @@ body { padding: 0; }
   $('#f-catgrp').addEventListener('change', (e) => { pick.catgrp = e.target.value; draw(); });
   $('#f-o2o').addEventListener('change', (e) => { pick.o2o = e.target.value; draw(); });
   $('#f-shkdept').addEventListener('change', (e) => { pick.shkdept = e.target.value; draw(); });
+  $('#f-agst').addEventListener('change', (e) => { pick.agst = e.target.value; draw(); });
   wire('#cat-sort', 'catsort'); wire('#dpt-sort', 'dptsort'); wire('#dpt-per', 'dptper');
   [['#f-dptdept', 'dptdept'], ['#f-dptb', 'dptb'], ['#f-dptly', 'dptly']].forEach(([sel, k]) => $(sel).addEventListener('change', (e) => { pick[k] = e.target.value; draw(); }));
   $$('#dpt-div button').forEach((b) => b.addEventListener('click', () => {
@@ -1985,9 +1988,9 @@ body { padding: 0; }
       { title: 'สินค้า Aging ทั้งร้าน (พันบาท)', v: n0(agT.stock_k), src: 'aging_status', field: 'stock_k', where: 'status=Total', subs: [
         { label: '', after: 'Items', v: n0(agT.items), src: 'aging_status', field: 'items', where: 'status=Total' },
         { label: '', after: 'จาก Total Stock', v: n2(agT.pct_stock) + '%', src: 'aging_status', field: 'pct_stock', where: 'status=Total' }] },
-      { title: `Top 4000 Stock ติดลบ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus),
+      { title: `Top 4000 Negative Stock${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus), after: 'รายการ',
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Negative Stock' },
-      { title: `Top 4000 Stock เป็นศูนย์ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus),
+      { title: `Top 4000 Zero Stock${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus), after: 'รายการ',
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Zero Stock' },
     ]);
     fillTable('#tb-stockdiv', sdv && sdv.filter((r) => inDiv(r.division)), 'division', [
@@ -2003,7 +2006,10 @@ body { padding: 0; }
     fillTable('#tb-aging', ag, 'status', [
       { f: 'status', l: true }, { f: 'stock_k', fmt: n0 }, { f: 'items', fmt: n0 }, { f: 'pct_stock', fmt: (v) => n2(v) + '%' }], { total: (r) => r.status === 'Total' });
     const ai = ok('aging_items');
-    fillTable('#tb-agingitems', ai && ai.filter((r) => inDiv(r.division)), 'key', [
+    const agSt = [...new Set((ai || []).map((r) => r.status).filter(Boolean))].sort();
+    if (!['ทั้งหมด', ...agSt].includes(pick.agst)) pick.agst = 'ทั้งหมด';
+    fillSelect('#f-agst', ['ทั้งหมด', ...agSt], pick.agst);
+    fillTable('#tb-agingitems', ai && ai.filter((r) => inDiv(r.division) && (pick.agst === 'ทั้งหมด' || r.status === pick.agst)), 'key', [
       { f: 'division', l: true }, { f: 'rank' }, { f: 'status', l: true }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'price', fmt: n2 },
       { f: 'qty', fmt: n1 }, { f: 'cost', fmt: n0 }, { f: 'last_sold', l: true }, { f: 'last_received', l: true }]);
     fillTable('#tb-top4000', t4, 'key', [
@@ -2883,7 +2889,7 @@ body { padding: 0; }
         const d = (ok('t5_disc_sum') || []).find((r) => r.key === 'ALL') || {};
         const w = `key=${dv}`;
         return [{ title: `Gone Forever · Stock ปัจจุบัน · ${divLabel()} (บาท)`, v: n0(g.now_amt), src: 't5_gone_sum', field: 'now_amt', where: w,
-          subs: [{ label: 'ตั้งต้น', v: n0(g.start_amt), src: 't5_gone_sum', field: 'start_amt', where: w }, { label: 'ลดลง', v: pc(g.pct_amt), cls: 'up', src: 't5_gone_sum', field: 'pct_amt', where: w }] },
+          subs: [{ label: 'ตั้งต้น', v: n0(g.start_amt), src: 't5_gone_sum', field: 'start_amt', where: w }, { label: 'ลดลง', v: pc(g.pct_amt), cls: 'down', src: 't5_gone_sum', field: 'pct_amt', where: w }] },
         { title: 'Gone Forever · ยอดขาย (บาท)', v: n0(g.sales_amt), src: 't5_gone_sum', field: 'sales_amt', where: w },
         { title: 'Discontinue · Stock ปัจจุบัน (บาท)', v: n0(d.now_amt), src: 't5_disc_sum', field: 'now_amt', where: 'key=ALL',
           subs: [{ label: 'ยอดขาย', v: n0(d.sales_amt), src: 't5_disc_sum', field: 'sales_amt', where: 'key=ALL' }] }];
