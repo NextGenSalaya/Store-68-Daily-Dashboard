@@ -355,7 +355,7 @@ body { padding: 0; }
     <!-- 1. ยอดขาย & ลูกค้า -->
     <section class="b68-page" id="sales" data-page="sales">
       <div class="b68-intro"><h2>ยอดขาย &amp; ลูกค้า</h2>
-        <p>ยอดขายและ Margin เทียบงบและปีก่อน ตามช่วงเวลาที่เลือก ยอดที่ต้องขายต่อวันเพื่อให้ถึงงบ และพฤติกรรมลูกค้าแต่ละกลุ่ม · Sheet Dashboard · ตาราง Customer ไม่แยก Division</p></div>
+        <p>ยอดขายและ Margin เทียบ BG และ LY ตามช่วงเวลาที่เลือก ยอดที่ต้องขายต่อวันเพื่อให้ถึง BG และพฤติกรรมลูกค้าแต่ละกลุ่ม · Sheet Dashboard · ตาราง Customer ไม่แยก Division</p></div>
       <div class="b68-cards" id="cards-sales"></div>
       <div class="b68-cols">
         <div class="b68-panel">
@@ -369,14 +369,14 @@ body { padding: 0; }
           </table></div>
           <div class="b68-band" style="margin-top:8px">Daily Need for Budget (พันบาท/วัน)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-need" data-source="daily_need" data-row-key="division">
-            <thead><tr><th class="l" data-field="division">Division</th><th data-field="avg_day">ขายได้เฉลี่ย/วัน</th><th data-field="budget_day">งบต่อวัน</th><th data-field="pct_var">% Var</th><th data-field="need_day">ต้องขายต่อวัน</th></tr></thead><tbody></tbody>
+            <thead><tr><th class="l" data-field="division">Division</th><th data-field="avg_day">ขายได้เฉลี่ย/วัน</th><th data-field="budget_day">BG ต่อวัน</th><th data-field="pct_var">% Var</th><th data-field="need_day">ต้องขายต่อวัน</th></tr></thead><tbody></tbody>
           </table></div>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Sales by Division (VS. LY) · <span class="pl">MTD</span></div>
-          <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>Sales LY</span><span><i style="background:var(--b-cy)"></i>Sales CY</span><span><i style="background:var(--b-bud)"></i>Budget</span></div>
+          <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY (Last Year)</span><span><i style="background:var(--b-cy)"></i>CY (Current Year)</span><span><i style="background:var(--b-bud)"></i>BG (Budget)</span></div>
           <div class="b68-chart" id="ch-sales" data-source="sales"></div>
-          <p class="b68-note">พันบาท · แท่งเขียว/แดงด้านล่างคือ % เทียบปีก่อน</p>
+          <p class="b68-note">พันบาท · แท่งเขียว/แดงด้านล่างคือ % เทียบ LY</p>
           <div class="b68-band">Bottom Stores (MTD vs LY)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-bottom" data-source="bottom_stores" data-row-key="store">
             <thead><tr><th class="l" data-field="store">Store</th><th data-field="variance">Variance (พันบาท)</th><th data-field="pct_variance">% Variance</th></tr></thead><tbody></tbody>
@@ -1693,16 +1693,16 @@ body { padding: 0; }
         { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales', field: 'pct_ly', where: `key=${key}` },
         { label: 'Budget', v: n0(st.budget), src: 'sales', field: 'budget', where: `key=${key}` },
         { label: 'vs Budget', v: pc(st.pct_budget, 1), cls: tone(st.pct_budget), src: 'sales', field: 'pct_budget', where: `key=${key}` }] },
-      { title: `ส่วนต่างจากปีก่อน · ${PL[p]} (พันบาท)`, v: sg(sm.diff_ly, 0), cls: tone(sm.diff_ly), src: 'sales_diff', field: 'diff_ly', where: `key=${key}`, subs: [
-        { label: 'ส่วนต่างจากงบ', v: sg(sm.diff_budget, 0), cls: tone(sm.diff_budget), src: 'sales_diff', field: 'diff_budget', where: `key=${key}` },
+      { title: `ส่วนต่างจาก LY · ${PL[p]} (พันบาท)`, v: sg(sm.diff_ly, 0), cls: tone(sm.diff_ly), src: 'sales_diff', field: 'diff_ly', where: `key=${key}`, subs: [
+        { label: 'ส่วนต่างจาก BG', v: sg(sm.diff_budget, 0), cls: tone(sm.diff_budget), src: 'sales_diff', field: 'diff_budget', where: `key=${key}` },
         { label: '% สัดส่วนยอดขาย', v: n2(st.share) + '%', src: 'sales', field: 'share', where: `key=${key}` }] },
       { title: `Front Margin · ${PL[p]}`, v: n2(mt.actual) + '%', src: 'margin', field: 'actual', where: `key=${key}`, subs: [
         { label: 'LY', v: n2(mt.ly) + '%', src: 'margin', field: 'ly', where: `key=${key}` },
         { label: 'vs LY', v: sg(mt.var_ly) + ' pt', cls: tone(mt.var_ly), src: 'margin', field: 'var_ly', where: `key=${key}` },
         { label: 'vs Budget', v: sg(mt.var_budget) + ' pt', cls: tone(mt.var_budget), src: 'margin', field: 'var_budget', where: `key=${key}` }] },
-      { title: 'ต้องขายต่อวันให้ถึงงบ (พันบาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'daily_need', field: 'need_day', where: `division=${dv}`, subs: [
+      { title: 'ต้องขายต่อวันให้ถึง BG (พันบาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'daily_need', field: 'need_day', where: `division=${dv}`, subs: [
         { label: 'ขายได้เฉลี่ย/วัน', v: n0(dt.avg_day), src: 'daily_need', field: 'avg_day', where: `division=${dv}` },
-        { label: 'งบต่อวัน', v: n0(dt.budget_day), src: 'daily_need', field: 'budget_day', where: `division=${dv}` }] },
+        { label: 'BG ต่อวัน', v: n0(dt.budget_day), src: 'daily_need', field: 'budget_day', where: `division=${dv}` }] },
       { title: `Transactions (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'customers', field: 'invoices', where: `key=${cp}|Total`, subs: [
         { label: '%SPLY', v: pc(ct.invoices_sply), cls: tone(ct.invoices_sply), src: 'customers', field: 'invoices_sply', where: `key=${cp}|Total` },
         { label: 'Active', v: n0(ct.active), src: 'customers', field: 'active', where: `key=${cp}|Total` },
