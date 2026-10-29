@@ -395,7 +395,7 @@ body { padding: 0; }
     <!-- 2. Category & แผนก -->
     <section class="b68-page" id="category" data-page="category" hidden>
       <div class="b68-intro"><h2>Category &amp; แผนก</h2>
-        <p>ยอดขายแต่ละ Category เทียบงบและปีก่อน (Sheet Category) และยอดขายตามแผนกตั้งแต่ 1 มิ.ย. และ YTD (Sheet Analysis) · Category ใช้การแบ่งกลุ่มของตัวเอง เลือกกลุ่มได้ที่ตัวกรองด้านล่าง</p></div>
+        <p>ยอดขายแต่ละ Category เทียบ BG และ LY (Sheet Category) และยอดขายตามแผนกตั้งแต่ 1 มิ.ย. และ YTD (Sheet Analysis) · Category ใช้การแบ่งกลุ่มของตัวเอง เลือกกลุ่มได้ที่ตัวกรองด้านล่าง</p></div>
       <div class="b68-cards" id="cards-category"></div>
       <div class="b68-panel">
         <div class="b68-band">Sales by Category (VS. LY) · <span class="plcat">MTD</span></div>
@@ -404,12 +404,12 @@ body { padding: 0; }
         </div>
         <div class="b68-tools">
           <label class="b68-f" for="f-catgrp">กลุ่ม Category <select class="b68-select" id="f-catgrp"></select></label>
-          <label class="b68-f" for="f-catb">เทียบงบ <select class="b68-select" id="f-catb"></select></label>
-          <label class="b68-f" for="f-catly">เทียบปีก่อน <select class="b68-select" id="f-catly"></select></label>
+          <label class="b68-f" for="f-catb">เทียบ BG <select class="b68-select" id="f-catb"></select></label>
+          <label class="b68-f" for="f-catly">เทียบ LY <select class="b68-select" id="f-catly"></select></label>
           <label class="b68-f" for="q-cat">ค้นหา <input class="b68-search" id="q-cat" type="search" placeholder="ชื่อ Category"></label>
-          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="cat-sort"><button type="button" data-v="grp">ตามกลุ่ม</button><button type="button" data-v="worst">ต่ำกว่างบมากสุด</button><button type="button" data-v="best">ดีกว่างบมากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
+          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="cat-sort"><button type="button" data-v="grp">ตามกลุ่ม</button><button type="button" data-v="worst">ต่ำกว่า BG มากสุด</button><button type="button" data-v="best">ดีกว่า BG มากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
         </div>
-        <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY</span><span><i style="background:var(--b-cy)"></i>CY</span><span><i style="background:var(--b-bud)"></i>Budget</span></div>
+        <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY (Last Year)</span><span><i style="background:var(--b-cy)"></i>CY (Current Year)</span><span><i style="background:var(--b-bud)"></i>BG (Budget)</span></div>
         <div class="b68-chart" id="ch-cat" data-source="category"></div>
         <div class="b68-wrap"><table class="b68-t" id="tb-category" data-source="category" data-row-key="key">
           <thead><tr><th class="l" data-field="division">Group</th><th class="l" data-field="category">Category</th><th data-field="mtd_actual">Actual</th><th data-field="mtd_budget">Budget</th><th data-source="cat_var" data-field="mtd_pct_budget">%Var B</th><th data-field="mtd_ly">LY</th><th data-source="cat_var" data-field="mtd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
@@ -425,10 +425,10 @@ body { padding: 0; }
         </div>
         <div class="b68-tools">
           <label class="b68-f" for="f-dptdept">Department <select class="b68-select" id="f-dptdept"></select></label>
-          <label class="b68-f" for="f-dptb">เทียบงบ <select class="b68-select" id="f-dptb"></select></label>
-          <label class="b68-f" for="f-dptly">เทียบปีก่อน <select class="b68-select" id="f-dptly"></select></label>
+          <label class="b68-f" for="f-dptb">เทียบ BG <select class="b68-select" id="f-dptb"></select></label>
+          <label class="b68-f" for="f-dptly">เทียบ LY <select class="b68-select" id="f-dptly"></select></label>
           <label class="b68-f" for="q-dpt">ค้นหา <input class="b68-search" id="q-dpt" type="search" placeholder="ชื่อแผนก หรือเลข"></label>
-          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="dpt-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="worst">ต่ำกว่างบมากสุด</button><button type="button" data-v="best">ดีกว่างบมากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
+          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="dpt-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="worst">ต่ำกว่า BG มากสุด</button><button type="button" data-v="best">ดีกว่า BG มากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
         </div>
         <div class="b68-wrap"><table class="b68-t" id="tb-dept" data-source="dept_sales" data-row-key="key">
           <thead><tr><th class="l" data-field="dept">Department</th><th data-field="p_actual">1 มิ.ย.–ปัจจุบัน</th><th data-field="p_budget">Budget</th><th data-source="dept_var" data-field="p_pct_budget">%Var B</th><th data-field="p_ly">LY</th><th data-source="dept_var" data-field="p_pct_ly">%Var LY</th><th data-field="ytd_actual">YTD Actual</th><th data-field="ytd_budget">YTD Budget</th><th data-source="dept_var" data-field="ytd_pct_budget">%Var B</th><th data-field="ytd_ly">YTD LY</th><th data-source="dept_var" data-field="ytd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
@@ -1043,9 +1043,6 @@ body { padding: 0; }
   const n2 = (v) => (v == null ? '—' : F[2].format(v));
   const sg = (v, d = 2) => (v == null ? '—' : (v > 0 ? '+' : '') + F[d].format(v));
   const pc = (v, d = 2) => (v == null ? '—' : sg(v, d) + '%');
-  // millions of baht; the unit is written in the card title
-  const M = (v) => n2(v);
-  const sM = (v) => sg(v);
   const tone = (v) => (v == null || v === 0 ? '' : v > 0 ? 'up' : 'down');
   const PL = { Daily: 'วันนี้', WTD: 'WTD', MTD: 'MTD', YTD: 'YTD' };
   const SHORT = { 'DRY FOOD': 'DF', 'FRESH FOOD': 'FF', 'NON FOOD': 'NF' };
@@ -1069,17 +1066,14 @@ body { padding: 0; }
   let page = 'sales';
   let pages = ['sales'];
 
-  dash.calc('sales_m', {
+  dash.calc('sales_diff', {
     inputs: ['sales'],
-    title: 'ยอดขายหน่วยล้านบาท และส่วนต่าง',
-    description: 'ยอดขายจริง ปีก่อน งบ จากพันบาทเป็นล้านบาท และส่วนต่างจากปีก่อนและงบ ปัดสองตำแหน่ง',
+    title: 'ส่วนต่างยอดขายจากปีก่อนและงบ (พันบาท)',
+    description: 'ยอดขายจริงลบปีก่อน และยอดขายจริงลบงบ หน่วยพันบาทเหมือนไฟล์ ปัดเป็นจำนวนเต็ม',
     fn: (sales) => sales.map((r) => ({
       key: r.key,
-      actual_m: Math.round(r.actual / 10) / 100,
-      ly_m: Math.round(r.ly / 10) / 100,
-      budget_m: Math.round(r.budget / 10) / 100,
-      diff_ly_m: Math.round((r.actual - r.ly) / 10) / 100,
-      diff_budget_m: Math.round((r.actual - r.budget) / 10) / 100,
+      diff_ly: Math.round(r.actual - r.ly),
+      diff_budget: Math.round(r.actual - r.budget),
     })),
   });
   dash.calc('cat_var', {
@@ -1520,7 +1514,7 @@ body { padding: 0; }
       svg.append('text').attr('x', cx(r)).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text(r.short);
       svg.append('rect').attr('x', x(r.x) - (x.step() - x.bandwidth()) / 2).attr('y', 0).attr('width', x.step()).attr('height', H - m.b)
         .style('fill', 'transparent')
-        .on('mousemove', (ev) => t.show(ev, [[r.label], ['ปีนี้ (CY)', o.fmt(r.cy)], ['ปีก่อน (LY)', o.fmt(r.ly)], ...(r.bud != null ? [['งบ (Budget)', o.fmt(r.bud)]] : []), ['เทียบปีก่อน', o.fmtV(r.v)]]))
+        .on('mousemove', (ev) => t.show(ev, [[r.label], ['CY (Current Year)', o.fmt(r.cy)], ['LY (Last Year)', o.fmt(r.ly)], ...(r.bud != null ? [['BG (Budget)', o.fmt(r.bud)]] : []), ['เทียบ LY', o.fmtV(r.v)]]))
         .on('mouseleave', () => t.hide());
     });
     box.querySelector('svg')?.remove();
@@ -1688,19 +1682,19 @@ body { padding: 0; }
     const dv = division() === 'ALL' ? 'Total' : division();
     const key = `${p}|${dv}`;
     const sd = ok('sales'), md = ok('margin'), cu = ok('customers'), dn = ok('daily_need');
-    const sm = byKey('sales_m').get(key) || {};
+    const sm = byKey('sales_diff').get(key) || {};
     const st = (sd || []).find((r) => r.key === key) || {};
     const mt = (md || []).find((r) => r.key === key) || {};
     const ct = (cu || []).find((r) => r.key === `${cp}|Total`) || {};
     const dt = (dn || []).find((r) => r.division === dv) || {};
     cards('#cards-sales', [
-      { title: `Sales Total · ${PL[p]} · ${divLabel()} (ล้านบาท)`, v: M(sm.actual_m), src: 'sales_m', field: 'actual_m', where: `key=${key}`, subs: [
-        { label: 'LY', v: `${M(sm.ly_m)}`, src: 'sales_m', field: 'ly_m', where: `key=${key}` },
+      { title: `Sales Total · ${PL[p]} · ${divLabel()} (พันบาท)`, v: n0(st.actual), src: 'sales', field: 'actual', where: `key=${key}`, subs: [
+        { label: 'LY', v: n0(st.ly), src: 'sales', field: 'ly', where: `key=${key}` },
         { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales', field: 'pct_ly', where: `key=${key}` },
-        { label: 'Budget', v: M(sm.budget_m), src: 'sales_m', field: 'budget_m', where: `key=${key}` },
+        { label: 'Budget', v: n0(st.budget), src: 'sales', field: 'budget', where: `key=${key}` },
         { label: 'vs Budget', v: pc(st.pct_budget, 1), cls: tone(st.pct_budget), src: 'sales', field: 'pct_budget', where: `key=${key}` }] },
-      { title: `ส่วนต่างจากปีก่อน · ${PL[p]} (ล้านบาท)`, v: sM(sm.diff_ly_m), cls: tone(sm.diff_ly_m), src: 'sales_m', field: 'diff_ly_m', where: `key=${key}`, subs: [
-        { label: 'ส่วนต่างจากงบ', v: sM(sm.diff_budget_m), cls: tone(sm.diff_budget_m), src: 'sales_m', field: 'diff_budget_m', where: `key=${key}` },
+      { title: `ส่วนต่างจากปีก่อน · ${PL[p]} (พันบาท)`, v: sg(sm.diff_ly, 0), cls: tone(sm.diff_ly), src: 'sales_diff', field: 'diff_ly', where: `key=${key}`, subs: [
+        { label: 'ส่วนต่างจากงบ', v: sg(sm.diff_budget, 0), cls: tone(sm.diff_budget), src: 'sales_diff', field: 'diff_budget', where: `key=${key}` },
         { label: '% สัดส่วนยอดขาย', v: n2(st.share) + '%', src: 'sales', field: 'share', where: `key=${key}` }] },
       { title: `Front Margin · ${PL[p]}`, v: n2(mt.actual) + '%', src: 'margin', field: 'actual', where: `key=${key}`, subs: [
         { label: 'LY', v: n2(mt.ly) + '%', src: 'margin', field: 'ly', where: `key=${key}` },
@@ -1767,17 +1761,17 @@ body { padding: 0; }
     const worst = members.slice().sort((a, b) => (cv.get(a.key)?.[cp + '_pct_budget'] ?? 1e9) - (cv.get(b.key)?.[cp + '_pct_budget'] ?? 1e9))[0] || {};
     cards('#cards-category', [
       { title: `ยอดขาย ${g === 'ทั้งหมด' ? 'ทั้งร้าน' : g} · ${CPL} (พันบาท)`, v: n0(totRow[cp + '_actual']), src: 'category', field: cp + '_actual', where: `key=${totRow.key}`, subs: [
-        { label: 'งบ', v: n0(totRow[cp + '_budget']), src: 'category', field: cp + '_budget', where: `key=${totRow.key}` },
-        { label: 'ปีก่อน', v: n0(totRow[cp + '_ly']), src: 'category', field: cp + '_ly', where: `key=${totRow.key}` }] },
-      { title: '% เทียบงบ', v: pc(tv[cp + '_pct_budget']), cls: tone(tv[cp + '_pct_budget']), src: 'cat_var', field: cp + '_pct_budget', where: `key=${totRow.key}`, subs: [
-        { label: '% เทียบปีก่อน', v: pc(tv[cp + '_pct_ly']), cls: tone(tv[cp + '_pct_ly']), src: 'cat_var', field: cp + '_pct_ly', where: `key=${totRow.key}` }] },
-      { title: 'Category ดีกว่างบมากสุด', v: best.category || '—', txt: true, src: 'category', field: 'category', where: best.key ? `key=${best.key}` : null, subs: [
-        { label: '% เทียบงบ', v: pc(cv.get(best.key)?.[cp + '_pct_budget']), cls: 'up', src: 'cat_var', field: cp + '_pct_budget', where: best.key ? `key=${best.key}` : null }] },
-      { title: 'Category ต่ำกว่างบมากสุด', v: worst.category || '—', txt: true, src: 'category', field: 'category', where: worst.key ? `key=${worst.key}` : null, subs: [
-        { label: '% เทียบงบ', v: pc(cv.get(worst.key)?.[cp + '_pct_budget']), cls: 'down', src: 'cat_var', field: cp + '_pct_budget', where: worst.key ? `key=${worst.key}` : null }] },
+        { label: 'BG', v: n0(totRow[cp + '_budget']), src: 'category', field: cp + '_budget', where: `key=${totRow.key}` },
+        { label: 'LY', v: n0(totRow[cp + '_ly']), src: 'category', field: cp + '_ly', where: `key=${totRow.key}` }] },
+      { title: '% เทียบ BG', v: pc(tv[cp + '_pct_budget']), cls: tone(tv[cp + '_pct_budget']), src: 'cat_var', field: cp + '_pct_budget', where: `key=${totRow.key}`, subs: [
+        { label: '% เทียบ LY', v: pc(tv[cp + '_pct_ly']), cls: tone(tv[cp + '_pct_ly']), src: 'cat_var', field: cp + '_pct_ly', where: `key=${totRow.key}` }] },
+      { title: 'Category ดีกว่า BG มากสุด', v: best.category || '—', txt: true, src: 'category', field: 'category', where: best.key ? `key=${best.key}` : null, subs: [
+        { label: '% เทียบ BG', v: pc(cv.get(best.key)?.[cp + '_pct_budget']), cls: 'up', src: 'cat_var', field: cp + '_pct_budget', where: best.key ? `key=${best.key}` : null }] },
+      { title: 'Category ต่ำกว่า BG มากสุด', v: worst.category || '—', txt: true, src: 'category', field: 'category', where: worst.key ? `key=${worst.key}` : null, subs: [
+        { label: '% เทียบ BG', v: pc(cv.get(worst.key)?.[cp + '_pct_budget']), cls: 'down', src: 'cat_var', field: cp + '_pct_budget', where: worst.key ? `key=${worst.key}` : null }] },
     ]);
     const q = query('#q-cat');
-    const VS = { B: ['ทั้งหมด', 'สูงกว่างบ', 'ต่ำกว่างบ'], LY: ['ทั้งหมด', 'เพิ่มขึ้นจากปีก่อน', 'ลดลงจากปีก่อน'] };
+    const VS = { B: ['ทั้งหมด', 'สูงกว่า BG', 'ต่ำกว่า BG'], LY: ['ทั้งหมด', 'เพิ่มขึ้นจาก LY', 'ลดลงจาก LY'] };
     fillSelect('#f-catb', VS.B, pick.catb); fillSelect('#f-catly', VS.LY, pick.catly);
     pressed('#cat-sort', pick.catsort);
     const pb = (r) => cv.get(r.key)?.[cp + '_pct_budget'], pl = (r) => cv.get(r.key)?.[cp + '_pct_ly'];
@@ -2744,31 +2738,31 @@ body { padding: 0; }
     },
     t5cat: {
       title: 'Sales by Category', seg: { k: 'per', def: 'm', opts: [['d', 'วันนี้'], ['m', 'MTD'], ['y', 'YTD']] },
-      intro: () => `ยอดขายตาม Category Division / Category / Class เทียบงบและปีก่อน · หน่วยพันบาท · ข้อมูล ณ ${metaT5('Sales by Category date')} · DG FOOD, DG NONFOOD, LIQUOR นับเป็น DRY FOOD และ HARDLINE นับเป็น NON FOOD เมื่อเลือก Division · File ST.68 Sales By Category`,
+      intro: () => `ยอดขายตาม Category Division / Category / Class เทียบ BG และ LY · หน่วยพันบาท · ข้อมูล ณ ${metaT5('Sales by Category date')} · DG FOOD, DG NONFOOD, LIQUOR นับเป็น DRY FOOD และ HARDLINE นับเป็น NON FOOD เมื่อเลือก Division · File ST.68 Sales By Category`,
       cards: (dv, st) => {
         const p = st.per;
         const rows = ok('t5_cat_div') || [];
         const r = rows.find((x) => x.key === 'ALL') || {};
         const w = 'key=ALL';
         return [{ title: `ยอดขายทั้งร้าน · ${{ d: 'วันนี้', m: 'MTD', y: 'YTD' }[p]} (พันบาท)`, v: n0(r[p + '_a']), src: 't5_cat_div', field: p + '_a', where: w,
-          subs: [{ label: 'งบ', v: n0(r[p + '_b']), src: 't5_cat_div', field: p + '_b', where: w }, { label: 'ปีก่อน', v: n0(r[p + '_ly']), src: 't5_cat_div', field: p + '_ly', where: w }] },
-        { title: '% เทียบงบ', v: pc(r[p + '_pct_b']), cls: tone(r[p + '_pct_b']), src: 't5_cat_div', field: p + '_pct_b', where: w },
-        { title: '% เทียบปีก่อน', v: pc(r[p + '_pct_ly']), cls: tone(r[p + '_pct_ly']), src: 't5_cat_div', field: p + '_pct_ly', where: w }];
+          subs: [{ label: 'BG', v: n0(r[p + '_b']), src: 't5_cat_div', field: p + '_b', where: w }, { label: 'LY', v: n0(r[p + '_ly']), src: 't5_cat_div', field: p + '_ly', where: w }] },
+        { title: '% เทียบ BG', v: pc(r[p + '_pct_b']), cls: tone(r[p + '_pct_b']), src: 't5_cat_div', field: p + '_pct_b', where: w },
+        { title: '% เทียบ LY', v: pc(r[p + '_pct_ly']), cls: tone(r[p + '_pct_ly']), src: 't5_cat_div', field: p + '_pct_ly', where: w }];
       },
-      charts: [{ id: 'ch-t5cat', band: 'ยอดขายตาม Category Division (พันบาท) · เทา = ปีก่อน, น้ำเงิน = ปีนี้, จุด = งบ', src: 't5_cat_div', kind: 'bic',
+      charts: [{ id: 'ch-t5cat', band: 'ยอดขายตาม Category Division (พันบาท) · เทา = LY (Last Year), น้ำเงิน = CY (Current Year), จุด = BG (Budget)', src: 't5_cat_div', kind: 'bic',
         data: (st) => (ok('t5_cat_div') || []).filter((r) => r.key !== 'ALL' && inDiv(t5div(r))).map((r) => ({ x: r.key, label: r.division, cy: r[st.per + '_a'], ly: r[st.per + '_ly'], bud: r[st.per + '_b'], v: r[st.per + '_pct_ly'] })) }],
       tables: [
         { id: 'tb-t5cd', band: 'ตาม Category Division', src: 't5_cat_div', total: (r) => r.key === 'ALL', rows: (d) => d.filter((r) => r.key === 'ALL' || inDiv(t5div(r))),
-          cols: [['division', 'Division', 'txt'], ['a', 'ปีนี้', 'n0', { per: true }], ['b', 'งบ', 'n0', { per: true }], ['pct_b', '% เทียบงบ', 'pc', { per: true, tone: TONE.sign }], ['ly', 'ปีก่อน', 'n0', { per: true }], ['pct_ly', '% เทียบปีก่อน', 'pc', { per: true, tone: TONE.sign }]] },
+          cols: [['division', 'Division', 'txt'], ['a', 'CY', 'n0', { per: true }], ['b', 'BG', 'n0', { per: true }], ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n0', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] },
         { id: 'tb-t5cc', band: 'ตาม Category', src: 't5_cat_cat', filters: [['division', 'Division']],
-          cols: [['division', 'Division', 'txt'], ['category', 'Category', 'txt'], ['a', 'ปีนี้', 'n0', { per: true }], ['b', 'งบ', 'n0', { per: true }], ['pct_b', '% เทียบงบ', 'pc', { per: true, tone: TONE.sign }], ['ly', 'ปีก่อน', 'n0', { per: true }], ['pct_ly', '% เทียบปีก่อน', 'pc', { per: true, tone: TONE.sign }]] },
+          cols: [['division', 'Division', 'txt'], ['category', 'Category', 'txt'], ['a', 'CY', 'n0', { per: true }], ['b', 'BG', 'n0', { per: true }], ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n0', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] },
         { id: 'tb-t5ccl', band: 'ตาม Class', src: 't5_cat_cls', filters: [['division', 'Division'], ['category', 'Category']], q: ['cls', 'desc'],
-          sorts: [['ต่ำกว่างบมากสุด', (a, b, st) => (a[st.per + '_var_b'] || 0) - (b[st.per + '_var_b'] || 0)], ['ยอดขายสูงสุด', (a, b, st) => (b[st.per + '_a'] || 0) - (a[st.per + '_a'] || 0)]],
-          cols: [['category', 'Category', 'txt'], ['cls', 'Class', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['a', 'ปีนี้', 'n1', { per: true }], ['b', 'งบ', 'n1', { per: true }], ['var_b', 'ส่วนต่างงบ', 'n1', { per: true, tone: TONE.sign }],
-            ['pct_b', '% เทียบงบ', 'pc', { per: true, tone: TONE.sign }], ['ly', 'ปีก่อน', 'n1', { per: true }], ['pct_ly', '% เทียบปีก่อน', 'pc', { per: true, tone: TONE.sign }]] }],
+          sorts: [['ต่ำกว่า BG มากสุด', (a, b, st) => (a[st.per + '_var_b'] || 0) - (b[st.per + '_var_b'] || 0)], ['ยอดขายสูงสุด', (a, b, st) => (b[st.per + '_a'] || 0) - (a[st.per + '_a'] || 0)]],
+          cols: [['category', 'Category', 'txt'], ['cls', 'Class', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['a', 'CY', 'n1', { per: true }], ['b', 'BG', 'n1', { per: true }], ['var_b', 'ส่วนต่าง BG', 'n1', { per: true, tone: TONE.sign }],
+            ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n1', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] }],
     },
     t5item: {
-      title: 'Sale by Item & Top Drop Customer', intro: () => 'ยอดขายรายสินค้าปีนี้เทียบปีก่อน (บาท) และสินค้าที่ลูกค้าซื้อลดลง สรุปจำนวนลูกค้าและยอดที่หายไป · ไม่แสดงชื่อหรือรหัสลูกค้า · File Sale by item, Top drop Customer by class1',
+      title: 'Sale by Item & Top Drop Customer', intro: () => `ยอดขายรายสินค้าปีนี้เทียบปีก่อน (บาท) และสินค้าที่ลูกค้าซื้อลดลง สรุปจำนวนลูกค้าและยอดที่หายไป${ok('t5_drop_cust') ? ' พร้อมรายชื่อลูกค้า' : ''} · File Sale by item, Top drop Customer by class1`,
       cards: (dv) => {
         const s = byKey('t5_sale_tot').get(dv) || {}, d = byKey('t5_drop_tot').get(dv) || {};
         const w = `key=${dv}`;
@@ -2787,7 +2781,13 @@ body { padding: 0; }
           cols: [['division', 'Div', 'div'], ['type', 'ประเภทลูกค้า', 'txt'], ['customers', 'ลูกค้า (ครั้ง)', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
         { id: 'tb-t5di', band: 'สินค้าที่ลูกค้าซื้อลดลง', src: 't5_drop_item', dept: true, q: ['item', 'desc', 'cls_name'], sorts: [['ยอดหายมากสุด', (a, b) => a.var - b.var], ['ลูกค้าหายมากสุด', (a, b) => b.lost - a.lost]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['customers', 'ลูกค้า', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'],
-            ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] }],
+            ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
+        // customer names exist only on the private claude.ai dashboard; where the dataset is absent the panel is hidden
+        { id: 'tb-t5dc', band: 'ลูกค้าที่ซื้อลดลง · รายคน', src: 't5_drop_cust', optional: true, dept: true,
+          filters: [['type', 'ประเภทลูกค้า'], ['st', 'สถานะ', (r) => (r.lost ? 'ไม่ซื้อเลยปีนี้' : 'ยังซื้ออยู่แต่ลดลง')]], q: ['cust_name', 'cust_no', 'item', 'desc'],
+          sorts: [['ยอดหายมากสุด', (a, b) => (a.var || 0) - (b.var || 0)], ['ตามอันดับใน Class', (a, b) => (a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : a.rank - b.rank)]],
+          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['rank', 'อันดับ', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }],
+            ['type', 'ประเภท', 'txt'], ['cust_no', 'รหัสลูกค้า', 'txt'], ['cust_name', 'ชื่อลูกค้า', 'txt', { wrap: true }], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] }],
     },
     t5shk: {
       title: 'Shrinkage by Code MTD', intro: () => 'Shrinkage เดือนนี้รายสินค้า แยกตาม Reason Code (บาท) · 10/11 Adjust, 20/21 Damaged Joblot, 52/53 Expired, 60/61 Stolen, TC-41 Stock count · % = Shrinkage ต่อยอดขาย · File Shrinkage_by_code_by_Div_MTD',
@@ -2945,6 +2945,12 @@ body { padding: 0; }
       else hbars(box, rows.filter((r) => r.v != null), { fmt: c.fmt || n0, tip: (it) => [[it.label], ['ค่า', (c.fmt || n0)(it.v)], ...(it.tip || [])] });
     });
     P.tables.forEach((t) => {
+      if (t.optional) {
+        const s = dash.data(t.src).status;
+        const panel = document.getElementById(t.id).closest('.b68-panel');
+        panel.hidden = s === 'error' || s === 'missing';
+        if (panel.hidden) return;
+      }
       let rows = ok(t.src) || [];
       if (!t.nodiv && !t.rows) rows = rows.filter((r) => r.division == null || inDiv(t5div(r)));
       if (t.rows) rows = t.rows(rows);

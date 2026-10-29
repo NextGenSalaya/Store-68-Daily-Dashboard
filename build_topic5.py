@@ -2,8 +2,9 @@
 sale by item, top drop customers, shrinkage by code, last sales 3 days, negative stock, gone forever & discontinue,
 hamper and soft-serve / rotisserie sales. Reads the 19 source files from anywhere under this folder.
 
-Customer names and numbers (Top drop Customer) and user ids / comments (Negative stock, Adj sheet) are never written
-out: customers are only counted and summed. Sheets whose run date is older than the rest (Top Aging: Item, sum;
+Customer names and numbers (Top drop Customer) go only to data_private/t5_drop_cust.json, for the private claude.ai
+dashboard; the public datasets in data_t5 only count and sum customers. User ids / comments (Negative stock, Adj
+sheet) are never written out. Sheets whose run date is older than the rest (Top Aging: Item, sum;
 Top1000: store 68, FV..NF2; Top_4000: Data2 with #REF!) are skipped. Percent values are in percent units.
 Usage: python build_topic5.py [out_folder]
 """
@@ -290,6 +291,7 @@ save("t5_sale_item", dedupe([{"key": code(r[3]), "dept": code(r[0]), "division":
                               for r in ws.iter_rows(min_row=4, max_col=8, values_only=True) if num(r[0]) is not None and txt(r[3])]))
 ws = sheet(find("Top drop Customer by class1.xlsx"))
 by_item, by_type, dv = {}, {}, ""
+cust = []
 for r in ws.iter_rows(min_row=1, max_col=14, values_only=True):
     if txt(r[0]).upper() in ("FRESH FOOD", "DRY FOOD", "NON FOOD"):
         dv = txt(r[0]).upper(); continue
@@ -297,6 +299,9 @@ for r in ws.iter_rows(min_row=1, max_col=14, values_only=True):
         continue
     cy, ly, var = num(r[9]) or 0, num(r[10]) or 0, num(r[11]) or 0
     k = code(r[4])
+    cust.append({"key": f"{dv}|{k}|{code(r[7])}|{len(cust)}", "division": dv, "rank": int(num(r[0])), "dept": code(r[1]), "cls": code(r[2]),
+                 "cls_name": txt(r[3]), "item": k, "desc": txt(r[5]), "type": txt(r[6]) or "(ว่าง)", "cust_no": code(r[7]),
+                 "cust_name": txt(r[8]), "cy": rnd(cy), "ly": rnd(ly), "var": rnd(var), "profit": rnd(r[12]), "lost": cy == 0})
     o = by_item.setdefault(k, {"key": k, "division": dv, "dept": code(r[1]), "cls": code(r[2]), "cls_name": txt(r[3]), "item": k,
                                 "desc": txt(r[5]), "customers": 0, "cy": 0.0, "ly": 0.0, "var": 0.0, "lost": 0})
     o["customers"] += 1; o["cy"] += cy; o["ly"] += ly; o["var"] += var; o["lost"] += cy == 0
@@ -309,6 +314,12 @@ for d in (by_item, by_type):
             o[f2] = round(o[f2], 2)
 save("t5_drop_item", list(by_item.values()))
 save("t5_drop_type", list(by_type.values()))
+# customer names and numbers go to data_private/ only: make_site.py never copies that folder to the public website
+PRIV = os.path.join(HERE, "data_private")
+os.makedirs(PRIV, exist_ok=True)
+with open(os.path.join(PRIV, "t5_drop_cust.json"), "w", encoding="utf-8") as f:
+    json.dump(cust, f, ensure_ascii=False, separators=(",", ":"))
+print(f"t5_drop_cust: {len(cust)} rows (private, claude.ai link only)")
 
 # ---------- Hamper ----------
 f = find("Sales_Hamper 2026.xlsm")
