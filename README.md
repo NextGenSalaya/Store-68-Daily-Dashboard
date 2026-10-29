@@ -8,7 +8,7 @@ Dashboard ประจำวันของ Makro สาขา 68 Salaya (Distri
 
 | หัวข้อ | หน้า |
 |---|---|
-| ยอดขาย · Sales | ยอดขาย & ลูกค้า, Category & Class, สินค้า & Top Drop Customer, Fresh Food Sale & Top 50, Hamper & Soft-serve |
+| Overall Trend | ยอดขาย & ลูกค้า, Category, Class & สินค้า, Sale by Item & Top Drop Customer, Fresh Food Sale & Top 50, Hamper & Soft-serve |
 | Stock & Order | Stock & Stock Days, Stock ใกล้หมด & ติดลบ, Over Stock & On Order, Aging NBS & Clearance, Top Items & Item List |
 | Service Level · KVI | Service level, KVI · OB · Makro Mail Monitoring, KVI Price Survey List, Pack & Component |
 | Shrinkage | Shrinkage ภาพรวม & แผนก, Shrinkage by Code |
