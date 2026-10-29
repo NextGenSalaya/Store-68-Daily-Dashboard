@@ -1440,9 +1440,10 @@ body { padding: 0; }
       box.append(h, v);
       (c.subs || []).forEach((s) => {
         const p = document.createElement('div'); p.className = 's';
-        p.append(document.createTextNode(s.label + ' '));
+        if (s.label) p.append(document.createTextNode(s.label + ' '));
         const b = document.createElement('b'); b.textContent = s.v; if (s.cls) b.classList.add(s.cls);
-        mark(b, s); p.append(b); box.append(p);
+        mark(b, s); p.append(b);
+        if (s.after) p.append(document.createTextNode(' ' + s.after)); box.append(p);
       });
       return box;
     }));
@@ -1982,8 +1983,8 @@ body { padding: 0; }
     cards('#cards-stock', [
       stockCard,
       { title: 'สินค้า Aging ทั้งร้าน (พันบาท)', v: n0(agT.stock_k), src: 'aging_status', field: 'stock_k', where: 'status=Total', subs: [
-        { label: 'รายการ', v: n0(agT.items), src: 'aging_status', field: 'items', where: 'status=Total' },
-        { label: '% ของ Stock', v: n2(agT.pct_stock) + '%', src: 'aging_status', field: 'pct_stock', where: 'status=Total' }] },
+        { label: '', after: 'Items', v: n0(agT.items), src: 'aging_status', field: 'items', where: 'status=Total' },
+        { label: '', after: 'จาก Total Stock', v: n2(agT.pct_stock) + '%', src: 'aging_status', field: 'pct_stock', where: 'status=Total' }] },
       { title: `Top 4000 Stock ติดลบ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus), cls: 'down',
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Negative Stock' },
       { title: `Top 4000 Stock เป็นศูนย์ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus), cls: 'down',
@@ -2912,25 +2913,25 @@ body { padding: 0; }
         data: () => (ok('t5_hamper_day') || []).map((r) => ({ x: r.date, label: r.date.slice(8), cy: r.amount })) }],
       tables: [
         { id: 'tb-t5hs', band: 'ตาม Supplier', src: 't5_hamper_sup', nodiv: true,
-          cols: [['supplier', 'Supplier', 'txt', { wrap: true }], ['stock_qty', 'Stock (ชิ้น)', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'], ['ly_qty', 'QTY LY', 'n0'], ['ly_amt', 'Sale LY', 'n0'], ['cy_qty', 'QTY 2026', 'n0'], ['cy_amt', 'Sale 2026', 'n0']] },
-        { id: 'tb-t5hi', band: 'รายสินค้า', src: 't5_hamper_items', nodiv: true, q: ['item', 'desc'], sorts: [['Sale 2026 สูงสุด', (a, b) => (b.cy_amt || 0) - (a.cy_amt || 0)], ['Stock มากสุด', (a, b) => (b.soh_cost || 0) - (a.soh_cost || 0)]],
-          cols: [['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['ly_qty', 'QTY LY', 'n0'], ['ly_amt', 'Sale LY', 'n0'], ['cy_qty', 'QTY 2026', 'n0'], ['cy_amt', 'Sale 2026', 'n0'], ['cy_profit', 'Profit 2026', 'n0', { tone: TONE.sign }],
-            ['var', 'ส่วนต่าง LY', 'n0', { tone: TONE.sign }], ['soh', 'SOH', 'n0'], ['soh_cost', 'SOH Cost', 'n0'], ['on_order', 'On Order', 'n0']] }],
+          cols: [['supplier', 'Supplier', 'txt', { wrap: true }], ['stock_qty', 'QTY Stock', 'n0'], ['stock_amt', 'Sale Stock', 'n0'], ['ly_qty', 'LY QTY', 'n0'], ['ly_amt', 'LY Sale', 'n0'], ['cy_qty', 'CY QTY', 'n0'], ['cy_amt', 'CY Sale', 'n0']] },
+        { id: 'tb-t5hi', band: 'รายสินค้า', src: 't5_hamper_items', nodiv: true, q: ['item', 'desc'], sorts: [['CY Sale สูงสุด', (a, b) => (b.cy_amt || 0) - (a.cy_amt || 0)], ['Stock มากสุด', (a, b) => (b.soh_cost || 0) - (a.soh_cost || 0)]],
+          cols: [['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['ly_qty', 'LY QTY', 'n0'], ['ly_amt', 'LY Sale', 'n0'], ['cy_qty', 'CY QTY', 'n0'], ['cy_amt', 'CY Sale', 'n0'], ['cy_profit', 'CY Margin', 'n0', { tone: TONE.sign }],
+            ['var', 'Diff', 'n0', { tone: TONE.sign }], ['soh', 'SOH', 'n0'], ['soh_cost', 'SOH Cost', 'n0'], ['on_order', 'On Order', 'n0']] }],
     },
     t5soft: {
       title: 'Soft-serve & Rotisserie', intro: () => 'ยอดขายไอศกรีม Soft-serve ไก่อบ Rotisserie และทุเรียน รายวัน (จำนวนและบาท) · File St.68 Soft-servers Rotisserie chicken sales (Sheet Sum)',
       cards: () => {
         const t = byKey('t5_soft_tot').get('ALL') || {};
         const w = 'key=ALL';
-        return [{ title: `ยอดรวม ${n0(t.n)} วัน (บาท)`, v: n0(t.amount), src: 't5_soft_tot', field: 'amount', where: w },
-          { title: 'Soft-serve (บาท)', v: n0(t.soft_amt), src: 't5_soft_tot', field: 'soft_amt', where: w, subs: [{ label: 'ชิ้น', v: n0(t.soft_qty), src: 't5_soft_tot', field: 'soft_qty', where: w }] },
-          { title: 'Rotisserie chicken (บาท)', v: n0(t.chk_amt), src: 't5_soft_tot', field: 'chk_amt', where: w, subs: [{ label: 'ตัว', v: n0(t.chk_qty), src: 't5_soft_tot', field: 'chk_qty', where: w }] },
-          { title: 'Durian (บาท)', v: n0(t.durian_amt), src: 't5_soft_tot', field: 'durian_amt', where: w }];
+        return [{ title: 'ยอดขายรวม (บาท)', v: n0(t.amount), src: 't5_soft_tot', field: 'amount', where: w },
+          { title: 'Sale Soft Serve (บาท)', v: n0(t.soft_amt), src: 't5_soft_tot', field: 'soft_amt', where: w, subs: [{ label: 'QTY', v: n0(t.soft_qty), src: 't5_soft_tot', field: 'soft_qty', where: w }] },
+          { title: 'Sale Rotisserie Chicken (บาท)', v: n0(t.chk_amt), src: 't5_soft_tot', field: 'chk_amt', where: w, subs: [{ label: 'QTY', v: n0(t.chk_qty), src: 't5_soft_tot', field: 'chk_qty', where: w }] },
+          { title: 'Sale Durian (บาท)', v: n0(t.durian_amt), src: 't5_soft_tot', field: 'durian_amt', where: w }];
       },
       charts: [{ id: 'ch-t5soft', band: 'ยอดขายรวมรายวัน (บาท)', src: 't5_soft', kind: 'bic',
         data: () => (ok('t5_soft') || []).map((r) => ({ x: r.date, label: r.label, cy: r.amount })) }],
       tables: [{ id: 'tb-t5soft', band: 'รายวัน', src: 't5_soft', nodiv: true,
-        cols: [['label', 'วัน', 'txt'], ['soft_qty', 'Soft-serve ชิ้น', 'n0'], ['soft_amt', 'Soft-serve บาท', 'n0'], ['chk_qty', 'ไก่อบ ตัว', 'n0'], ['chk_amt', 'ไก่อบ บาท', 'n0'], ['durian_qty', 'ทุเรียน', 'n0'], ['durian_amt', 'ทุเรียน บาท', 'n0'], ['qty', 'รวม ชิ้น', 'n0'], ['amount', 'รวม บาท', 'n0']] }],
+        cols: [['label', 'วัน', 'txt'], ['soft_qty', 'Soft Serve QTY', 'n0'], ['soft_amt', 'Sale Soft Serve', 'n0'], ['chk_qty', 'Rotisserie QTY', 'n0'], ['chk_amt', 'Sale Rotisserie', 'n0'], ['durian_qty', 'Durian QTY', 'n0'], ['durian_amt', 'Sale Durian', 'n0'], ['qty', 'Total QTY', 'n0'], ['amount', 'Total Sale', 'n0']] }],
     },
   };
 
