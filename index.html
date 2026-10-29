@@ -2612,10 +2612,10 @@ body { padding: 0; }
   const t5div = (r) => T5DIV[r.division] || r.store_div || r.division;
   const DIVSEC = { 'FRESH FOOD': 'FF', 'DRY FOOD': 'DF', 'NON FOOD': 'NF', ALL: 'Total' };
   // one summary calc per list: count and sums by division and ALL
-  const t5tot = (id, src, fields, title) => dash.calc(id, {
+  const t5tot = (id, src, fields, title, kf = []) => dash.calc(id, {
     inputs: [src],
     title,
-    description: `จำนวนรายการ (n) และผลรวม ${fields.join(', ')} ของ ${src} ตาม Division และทั้งหมด (ALL)`,
+    description: `จำนวนรายการ (n) และผลรวม ${fields.join(', ')} ของ ${src} ตาม Division และทั้งหมด (ALL)${kf.length ? `; ${kf.join(', ')} เป็นพันบาท` : ''}`,
     fn: (rows) => {
       const out = new Map();
       rows.forEach((r) => [t5div(r), 'ALL'].forEach((k) => {
@@ -2624,15 +2624,23 @@ body { padding: 0; }
         o.n += 1; fields.forEach((f) => { o[f] = Math.round((o[f] + (r[f] || 0)) * 100) / 100; });
         out.set(k, o);
       }));
-      return [...out.values()];
+      return [...out.values()].map((o) => { kf.forEach((f) => { o[f] = Math.round(o[f] / 10) / 100; }); return o; });
     },
   });
+  // item lists shown in thousand baht: cy, ly, var / 1,000 (2 decimals)
+  const kOf = (id, src) => dash.calc(id, {
+    inputs: [src],
+    title: `${src} (พันบาท)`,
+    description: `${src} ที่ช่อง cy, ly, var หาร 1,000 เป็นพันบาท ช่องอื่นเหมือนเดิม`,
+    fn: (rows) => rows.map((r) => ({ ...r, cy: Math.round((r.cy || 0) / 10) / 100, ly: Math.round((r.ly || 0) / 10) / 100, var: Math.round((r.var || 0) / 10) / 100 })),
+  });
+  ['t5_sale_item', 't5_drop_type', 't5_drop_item', 't5_drop_cust'].forEach((s) => kOf(s + '_k', s));
   t5tot('t5_mu13_tot', 't5_mu13', ['qty', 'cost', 'on_order'], 'Stock 1-3 MU รวม');
   t5tot('t5_mu15_tot', 't5_mu15', ['stock', 'amount', 'on_order'], 'Stock 1-5 MU รวม');
   t5tot('t5_aging_tot', 't5_aging_items', ['cost', 'qty'], 'Aging items รวม');
   t5tot('t5_top50_tot', 't5_top50', ['qty', 'amount', 'mtd', 'lmtd', 'diff'], 'Top 50 FF รวม');
-  t5tot('t5_sale_tot', 't5_sale_item', ['cy', 'ly', 'var'], 'Sale by item รวม');
-  t5tot('t5_drop_tot', 't5_drop_type', ['customers', 'lost', 'cy', 'ly', 'var'], 'Top drop customer รวม');
+  t5tot('t5_sale_tot', 't5_sale_item', ['cy', 'ly', 'var'], 'Sale by item รวม', ['cy', 'ly', 'var']);
+  t5tot('t5_drop_tot', 't5_drop_type', ['customers', 'lost', 'cy', 'ly', 'var'], 'Top drop customer รวม', ['cy', 'ly', 'var']);
   t5tot('t5_shk_tot', 't5_shk_code', ['c10', 'c11', 'c20', 'c21', 'c52', 'c53', 'c60', 'c61', 'tc41', 'qty', 'shrink', 'sale'], 'Shrinkage by code รวม');
   t5tot('t5_neg_tot', 't5_neg_items', ['value', 'on_order'], 'Negative stock รวม');
   t5tot('t5_gone_tot', 't5_gone_items', ['stock_amt', 'sales_amt', 'on_order'], 'Gone Forever รวม');
@@ -2640,7 +2648,7 @@ body { padding: 0; }
 
   const t5s = {};
   const t5get = (k, d) => (k in t5s ? t5s[k] : d);
-  const FM = { n0, n1, n2, pc: (v) => pc(v), pc3: (v) => pc(v, 3), txt: (v) => v ?? '', div: (v) => SHORT[v] || v };
+  const FM = { n0, n1, n2, sg1: (v) => sg(v, 1), pc: (v) => pc(v), pc3: (v) => pc(v, 3), txt: (v) => v ?? '', div: (v) => SHORT[v] || v };
   const TONE = { sign: tone, neg: (v) => (v < 0 ? 'down' : ''), pos: (v) => (v > 0 ? 'down' : ''), bad: () => 'down' };
   const el = (tag, attrs = {}, kids = []) => {
     const e = document.createElement(tag);
@@ -2794,32 +2802,32 @@ body { padding: 0; }
             ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n0', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] }],
     },
     t5item: {
-      title: 'Sale by Item & Top Drop Customer', intro: () => `ยอดขายรายสินค้าปีนี้เทียบปีก่อน (บาท) และสินค้าที่ลูกค้าซื้อลดลง สรุปจำนวนลูกค้าและยอดที่หายไป${ok('t5_drop_cust') ? ' พร้อมรายชื่อลูกค้า' : ''} · File Sale by item, Top drop Customer by class1`,
+      title: 'Sale by Item & Top Drop Customer', intro: () => `ยอดขายรายสินค้า CY เทียบ LY (พันบาท) และสินค้าที่ลูกค้าซื้อลดลง สรุปจำนวนลูกค้าและยอดที่หายไป${ok('t5_drop_cust') ? ' พร้อมรายชื่อลูกค้า' : ''} · File Sale by item, Top drop Customer by class1`,
       cards: (dv) => {
         const s = byKey('t5_sale_tot').get(dv) || {}, d = byKey('t5_drop_tot').get(dv) || {};
         const w = `key=${dv}`;
-        return [{ title: `ยอดขายปีนี้ · ${divLabel()} (บาท)`, v: n0(s.cy), src: 't5_sale_tot', field: 'cy', where: w, subs: [{ label: 'ปีก่อน', v: n0(s.ly), src: 't5_sale_tot', field: 'ly', where: w }] },
-          { title: 'ส่วนต่าง (บาท)', v: n0(s.var), cls: tone(s.var), src: 't5_sale_tot', field: 'var', where: w },
+        return [{ title: `ยอดขาย CY${dv === 'ALL' ? '' : ' · ' + dv} (พันบาท)`, v: n0(s.cy), src: 't5_sale_tot', field: 'cy', where: w, subs: [{ label: 'LY', v: n0(s.ly), src: 't5_sale_tot', field: 'ly', where: w }] },
+          { title: 'ส่วนต่าง LY (พันบาท)', v: sg(s.var, 0), cls: tone(s.var), src: 't5_sale_tot', field: 'var', where: w },
           { title: 'ลูกค้าที่ซื้อลดลง (ครั้ง)', v: n0(d.customers), src: 't5_drop_tot', field: 'customers', where: w, subs: [{ label: 'ไม่ซื้อเลยปีนี้', v: n0(d.lost), cls: 'down', src: 't5_drop_tot', field: 'lost', where: w }] },
-          { title: 'ยอดที่หายไป (บาท)', v: n0(d.var), cls: 'down', src: 't5_drop_tot', field: 'var', where: w }];
+          { title: 'ยอดที่หายไป (พันบาท)', v: n0(d.var), cls: 'down', src: 't5_drop_tot', field: 'var', where: w }];
       },
-      charts: [{ id: 'ch-t5drop', band: 'ยอดที่หายไปตามประเภทลูกค้า (บาท)', src: 't5_drop_type',
-        data: () => sumBy((ok('t5_drop_type') || []).filter((r) => inDiv(r.division)), (r) => r.type, 'var').sort((a, b) => a[1] - b[1]).map(([k, v]) => ({ label: k, v, color: cssv('--b-down'), tip: [] })), fmt: n0 }],
+      charts: [{ id: 'ch-t5drop', band: 'ยอดที่หายไปตามประเภทลูกค้า (พันบาท)', src: 't5_drop_type_k',
+        data: () => sumBy((ok('t5_drop_type_k') || []).filter((r) => inDiv(r.division)), (r) => r.type, 'var').sort((a, b) => a[1] - b[1]).map(([k, v]) => ({ label: k, v, color: cssv('--b-down'), tip: [] })), fmt: n0 }],
       tables: [
-        { id: 'tb-t5si', band: 'ยอดขายรายสินค้า', src: 't5_sale_item', dept: true, q: ['item', 'desc', 'cls_name'],
+        { id: 'tb-t5si', band: 'ยอดขายรายสินค้า (พันบาท)', src: 't5_sale_item_k', dept: true, q: ['item', 'desc', 'cls_name'],
           sorts: [['ลดลงมากสุด', (a, b) => (a.var || 0) - (b.var || 0)], ['เพิ่มขึ้นมากสุด', (a, b) => (b.var || 0) - (a.var || 0)], ['ขายสูงสุด', (a, b) => (b.cy || 0) - (a.cy || 0)]],
-          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
-        { id: 'tb-t5dt', band: 'ลูกค้าที่ซื้อลดลง ตามประเภท', src: 't5_drop_type', rows: (d) => d.slice().sort((a, b) => a.var - b.var),
-          cols: [['division', 'Div', 'div'], ['type', 'ประเภทลูกค้า', 'txt'], ['customers', 'ลูกค้า (ครั้ง)', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
-        { id: 'tb-t5di', band: 'สินค้าที่ลูกค้าซื้อลดลง', src: 't5_drop_item', dept: true, q: ['item', 'desc', 'cls_name'], sorts: [['ยอดหายมากสุด', (a, b) => a.var - b.var], ['ลูกค้าหายมากสุด', (a, b) => b.lost - a.lost]],
+          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] },
+        { id: 'tb-t5dt', band: 'ลูกค้าที่ซื้อลดลง ตามประเภท (พันบาท)', src: 't5_drop_type_k', rows: (d) => d.slice().sort((a, b) => a.var - b.var),
+          cols: [['division', 'Div', 'div'], ['type', 'ประเภทลูกค้า', 'txt'], ['customers', 'ลูกค้า (ครั้ง)', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'], ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] },
+        { id: 'tb-t5di', band: 'สินค้าที่ลูกค้าซื้อลดลง (พันบาท)', src: 't5_drop_item_k', dept: true, q: ['item', 'desc', 'cls_name'], sorts: [['ยอดหายมากสุด', (a, b) => a.var - b.var], ['ลูกค้าหายมากสุด', (a, b) => b.lost - a.lost]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['customers', 'ลูกค้า', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'],
-            ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
+            ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] },
         // customer names exist only on the private claude.ai dashboard; where the dataset is absent the panel is hidden
-        { id: 'tb-t5dc', band: 'ลูกค้าที่ซื้อลดลง · รายคน', src: 't5_drop_cust', optional: true, dept: true,
+        { id: 'tb-t5dc', band: 'ลูกค้าที่ซื้อลดลง · รายคน (พันบาท)', src: 't5_drop_cust_k', optional: true, dept: true,
           filters: [['type', 'ประเภทลูกค้า'], ['st', 'สถานะ', (r) => (r.lost ? 'ไม่ซื้อเลยปีนี้' : 'ยังซื้ออยู่แต่ลดลง')]], q: ['cust_name', 'cust_no', 'item', 'desc'],
           sorts: [['ยอดหายมากสุด', (a, b) => (a.var || 0) - (b.var || 0)], ['ตามอันดับใน Class', (a, b) => (a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : a.rank - b.rank)]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['rank', 'อันดับ', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }],
-            ['type', 'ประเภท', 'txt'], ['cust_no', 'รหัสลูกค้า', 'txt'], ['cust_name', 'ชื่อลูกค้า', 'txt', { wrap: true }], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] }],
+            ['type', 'ประเภท', 'txt'], ['cust_no', 'รหัสลูกค้า', 'txt'], ['cust_name', 'ชื่อลูกค้า', 'txt', { wrap: true }], ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] }],
     },
     t5shk: {
       title: 'Shrinkage by Code MTD', intro: () => 'Shrinkage เดือนนี้รายสินค้า แยกตาม Reason Code (บาท) · 10/11 Adjust, 20/21 Damaged Joblot, 52/53 Expired, 60/61 Stolen, TC-41 Stock count · % = Shrinkage ต่อยอดขาย · File Shrinkage_by_code_by_Div_MTD',
