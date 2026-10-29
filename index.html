@@ -2906,7 +2906,7 @@ body { padding: 0; }
         const w = `key=${t.key}`;
         return [{ title: 'Sale 2026 (บาท)', v: n0(t.cy_amt), src: 't5_hamper_sup', field: 'cy_amt', where: w, subs: [{ label: 'LY (Last Year)', v: n0(t.ly_amt), src: 't5_hamper_sup', field: 'ly_amt', where: w }] },
           { title: 'QTY 2026 (ชิ้น)', v: n0(t.cy_qty), src: 't5_hamper_sup', field: 'cy_qty', where: w, subs: [{ label: 'LY (Last Year)', v: n0(t.ly_qty), src: 't5_hamper_sup', field: 'ly_qty', where: w }] },
-          { title: 'Stock คงเหลือ (บาท)', v: n0(t.stock_amt), src: 't5_hamper_sup', field: 'stock_amt', where: w, subs: [{ label: 'ชิ้น', v: n0(t.stock_qty), src: 't5_hamper_sup', field: 'stock_qty', where: w }] }];
+          { title: 'Stock Balance (บาท)', v: n0(t.stock_amt), src: 't5_hamper_sup', field: 'stock_amt', where: w, subs: [{ label: 'ชิ้น', v: n0(t.stock_qty), src: 't5_hamper_sup', field: 'stock_qty', where: w }] }];
       },
       charts: [{ id: 'ch-t5hd', band: 'ยอดขาย Hamper รายวัน (บาท)', src: 't5_hamper_day', kind: 'bic',
         data: () => (ok('t5_hamper_day') || []).map((r) => ({ x: r.date, label: r.date.slice(8), cy: r.amount })) }],
