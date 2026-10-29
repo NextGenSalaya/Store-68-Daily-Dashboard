@@ -265,14 +265,12 @@ for r in ws.iter_rows(min_row=4, max_row=10, max_col=23, values_only=True):
     if txt(r[1]):
         k = "ALL" if txt(r[1]) == "Grand Total" else txt(r[1])
         csum.append({"key": k, "division": k, **cat_vals(r[2:23])})
-save("t5_cat_div", csum)
 ccat, dv = [], ""
 for r in ws.iter_rows(min_row=15, max_row=60, max_col=23, values_only=True):
     if txt(r[0]) and not txt(r[0]).startswith("Total"):
         dv = txt(r[0])
     if txt(r[1]) and dv:
         ccat.append({"key": f"{dv}|{txt(r[1])}", "division": dv, "category": txt(r[1]), **cat_vals(r[2:23])})
-save("t5_cat_cat", ccat)
 ccls = []
 for s in ["DG FOOD", "DG NONFOOD", "FRESH FOOD", "HARDLINE E", "HARDLINE H", "LIQUOR & TOBACCO"]:
     cat = ""
@@ -282,6 +280,44 @@ for s in ["DG FOOD", "DG NONFOOD", "FRESH FOOD", "HARDLINE E", "HARDLINE H", "LI
         if num(r[2]) is None or all(num(v) is None for v in r[4:25]):
             continue
         ccls.append({"key": f"{s}|{code(r[2])}", "division": s, "category": cat, "cls": code(r[2]), "desc": txt(r[3]), **cat_vals(r[4:25])})
+
+# classes in no category sheet ("Check Diff" in the file) form a group per store division, and join the store total
+from unmapped import unmapped_classes, GROUP, LABEL
+SHORT = {"DRY FOOD": "DF", "FRESH FOOD": "FF", "NON FOOD": "NF"}
+
+
+def abl(a, b, ly):
+    """a / b / ly per period -> the file's d_/m_/y_ fields (var and % against budget and last year)."""
+    out = {}
+    for p in P:
+        A, B, L = a[p], b[p], ly[p]
+        out.update({f"{p}_a": round(A, 2), f"{p}_b": round(B, 2), f"{p}_var_b": round(A - B, 2),
+                    f"{p}_pct_b": round((A / B - 1) * 100, 2) if B else None, f"{p}_ly": round(L, 2),
+                    f"{p}_var_ly": round(A - L, 2), f"{p}_pct_ly": round((A / L - 1) * 100, 2) if L else None})
+    return out
+
+
+def sums(rows):
+    return ({p: sum(x[f"{p}_a"] for x in rows) for p in P}, {p: sum(x[f"{p}_b"] for x in rows) for p in P},
+            {p: sum(x[f"{p}_ly"] for x in rows) for p in P})
+
+
+extra = unmapped_classes(f)
+for sd in sorted({x["store_div"] for x in extra}):
+    grp = f"{GROUP} · {SHORT.get(sd, sd)}"
+    rows = [x for x in extra if x["store_div"] == sd]
+    for x in rows:
+        ccls.append({"key": f"{grp}|{x['cls']}", "division": grp, "store_div": sd, "category": LABEL, "cls": x["cls"],
+                     "desc": f"{x['desc']} (Dept {x['dept']})", **abl(*({p: x[f'{p}_{k}'] for p in P} for k in ("a", "b", "ly")))})
+    ccat.append({"key": f"{grp}|{LABEL}", "division": grp, "store_div": sd, "category": LABEL, **abl(*sums(rows))})
+    csum.insert(len(csum) - 1, {"key": grp, "division": grp, "store_div": sd, **abl(*sums(rows))})
+tot = csum[-1]
+if extra and tot["key"] == "ALL":
+    a, b, ly = sums(extra)
+    tot.update(abl(*({p: tot[f"{p}_{k}"] + add[p] for p in P} for k, add in (("a", a), ("b", b), ("ly", ly)))))
+print(f"unmapped classes: {len(extra)}, MTD {round(sum(x['m_a'] for x in extra), 2)} (thousand baht) added as '{GROUP}'")
+save("t5_cat_div", csum)
+save("t5_cat_cat", ccat)
 save("t5_cat_cls", dedupe(ccls))
 
 # ---------- Sale by item / Top drop customer ----------

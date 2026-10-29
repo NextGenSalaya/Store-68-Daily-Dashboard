@@ -161,6 +161,27 @@ for r in range(4, ws.max_row + 1):
         rec[f"{p}_actual"], rec[f"{p}_budget"], rec[f"{p}_ly"] = rnd(ws[f"{a1}{r}"].value), rnd(ws[f"{b1}{r}"].value), rnd(ws[f"{l1}{r}"].value)
     if is_total or any(abs(rec[k] or 0) >= 0.5 for k in ("mtd_actual", "mtd_budget", "ytd_actual")):
         cats.append(rec)
+# classes in no category (from ST.68 Sales By Category, its "Check Diff") form a group per store division and join the
+# store total, so the Category total equals the store's sales
+cat_files = sorted(glob.glob(os.path.join(HERE, "**", "ST.68 Sales By Category.xlsx"), recursive=True), key=os.path.getmtime)
+if cat_files:
+    from unmapped import unmapped_classes, GROUP, LABEL
+    extra = unmapped_classes(cat_files[-1])
+    store = next((c for c in cats if c["division"] == "ทั้งร้าน"), None)
+    at = cats.index(store) if store else len(cats)
+    for sd in sorted({x["store_div"] for x in extra}):
+        grp = f"{GROUP} · {dict(zip(('DRY FOOD', 'FRESH FOOD', 'NON FOOD'), ('DF', 'FF', 'NF'))).get(sd, sd)}"
+        rows = [x for x in extra if x["store_div"] == sd]
+        vals = {f"{p}_{k}": round(sum(x[f"{q}_{s}"] for x in rows), 2)
+                for p, q in (("day", "d"), ("mtd", "m"), ("ytd", "y")) for k, s in (("actual", "a"), ("budget", "b"), ("ly", "ly"))}
+        member = {"key": f"{grp}|{LABEL}", "division": grp, "store_div": sd, "category": f"{LABEL} ({len(rows)} Class)", "is_total": False, **vals}
+        total = {"key": f"Total {grp}|รวม {grp}", "division": grp, "store_div": sd, "category": f"รวม {grp}", "is_total": True, **vals}
+        cats[at:at] = [member, total]
+        at += 2
+        if store:
+            for k, v in vals.items():
+                store[k] = round((store[k] or 0) + v, 2)
+    print(f"category: added {len(extra)} classes with no category (MTD {round(sum(x['m_a'] for x in extra), 2)} thousand baht)")
 save("category", cats)
 
 # ------------------------------------------------------------------ Analysis sheet (sales since 1 June and YTD by department)

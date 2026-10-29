@@ -1781,7 +1781,7 @@ body { padding: 0; }
     const CATDIV = { 'DG FOOD': 'DRY FOOD', 'DG NONFOOD': 'DRY FOOD', 'LIQUOR & TOBACCO': 'DRY FOOD', 'FRESH FOOD': 'FRESH FOOD', 'HARDLINE E': 'NON FOOD', 'HARDLINE H': 'NON FOOD' };
     const cdiv = division() !== 'ALL' ? division() : pick.catdiv;
     pressed('#cat-div', cdiv);
-    const inCdiv = (r) => cdiv === 'ALL' || CATDIV[r.division] === cdiv;
+    const inCdiv = (r) => cdiv === 'ALL' || (CATDIV[r.division] || r.store_div) === cdiv;
     const groups = cat ? [...new Set(cat.filter((r) => r.division !== 'ทั้งร้าน' && inCdiv(r)).map((r) => r.division))] : [];
     if (!['ทั้งหมด', ...groups].includes(pick.catgrp)) pick.catgrp = 'ทั้งหมด';
     fillSelect('#f-catgrp', ['ทั้งหมด', ...groups], pick.catgrp);
@@ -2609,7 +2609,7 @@ body { padding: 0; }
   // ----- Topic 5: pages built from one layout (cards, charts, tables with filters)
   // Category divisions of the Sales by Category file belong to the store's three divisions
   const T5DIV = { 'DG FOOD': 'DRY FOOD', 'DG NONFOOD': 'DRY FOOD', 'LIQUOR & TOBACCO': 'DRY FOOD', 'HARDLINE E': 'NON FOOD', 'HARDLINE H': 'NON FOOD' };
-  const t5div = (r) => T5DIV[r.division] || r.division;
+  const t5div = (r) => T5DIV[r.division] || r.store_div || r.division;
   const DIVSEC = { 'FRESH FOOD': 'FF', 'DRY FOOD': 'DF', 'NON FOOD': 'NF', ALL: 'Total' };
   // one summary calc per list: count and sums by division and ALL
   const t5tot = (id, src, fields, title) => dash.calc(id, {
