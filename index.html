@@ -359,36 +359,36 @@ body { padding: 0; }
       <div class="b68-cards" id="cards-sales"></div>
       <div class="b68-cols">
         <div class="b68-panel">
-          <div class="b68-band">Sales Table · <span class="pl">MTD</span> (พันบาท)</div>
-          <div class="b68-wrap"><table class="b68-t" id="tb-sales" data-source="sales" data-row-key="key">
+          <div class="b68-band">Sales Table · <span class="pl">MTD</span> (บาท)</div>
+          <div class="b68-wrap"><table class="b68-t" id="tb-sales" data-source="sales_baht" data-row-key="key">
             <thead><tr><th class="l" data-field="division">Division</th><th data-field="actual">Actual</th><th data-field="budget">Budget</th><th data-field="pct_budget">% to Budget</th><th data-field="ly">LY</th><th data-field="pct_ly">% to LY</th><th data-field="share">% Shared</th></tr></thead><tbody></tbody>
           </table></div>
           <div class="b68-band" style="margin-top:8px">Margin Table · <span class="pl">MTD</span> (%)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-margin" data-source="margin" data-row-key="key">
             <thead><tr><th class="l" data-field="division">Division</th><th data-field="actual">Actual</th><th data-field="budget">Budget</th><th data-field="var_budget">Vs. Budget (pt)</th><th data-field="ly">LY</th><th data-field="var_ly">Vs. LY (pt)</th><th data-field="share">% Shared</th></tr></thead><tbody></tbody>
           </table></div>
-          <div class="b68-band" style="margin-top:8px">Daily Need for Budget (พันบาท/วัน)</div>
-          <div class="b68-wrap"><table class="b68-t" id="tb-need" data-source="daily_need" data-row-key="division">
+          <div class="b68-band" style="margin-top:8px">Daily Need for Budget (บาท/วัน)</div>
+          <div class="b68-wrap"><table class="b68-t" id="tb-need" data-source="need_baht" data-row-key="division">
             <thead><tr><th class="l" data-field="division">Division</th><th data-field="avg_day">ขายได้เฉลี่ย/วัน</th><th data-field="budget_day">BG ต่อวัน</th><th data-field="pct_var">% Var</th><th data-field="need_day">ต้องขายต่อวัน</th></tr></thead><tbody></tbody>
           </table></div>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Sales by Division (VS. LY) · <span class="pl">MTD</span></div>
           <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY (Last Year)</span><span><i style="background:var(--b-cy)"></i>CY (Current Year)</span><span><i style="background:var(--b-bud)"></i>BG (Budget)</span></div>
-          <div class="b68-chart" id="ch-sales" data-source="sales"></div>
-          <p class="b68-note">พันบาท · แท่งเขียว/แดงด้านล่างคือ % เทียบ LY</p>
+          <div class="b68-chart" id="ch-sales" data-source="sales_baht"></div>
+          <p class="b68-note">บาท · แท่งเขียว/แดงด้านล่างคือ % เทียบ LY</p>
           <div class="b68-band">Bottom Stores (MTD vs LY)</div>
-          <div class="b68-wrap"><table class="b68-t" id="tb-bottom" data-source="bottom_stores" data-row-key="store">
-            <thead><tr><th class="l" data-field="store">Store</th><th data-field="variance">Variance (พันบาท)</th><th data-field="pct_variance">% Variance</th></tr></thead><tbody></tbody>
+          <div class="b68-wrap"><table class="b68-t" id="tb-bottom" data-source="bottom_baht" data-row-key="store">
+            <thead><tr><th class="l" data-field="store">Store</th><th data-field="variance">Variance (บาท)</th><th data-field="pct_variance">% Variance</th></tr></thead><tbody></tbody>
           </table></div>
         </div>
       </div>
       <div class="b68-panel">
         <div class="b68-band">Customer Table · <span class="plc">MTD</span></div>
-        <div class="b68-wrap"><table class="b68-t" id="tb-cust" data-source="customers" data-row-key="key">
+        <div class="b68-wrap"><table class="b68-t" id="tb-cust" data-source="cust_baht" data-row-key="key">
           <thead><tr><th class="l" data-field="group">Main Group</th><th data-field="invoices">#Invoices</th><th data-field="invoices_sply">%SPLY</th><th data-field="sales">Sales Amount</th><th data-field="sales_sply">%SPLY</th><th data-field="active">Active Customers</th><th data-field="active_sply">%SPLY</th><th data-field="visits">Visit Frequency</th><th data-field="visits_sply">%SPLY</th><th data-field="participation">%Participation</th></tr></thead><tbody></tbody>
         </table></div>
-        <p class="b68-note">มีเฉพาะ WTD และ MTD · ยอดขายเป็นพันบาท</p>
+        <p class="b68-note">มีเฉพาะ WTD และ MTD · ยอดขายเป็นบาท</p>
       </div>
     </section>
 
@@ -1066,15 +1066,38 @@ body { padding: 0; }
   let page = 'sales';
   let pages = ['sales'];
 
-  dash.calc('sales_diff', {
+  // ----- ยอดขาย & ลูกค้า in baht: the Dashboard sheet gives money in thousand baht, the page shows baht
+  const baht = (v) => (v == null ? null : Math.round(v * 1000));
+  dash.calc('sales_baht', {
     inputs: ['sales'],
-    title: 'ส่วนต่างยอดขายจากปีก่อนและงบ (พันบาท)',
-    description: 'ยอดขายจริงลบปีก่อน และยอดขายจริงลบงบ หน่วยพันบาทเหมือนไฟล์ ปัดเป็นจำนวนเต็ม',
+    title: 'ยอดขายตาม Division (บาท)',
+    description: 'ยอดขายจริง (actual) งบ (budget) ปีก่อน (ly) คูณ 1,000 จากพันบาทเป็นบาท, ส่วนต่างจาก LY และ BG เป็นบาท; % และสัดส่วนเหมือนไฟล์',
     fn: (sales) => sales.map((r) => ({
-      key: r.key,
-      diff_ly: Math.round(r.actual - r.ly),
-      diff_budget: Math.round(r.actual - r.budget),
+      key: r.key, period: r.period, division: r.division,
+      actual: baht(r.actual), budget: baht(r.budget), ly: baht(r.ly),
+      diff_ly: baht(r.actual - r.ly), diff_budget: baht(r.actual - r.budget),
+      pct_budget: r.pct_budget, pct_ly: r.pct_ly, share: r.share,
     })),
+  });
+  dash.calc('need_baht', {
+    inputs: ['daily_need'],
+    title: 'ยอดที่ต้องขายต่อวันให้ถึง BG (บาท)',
+    description: 'ขายได้เฉลี่ยต่อวัน BG ต่อวัน และต้องขายต่อวัน คูณ 1,000 จากพันบาทเป็นบาท; % Var เหมือนไฟล์',
+    fn: (daily_need) => daily_need.map((r) => ({
+      key: r.division, division: r.division, avg_day: baht(r.avg_day), budget_day: baht(r.budget_day), need_day: baht(r.need_day), pct_var: r.pct_var,
+    })),
+  });
+  dash.calc('cust_baht', {
+    inputs: ['customers'],
+    title: 'Customer Table (ยอดขายเป็นบาท)',
+    description: 'ตาราง Customer ตามกลุ่ม ยอดขาย (sales) คูณ 1,000 จากพันบาทเป็นบาท ค่าอื่นเหมือนไฟล์',
+    fn: (customers) => customers.map((r) => ({ ...r, sales: baht(r.sales) })),
+  });
+  dash.calc('bottom_baht', {
+    inputs: ['bottom_stores'],
+    title: 'Bottom Stores (บาท)',
+    description: 'ส่วนต่าง MTD เทียบ LY ของสาขา (variance) คูณ 1,000 จากพันบาทเป็นบาท; % Variance เหมือนไฟล์',
+    fn: (bottom_stores) => bottom_stores.map((r) => ({ ...r, key: r.store, variance: baht(r.variance) })),
   });
   dash.calc('cat_var', {
     inputs: ['category'],
@@ -1681,32 +1704,31 @@ body { padding: 0; }
     const cp = p === 'WTD' ? 'WTD' : 'MTD';
     const dv = division() === 'ALL' ? 'Total' : division();
     const key = `${p}|${dv}`;
-    const sd = ok('sales'), md = ok('margin'), cu = ok('customers'), dn = ok('daily_need');
-    const sm = byKey('sales_diff').get(key) || {};
+    const sd = ok('sales_baht'), md = ok('margin'), cu = ok('cust_baht'), dn = ok('need_baht');
     const st = (sd || []).find((r) => r.key === key) || {};
     const mt = (md || []).find((r) => r.key === key) || {};
     const ct = (cu || []).find((r) => r.key === `${cp}|Total`) || {};
     const dt = (dn || []).find((r) => r.division === dv) || {};
     cards('#cards-sales', [
-      { title: `Sales Total · ${PL[p]} · ${divLabel()} (พันบาท)`, v: n0(st.actual), src: 'sales', field: 'actual', where: `key=${key}`, subs: [
-        { label: 'LY', v: n0(st.ly), src: 'sales', field: 'ly', where: `key=${key}` },
-        { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales', field: 'pct_ly', where: `key=${key}` },
-        { label: 'Budget', v: n0(st.budget), src: 'sales', field: 'budget', where: `key=${key}` },
-        { label: 'vs Budget', v: pc(st.pct_budget, 1), cls: tone(st.pct_budget), src: 'sales', field: 'pct_budget', where: `key=${key}` }] },
-      { title: `ส่วนต่างจาก LY · ${PL[p]} (พันบาท)`, v: sg(sm.diff_ly, 0), cls: tone(sm.diff_ly), src: 'sales_diff', field: 'diff_ly', where: `key=${key}`, subs: [
-        { label: 'ส่วนต่างจาก BG', v: sg(sm.diff_budget, 0), cls: tone(sm.diff_budget), src: 'sales_diff', field: 'diff_budget', where: `key=${key}` },
-        { label: '% สัดส่วนยอดขาย', v: n2(st.share) + '%', src: 'sales', field: 'share', where: `key=${key}` }] },
+      { title: `Sales Total · ${PL[p]} · ${divLabel()} (บาท)`, v: n0(st.actual), src: 'sales_baht', field: 'actual', where: `key=${key}`, subs: [
+        { label: 'LY', v: n0(st.ly), src: 'sales_baht', field: 'ly', where: `key=${key}` },
+        { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales_baht', field: 'pct_ly', where: `key=${key}` },
+        { label: 'Budget', v: n0(st.budget), src: 'sales_baht', field: 'budget', where: `key=${key}` },
+        { label: 'vs Budget', v: pc(st.pct_budget, 1), cls: tone(st.pct_budget), src: 'sales_baht', field: 'pct_budget', where: `key=${key}` }] },
+      { title: `ส่วนต่างจาก LY · ${PL[p]} (บาท)`, v: sg(st.diff_ly, 0), cls: tone(st.diff_ly), src: 'sales_baht', field: 'diff_ly', where: `key=${key}`, subs: [
+        { label: 'ส่วนต่างจาก BG', v: sg(st.diff_budget, 0), cls: tone(st.diff_budget), src: 'sales_baht', field: 'diff_budget', where: `key=${key}` },
+        { label: '% สัดส่วนยอดขาย', v: n2(st.share) + '%', src: 'sales_baht', field: 'share', where: `key=${key}` }] },
       { title: `Front Margin · ${PL[p]}`, v: n2(mt.actual) + '%', src: 'margin', field: 'actual', where: `key=${key}`, subs: [
         { label: 'LY', v: n2(mt.ly) + '%', src: 'margin', field: 'ly', where: `key=${key}` },
         { label: 'vs LY', v: sg(mt.var_ly) + ' pt', cls: tone(mt.var_ly), src: 'margin', field: 'var_ly', where: `key=${key}` },
         { label: 'vs Budget', v: sg(mt.var_budget) + ' pt', cls: tone(mt.var_budget), src: 'margin', field: 'var_budget', where: `key=${key}` }] },
-      { title: 'ต้องขายต่อวันให้ถึง BG (พันบาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'daily_need', field: 'need_day', where: `division=${dv}`, subs: [
-        { label: 'ขายได้เฉลี่ย/วัน', v: n0(dt.avg_day), src: 'daily_need', field: 'avg_day', where: `division=${dv}` },
-        { label: 'BG ต่อวัน', v: n0(dt.budget_day), src: 'daily_need', field: 'budget_day', where: `division=${dv}` }] },
-      { title: `Transactions (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'customers', field: 'invoices', where: `key=${cp}|Total`, subs: [
-        { label: '%SPLY', v: pc(ct.invoices_sply), cls: tone(ct.invoices_sply), src: 'customers', field: 'invoices_sply', where: `key=${cp}|Total` },
-        { label: 'Active', v: n0(ct.active), src: 'customers', field: 'active', where: `key=${cp}|Total` },
-        { label: 'Visit/คน', v: n2(ct.visits), src: 'customers', field: 'visits', where: `key=${cp}|Total` }] },
+      { title: 'ต้องขายต่อวันให้ถึง BG (บาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'need_baht', field: 'need_day', where: `key=${dv}`, subs: [
+        { label: 'ขายได้เฉลี่ย/วัน', v: n0(dt.avg_day), src: 'need_baht', field: 'avg_day', where: `key=${dv}` },
+        { label: 'BG ต่อวัน', v: n0(dt.budget_day), src: 'need_baht', field: 'budget_day', where: `key=${dv}` }] },
+      { title: `Transactions (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'cust_baht', field: 'invoices', where: `key=${cp}|Total`, subs: [
+        { label: '%SPLY', v: pc(ct.invoices_sply), cls: tone(ct.invoices_sply), src: 'cust_baht', field: 'invoices_sply', where: `key=${cp}|Total` },
+        { label: 'Active', v: n0(ct.active), src: 'cust_baht', field: 'active', where: `key=${cp}|Total` },
+        { label: 'Visit/คน', v: n2(ct.visits), src: 'cust_baht', field: 'visits', where: `key=${cp}|Total` }] },
     ]);
 
     const showDiv = (r) => (division() === 'ALL' ? true : r.division === division());
@@ -1721,12 +1743,12 @@ body { padding: 0; }
       { f: 'division', l: true }, { f: 'avg_day', fmt: n0 }, { f: 'budget_day', fmt: n0 }, { f: 'pct_var', fmt: (v) => pc(v), tone },
       { f: 'need_day', fmt: n0 }], { total: isTotal });
     const box = $('#ch-sales');
-    if (!failed(box, 'sales') && sd) {
+    if (!failed(box, 'sales_baht') && sd) {
       bicCombo(box, sd.filter((r) => r.period === p && (division() === 'ALL' || r.division === division() || r.division === 'Total'))
         .map((r) => ({ x: r.key, label: r.division, cy: r.actual, ly: r.ly, bud: r.budget, v: r.pct_ly })), { fmt: n0, fmtV: (v) => pc(v, 1) });
     }
-    fillTable('#tb-bottom', ok('bottom_stores'), 'store', [
-      { f: 'store', l: true }, { f: 'variance', fmt: (v) => sg(v), tone }, { f: 'pct_variance', fmt: (v) => pc(v), tone }]);
+    fillTable('#tb-bottom', ok('bottom_baht'), 'store', [
+      { f: 'store', l: true }, { f: 'variance', fmt: (v) => sg(v, 0), tone }, { f: 'pct_variance', fmt: (v) => pc(v), tone }]);
     fillTable('#tb-cust', cu && cu.filter((r) => r.period === cp), 'key', [
       { f: 'group', l: true }, { f: 'invoices', fmt: n0 }, { f: 'invoices_sply', fmt: (v) => pc(v), tone }, { f: 'sales', fmt: n0 },
       { f: 'sales_sply', fmt: (v) => pc(v), tone }, { f: 'active', fmt: n0 }, { f: 'active_sply', fmt: (v) => pc(v), tone },
