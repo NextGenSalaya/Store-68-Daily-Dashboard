@@ -2722,9 +2722,9 @@ body { padding: 0; }
         const s = DIVSEC[dv];
         const w = `key=${last.key}`;
         return [{ title: `Aging · ${divLabel()} · ${last.date || ''} (บาท)`, v: n0(last['ag_' + s]), src: 't5_ag_trend', field: 'ag_' + s, where: w,
-          subs: [{ label: 'วันก่อนหน้า', v: n0(prev['ag_' + s]), src: 't5_ag_trend', field: 'ag_' + s, where: `key=${prev.key}` }] },
+          subs: [{ label: 'Previous Day', v: n0(prev['ag_' + s]), src: 't5_ag_trend', field: 'ag_' + s, where: `key=${prev.key}` }] },
         { title: 'NBS (บาท)', v: n0(last['nbs_' + s]), src: 't5_ag_trend', field: 'nbs_' + s, where: w,
-          subs: [{ label: 'วันก่อนหน้า', v: n0(prev['nbs_' + s]), src: 't5_ag_trend', field: 'nbs_' + s, where: `key=${prev.key}` }] },
+          subs: [{ label: 'Previous Day', v: n0(prev['nbs_' + s]), src: 't5_ag_trend', field: 'nbs_' + s, where: `key=${prev.key}` }] },
         { title: 'สินค้า Aging (รายการ)', v: n0((byKey('t5_aging_tot').get(dv) || {}).n), src: 't5_aging_tot', field: 'n', where: `key=${dv}` }];
       },
       charts: [
@@ -2889,7 +2889,7 @@ body { padding: 0; }
         const d = (ok('t5_disc_sum') || []).find((r) => r.key === 'ALL') || {};
         const w = `key=${dv}`;
         return [{ title: `Gone Forever · Stock ปัจจุบัน · ${divLabel()} (บาท)`, v: n0(g.now_amt), src: 't5_gone_sum', field: 'now_amt', where: w,
-          subs: [{ label: 'ตั้งต้น', v: n0(g.start_amt), src: 't5_gone_sum', field: 'start_amt', where: w }, { label: 'ลดลง', v: pc(g.pct_amt), cls: 'down', src: 't5_gone_sum', field: 'pct_amt', where: w }] },
+          subs: [{ label: 'Start', v: n0(g.start_amt), src: 't5_gone_sum', field: 'start_amt', where: w }, { label: 'ลดลง', v: pc(g.pct_amt), cls: 'down', src: 't5_gone_sum', field: 'pct_amt', where: w }] },
         { title: 'Gone Forever · ยอดขาย (บาท)', v: n0(g.sales_amt), src: 't5_gone_sum', field: 'sales_amt', where: w },
         { title: 'Discontinue · Stock ปัจจุบัน (บาท)', v: n0(d.now_amt), src: 't5_disc_sum', field: 'now_amt', where: 'key=ALL',
           subs: [{ label: 'ยอดขาย', v: n0(d.sales_amt), src: 't5_disc_sum', field: 'sales_amt', where: 'key=ALL' }] }];
@@ -2898,7 +2898,7 @@ body { padding: 0; }
         data: () => (ok('t5_gone_day') || []).map((r) => ({ x: r.date, label: r.date.slice(8), cy: r.amount })) }],
       tables: [
         { id: 'tb-t5gs', band: 'Gone Forever · สรุป', src: 't5_gone_sum', total: (r) => r.key === 'ALL', rows: (d) => d.filter((r) => r.key === 'ALL' || inDiv(r.division)),
-          cols: [['division', 'Division', 'txt'], ['start_amt', 'Stock ตั้งต้น (บาท)', 'n0'], ['now_amt', 'Stock ปัจจุบัน', 'n0'], ['var_amt', 'ลดลง', 'n0'], ['pct_amt', '%', 'pc'], ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0']] },
+          cols: [['division', 'Division', 'txt'], ['start_amt', 'Start Stock (บาท)', 'n0'], ['now_amt', 'Stock ปัจจุบัน', 'n0'], ['var_amt', 'ลดลง', 'n0'], ['pct_amt', '%', 'pc'], ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0']] },
         { id: 'tb-t5gi', band: 'Gone Forever · รายการ', src: 't5_gone_items', dept: true, filters: [['st', 'Stock', (r) => (r.stock_qty > 0 ? 'ยังมี Stock' : 'หมดแล้ว')]], q: ['item', 'desc'],
           sorts: [['Stock มากสุด', (a, b) => (b.stock_amt || 0) - (a.stock_amt || 0)], ['ขายได้มากสุด', (a, b) => (b.sales_amt || 0) - (a.sales_amt || 0)]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['on_order', 'On Order', 'n0', { tone: TONE.pos }], ['stock_qty', 'Stock', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'],
