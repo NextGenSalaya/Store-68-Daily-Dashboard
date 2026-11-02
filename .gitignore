@@ -4,6 +4,7 @@
 !*/
 !.gitignore
 !README.md
+!t5_drop_cust.json
 !update.bat
 !make_site.py
 !build_all_dashboard.py
