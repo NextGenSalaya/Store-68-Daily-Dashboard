@@ -5,6 +5,10 @@
 !.gitignore
 !README.md
 !t5_drop_cust.json
+!upload/
+!upload/**
+!tests/
+!tests/*.mjs
 !update.bat
 !make_site.py
 !build_all_dashboard.py

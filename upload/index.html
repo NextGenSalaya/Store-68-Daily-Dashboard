@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; style-src 'self'; connect-src 'self' https://cdn.jsdelivr.net https://pypi.org https://files.pythonhosted.org https://api.github.com https://nextgensalaya.github.io; worker-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'none'">
+<title>อัปเดตข้อมูล | Store 68 Daily Board</title>
+<link rel="stylesheet" href="upload.css"><script type="module" src="app.mjs"></script>
+</head>
+<body>
+<header><a href="../#sales">← กลับ Dashboard</a><span>STORE 68 · SALAYA</span></header>
+<main>
+<div class="intro"><p class="eyebrow">สำหรับผู้ดูแลข้อมูล</p><h1>อัปเดต Dashboard จาก Excel</h1><p>เลือกไฟล์ต้นฉบับ ตรวจสอบผล แล้วเผยแพร่ข้อมูลชุดใหม่ให้ทุกคนเห็นผ่านลิงก์เดิม</p></div>
+<section class="card"><div class="step"><span>1</span><div><h2>เลือกไฟล์ต้นฉบับ</h2><p>เลือกหลายไฟล์หรือทั้งโฟลเดอร์ รองรับ .xlsx · .xlsm · .xls · .xlsb ตามรูปแบบรายงานเดิม</p></div></div>
+<fieldset id="groups"><legend>หัวข้อที่ต้องการอัปเดต</legend><p>กำลังโหลดรายการหัวข้อ…</p></fieldset>
+<div class="picker"><label class="button">เลือกไฟล์ Excel<input id="files" type="file" multiple accept=".xlsx,.xlsm,.xls,.xlsb"></label><label class="button secondary">เลือกทั้งโฟลเดอร์<input id="folder" type="file" multiple webkitdirectory></label><button id="clear" class="text-button" type="button">ล้างรายการ</button></div>
+<p class="hint">Excel จะประมวลผลในเบราว์เซอร์ ไฟล์ต้นฉบับจะไม่ถูกอัปโหลดไป GitHub</p>
+<div id="file-status" role="status">ยังไม่ได้เลือกไฟล์</div><ul id="issues"></ul>
+<details><summary>รายชื่อไฟล์ที่ต้องใช้</summary><ul id="requirements"></ul></details>
+<div class="actions"><button id="convert" disabled>ตรวจสอบและแปลงข้อมูล</button><button id="cancel" class="secondary" hidden>ยกเลิกการแปลง</button></div>
+<div id="progress" class="notice" role="status" aria-live="polite" hidden></div>
+</section>
+<section id="review" class="card" hidden><div class="step"><span>2</span><div><h2>ตรวจสอบก่อนเผยแพร่</h2><p>ข้อมูลบนเว็บยังไม่เปลี่ยนจนกว่าจะกดเผยแพร่</p></div></div><div class="table-scroll"><table><thead><tr><th>กลุ่มข้อมูล</th><th>ชุดข้อมูล</th><th>รายการ</th><th>วันที่ในรายงาน / ไฟล์</th></tr></thead><tbody id="summary"></tbody></table></div><p id="review-note" class="hint"></p><p id="empty-warning" class="notice" hidden></p></section>
+<section id="publish-section" class="card" hidden><div class="step"><span>3</span><div><h2>เผยแพร่ไปเว็บสาธารณะ</h2><p>เฉพาะบัญชีที่มีสิทธิ์เขียน repository นี้เท่านั้นที่เผยแพร่ได้</p></div></div>
+<details id="token-help"><summary>ตั้งค่าสิทธิ์ GitHub ครั้งแรก</summary><ol><li>เข้าสู่บัญชี GitHub ที่ดูแล <strong>NextGenSalaya/Store-68-Daily-Dashboard</strong></li><li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener noreferrer">สร้าง Fine-grained personal access token</a> และกำหนดวันหมดอายุ</li><li>เลือก Resource owner เป็น NextGenSalaya แล้วเลือกเฉพาะ repository <strong>Store-68-Daily-Dashboard</strong></li><li>เพิ่มสิทธิ์ <strong>Contents: Read and write</strong> แล้วคัดลอกรหัสมาวางด้านล่าง</li></ol><p>ไม่ต้องให้สิทธิ์ผู้ดูแลระบบหรือสิทธิ์ทุก repository <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" target="_blank" rel="noopener noreferrer">ดูคู่มือ GitHub</a></p></details>
+<label class="token-label" for="token">รหัสสิทธิ์ GitHub (Personal access token)</label><p><a href="https://github.com/settings/personal-access-tokens/new?name=Store68%20Upload&amp;target_name=NextGenSalaya&amp;expires_in=30&amp;contents=write" target="_blank" rel="noopener noreferrer">ยังไม่มีรหัส? สร้างรหัสที่ GitHub →</a> แล้วเลือกเฉพาะ repository <strong>Store-68-Daily-Dashboard</strong></p><input type="password" id="token" autocomplete="off" spellcheck="false" placeholder="วางรหัสสิทธิ์ที่นี่" aria-describedby="token-note"><p id="token-note" class="hint">ใช้ส่งข้อมูลตรงไป GitHub เท่านั้น ไม่บันทึกรหัสไว้ในเว็บหรือไฟล์ และล้างออกหลังส่งข้อมูล</p>
+<label class="consent"><input type="checkbox" id="confirm"><span>ตรวจสอบข้อมูลแล้ว และยืนยันให้ข้อมูลที่แปลงแล้วเผยแพร่บนเว็บและ GitHub สาธารณะ รวมชื่อและเลขสมาชิกลูกค้าจริงหากเลือกกลุ่มข้อมูลรายคน</span></label>
+<button id="publish" disabled>เผยแพร่ข้อมูลใหม่</button><p id="publish-status" class="notice" role="status" aria-live="polite" hidden></p><a id="result-link" href="../#sales" target="_blank" rel="noopener" hidden>เปิด Dashboard ที่อัปเดตแล้ว →</a><a id="commit-link" target="_blank" rel="noopener noreferrer" hidden>ดูสถานะบน GitHub</a>
+</section>
+<p class="footer">ระหว่างแปลงไฟล์ให้เปิดหน้านี้ไว้ ไฟล์ขนาดใหญ่อาจใช้เวลาหลายนาที · ใช้คอมพิวเตอร์สำหรับข้อมูลทั้งชุด</p>
+</main></body></html>
