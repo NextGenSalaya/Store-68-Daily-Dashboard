@@ -482,4 +482,30 @@ ws = sheet(find("St.68 Soft-servers Rotisserie*.xlsx"), "Sum")
 save("t5_soft", [{"key": day(r[0]), "date": day(r[0]), "label": txt(r[1]), "soft_qty": rnd(r[2]), "soft_amt": rnd(r[3]), "chk_qty": rnd(r[4]),
                   "chk_amt": rnd(r[5]), "durian_qty": rnd(r[6]), "durian_amt": rnd(r[7]), "qty": rnd(r[8]), "amount": rnd(r[9])}
                  for r in ws.iter_rows(min_row=6, max_col=10, values_only=True) if day(r[0]) and num(r[8]) is not None])
+
+# ---------- Central Replenishment (Min-Max) ----------
+# items still in play: Active / Inactive, or anything with stock or on order. Flags (0/1) are summed per division by the page:
+# act = Active, zero = Active with stock <= 0, below = Active under Min, over = Active over Max, err = Min = Max (the file's remark)
+rp = sorted(glob.glob(os.path.join(HERE, "**", "ST.68 CentralReplenishmentList_Report*.xlsx"), recursive=True), key=os.path.getmtime)
+if rp:
+    print("reading", rp[-1])
+    REPL_DIV = {"1": "DRY FOOD", "2": "FRESH FOOD", "3": "NON FOOD"}
+    out = []
+    for r in sheet(rp[-1]).iter_rows(min_row=11, max_col=30, values_only=True):
+        if not txt(r[6]):
+            continue
+        st, oo, mn, mx = num(r[15]) or 0, num(r[16]) or 0, num(r[20]) or 0, num(r[21]) or 0
+        status = txt(r[9])
+        if status not in ("Active", "Inactive") and not st and oo <= 0:
+            continue
+        act = status == "Active"
+        flag = ("Stock 0" if st <= 0 else "Below Min" if st < mn else "Over Max" if mx and st > mx else "Normal") if act else "Not Active"
+        k = code(r[6])
+        out.append({"key": k, "division": REPL_DIV.get(code(r[0]), code(r[0])), "dept": code(r[1]), "desc": txt(r[7]),
+                    "supplier": txt(r[5]), "source": txt(r[8]), "status": status, "avg28": rnd(r[10]), "stock": rnd(st), "on_order": rnd(oo),
+                    "stock_day": rnd(r[19], 1), "min": rnd(mn), "max": rnd(mx), "aging": txt(r[22]), "schedule": txt(r[23]).rstrip(" ,"),
+                    "delivery": txt(r[24]).rstrip(" ,"), "flag": flag, "remark": "Min = Max" if txt(r[29]) else "",
+                    "act": int(act), "zero": int(flag == "Stock 0"), "below": int(flag == "Below Min"), "over": int(flag == "Over Max"), "err": int(bool(txt(r[29])))})
+    save("t5_repl", out)
+    meta.append({"key": "Central Replenishment date", "value": datetime.fromtimestamp(os.path.getmtime(rp[-1])).strftime("%Y-%m-%d")})
 save("t5_meta", meta)

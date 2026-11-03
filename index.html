@@ -292,6 +292,7 @@ body { padding: 0; }
           <button type="button" id="tab-t5mu" data-page="t5mu t5watch">Stock ใกล้หมด &amp; ติดลบ</button>
           <button type="button" id="tab-t4over" data-page="t4over t4floor">Over Stock &amp; On Order</button>
           <button type="button" id="tab-t5aging" data-page="t5aging t5gone">Aging, NBS &amp; Clearance</button>
+<button type="button" id="tab-t5repl" data-page="t5repl">Central Replenishment</button>
           <button type="button" id="tab-t5top" data-page="t5top t3il">Top Items &amp; Item List</button>
         </div>
       </div>
@@ -2654,6 +2655,7 @@ body { padding: 0; }
   t5tot('t5_neg_tot', 't5_neg_items', ['value', 'on_order'], 'Negative stock รวม');
   t5tot('t5_gone_tot', 't5_gone_items', ['stock_amt', 'sales_amt', 'on_order'], 'Gone Forever รวม');
   t5tot('t5_soft_tot', 't5_soft', ['soft_qty', 'soft_amt', 'chk_qty', 'chk_amt', 'durian_amt', 'qty', 'amount'], 'Soft-serve & Rotisserie รวม');
+  t5tot('t5_repl_tot', 't5_repl', ['act', 'zero', 'below', 'over', 'err'], 'Central Replenishment รวม');
 
   const t5s = {};
   const t5get = (k, d) => (k in t5s ? t5s[k] : d);
@@ -2938,6 +2940,20 @@ body { padding: 0; }
         data: () => (ok('t5_soft') || []).map((r) => ({ x: r.date, label: r.label, cy: r.amount })) }],
       tables: [{ id: 'tb-t5soft', band: 'รายวัน', src: 't5_soft', nodiv: true,
         cols: [['label', 'วัน', 'txt'], ['soft_qty', 'Soft Serve QTY', 'n0'], ['soft_amt', 'Sale Soft Serve', 'n0'], ['chk_qty', 'Rotisserie QTY', 'n0'], ['chk_amt', 'Sale Rotisserie', 'n0'], ['durian_qty', 'Durian QTY', 'n0'], ['durian_amt', 'Sale Durian', 'n0'], ['qty', 'Total QTY', 'n0'], ['amount', 'Total Sale', 'n0']] }],
+    },
+    t5repl: {
+      title: 'Central Replenishment', intro: () => `Stock เทียบ Min-Max ของสินค้า Active / Inactive และสินค้าที่ยังมี Stock หรือ On Order · Error Min-Max = Min เท่ากับ Max ต้องแก้ไขด่วน · File ST.68 CentralReplenishmentList_Report (${metaT5('Central Replenishment date')})`,
+      cards: (dv) => {
+        const t = byKey('t5_repl_tot').get(dv) || {};
+        const c = (title, f, cls) => ({ title, v: n0(t[f]), cls, after: 'รายการ', src: 't5_repl_tot', field: f, where: `key=${dv}` });
+        return [c('Active Items', 'act'), c('Stock 0', 'zero'), c('Below Min', 'below'), c('Over Max', 'over'), c('Error Min-Max (Min = Max)', 'err', 'down')];
+      },
+      charts: [],
+      tables: [{ id: 'tb-t5rp', band: 'รายการ', src: 't5_repl', dept: true, filters: [['flag', 'Stock vs Min-Max'], ['remark', 'Error'], ['status', 'Status'], ['source', 'Source']], q: ['key', 'desc', 'supplier'],
+        sorts: [['Avg Sale สูงสุด', (a, b) => (b.avg28 || 0) - (a.avg28 || 0)], ['Stock Day มากสุด', (a, b) => (b.stock_day || 0) - (a.stock_day || 0)]],
+        cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['key', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['supplier', 'Supplier', 'txt', { wrap: true }], ['source', 'Source', 'txt'], ['status', 'Status', 'txt'],
+          ['avg28', 'Avg Sale 28 วัน', 'n2'], ['stock', 'Stock', 'n0', { tone: TONE.sign }], ['on_order', 'On Order', 'n0'], ['stock_day', 'Stock Day', 'n1'], ['min', 'Min', 'n0'], ['max', 'Max', 'n0'],
+          ['flag', 'Stock vs Min-Max', 'txt'], ['remark', 'Error', 'txt'], ['aging', 'Aging', 'txt'], ['schedule', 'Order Day', 'txt'], ['delivery', 'Delivery Day', 'txt']] }],
     },
   };
 
