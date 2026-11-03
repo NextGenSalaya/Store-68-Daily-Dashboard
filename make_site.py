@@ -3,7 +3,9 @@
 docs/index.html = board/index.html plus a small runtime that does what the claude.ai dashboard does for the page:
 loads each dataset from docs/data/<id>.json the first time the page asks for it, runs the page's summary calcs,
 keeps the Date Period / Division filters, and puts the open menu item in the address (#link).
-docs/data/ = every JSON file from data_ad, data_t2 .. data_t5 (run the build_*.py extractors first).
+docs/data/ = every JSON file from data_ad, data_t2 .. data_t5 (run the build_*.py extractors first), plus
+data_private/t5_drop_cust.json (customer names; the owner approved it for the public site on 2 Nov 2026).
+The public page also links to the Excel upload page (upload/) next to the data date.
 Usage: python make_site.py
 """
 import glob, os, shutil
@@ -19,6 +21,10 @@ for d in ("data_ad", "data_t2", "data_t3", "data_t4", "data_t5"):
     for f in glob.glob(os.path.join(HERE, d, "*.json")):
         shutil.copy2(f, DATA)
         n += 1
+CUST = os.path.join(HERE, "data_private", "t5_drop_cust.json")
+if os.path.exists(CUST):
+    shutil.copy2(CUST, DATA)
+    n += 1
 
 RUNTIME = r"""<!doctype html>
 <html lang="th">
@@ -100,6 +106,9 @@ body { padding: 0; }
 <div class="site-loading" hidden>กำลังโหลดข้อมูล…</div>
 """
 page = open(os.path.join(HERE, "board", "index.html"), encoding="utf-8").read()
+DATE = '<b data-source="kpi" data-field="value" data-where="metric=Data date">—</b>'
+assert page.count(DATE) == 1, "data date not found in the page"
+page = page.replace(DATE, DATE + ' · <a href="upload/" style="color:#1f63d1;font-weight:600">ใส่ไฟล์ Excel / อัปเดตข้อมูล</a>')
 html = RUNTIME + page + "\n</body>\n</html>\n"
 open(os.path.join(SITE, "index.html"), "w", encoding="utf-8").write(html)
 open(os.path.join(SITE, ".nojekyll"), "w").close()
