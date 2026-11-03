@@ -170,6 +170,26 @@ save("t2_pack", pk2)
 wb = openpyxl.load_workbook(find("3.%Item Shortage MTD*.xlsx"), read_only=True, data_only=True)
 data_date = None
 
+# reasons in Thai (the file has them in English); an unknown reason stays as it is
+SHORT_TH = {"Product not found": "หาสินค้าไม่เจอ", "Insufficient order quantity": "สั่งสินค้าเข้าไม่พอ",
+            "Inaccurate stock record": "Stock ในระบบไม่ตรงกับของจริง", "Unable to find product before cut-off": "หาสินค้าไม่ทันก่อนตัดรอบ",
+            "Short-delivered by supplier": "Supplier ส่งของไม่ครบ", "Short-delivered by DC": "DC ส่งของไม่ครบ",
+            "Delayed delivery from DC": "DC ส่งของล่าช้า", "Product size/weight mismatch": "ขนาด/น้ำหนักสินค้าไม่ตรง",
+            "Poor product quality": "สินค้าคุณภาพไม่ดี", "Discounted product": "สินค้าลดราคา",
+            "Ordered without checking stock": "รับ Order โดยไม่เช็ค Stock", "Product does not meet customer specifications": "สินค้าไม่ตรงตามที่ลูกค้าต้องการ"}
+OOS_TH = {"Out of shelf": "ไม่มีของบนชั้นวาง", "Zero Stock": "Stock เป็น 0", "Need Preparation": "ต้องเตรียมสินค้าก่อน",
+          "The product weight does not match the order": "น้ำหนักสินค้าไม่ตรงกับที่สั่ง", "Prepare Pack Item": "ต้องแพ็คสินค้าก่อน",
+          "Missing location": "ไม่พบตำแหน่งสินค้า", "Big lot order": "สั่งจำนวนมาก"}
+def short_th(v):
+    v = txt(v)
+    if not v or v == "(blank)":
+        return "ไม่ระบุ"
+    no, _, en = v.partition(".")
+    return f"{no}.{SHORT_TH[en.strip()]}" if no.isdigit() and en.strip() in SHORT_TH else v
+def oos_th(v):
+    v = txt(v)
+    return OOS_TH.get(v, v) if v else "ไม่ระบุ"
+
 # order lines delivered short (no customer, SE or remark text)
 lines = []
 for i, r in enumerate(wb["Shortage _Reason"].iter_rows(max_col=14, values_only=True)):
@@ -178,7 +198,7 @@ for i, r in enumerate(wb["Shortage _Reason"].iter_rows(max_col=14, values_only=T
     if i < 4 or r[0] is None or num(r[6]) is None:
         continue
     lines.append({"item": code(r[0]), "desc": txt(r[1]), "division": txt(r[3]), "ordered": rnd(r[4], 2), "shipped": rnd(r[5], 2),
-                  "short": rnd(r[6], 2), "pct": rnd((num(r[7]) or 0) * 100, 1), "reason": txt(r[8]) or "ไม่ระบุ", "day": day(r[9])})
+                  "short": rnd(r[6], 2), "pct": rnd((num(r[7]) or 0) * 100, 1), "reason": short_th(r[8]), "day": day(r[9])})
 save("t2_short_lines", [dict(l, key=str(i)) for i, l in enumerate(lines)])
 
 # daily shortage counts per item (Shortage By item): total per day, and per item with its daily counts
@@ -235,7 +255,7 @@ for i, r in enumerate(wb["Data OOS overview1"].iter_rows(max_col=36, values_only
     if i == 0 or r[12] is None:
         continue
     d = day(r[9]) or ""
-    reason = txt(r[22]) or "ไม่ระบุ"
+    reason = oos_th(r[22])
     by_month[(d[:7], reason)] += 1
     by_dept_r[(txt(r[17]) or "ไม่ระบุ", txt(r[15]) or "", reason)] += 1
     it = by_item[(code(r[12]), txt(r[13]), txt(r[15]))]
@@ -253,7 +273,7 @@ for i, r in enumerate(wb["Data oos"].iter_rows(max_col=40, values_only=True)):
     if i == 0 or r[15] is None:
         continue
     today.append({"key": txt(r[6]) or str(i), "hour": int(num(r[0]) or 0), "section": txt(r[2]), "division": txt(r[22]),
-                  "reason": txt(r[13]) or "ไม่ระบุ", "status": txt(r[7]), "item": code(r[15]), "desc": txt(r[16]), "short": rnd(r[17], 2),
+                  "reason": oos_th(r[13]), "status": txt(r[7]), "item": code(r[15]), "desc": txt(r[16]), "short": rnd(r[17], 2),
                   "plan": rnd(r[19], 2), "dept": txt(r[30]), "shelf": txt(r[26]), "channel": txt(r[24]), "slot": txt(r[23]),
                   "wait": txt(r[14]), "floor_reason": txt(r[39]) or txt(r[37])})
 seen, td2 = set(), []
@@ -264,11 +284,14 @@ for t in today:
 save("t2_oos_today", td2)
 
 # O2O orders shipped (DataAO): per day and per payment method / delivery type
+# orders placed on the day the file was pulled are only a few hours' worth, so the file stops at the data date
 ao_day, ao_dim = defaultdict(lambda: {"orders": 0, "amount": 0.0}), defaultdict(lambda: {"orders": 0, "amount": 0.0})
 for i, r in enumerate(wb["DataAO"].iter_rows(max_col=40, values_only=True)):
     if i == 0 or r[0] is None:
         continue
     d = day(r[11])
+    if d and data_date and d > data_date:
+        continue
     amt = num(r[37]) or 0
     if d:
         ao_day[d]["orders"] += 1
