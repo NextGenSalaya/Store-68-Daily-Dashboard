@@ -18,8 +18,9 @@ GROUPS = [
         ("t5mu", "t5mu t5watch", "Stock ใกล้หมด & ติดลบ"),
         ("t4over", "t4over t4floor", "Over Stock & On Order"),
         ("t5aging", "t5aging t5gone", "Aging, NBS & Clearance"),
-        ("t5repl", "t5repl", "Central Replenishment"),
         ("t5top", "t5top t3il", "Top Items & Item List")]),
+    ("grp-repl", "Central Replenishment", [
+        ("t5repl", "t5repl", "Stock vs Min-Max")]),
     ("grp-svc", "Service Level · KVI", [
         ("service", "service t2sum", "Service level"),
         ("t2kvi", "t2items", "KVI · OB · Makro Mail Monitoring"),
