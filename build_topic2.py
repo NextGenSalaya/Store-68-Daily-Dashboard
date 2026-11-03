@@ -187,6 +187,8 @@ rows = list(ws.iter_rows(values_only=True))
 hdr_i = next(i for i, r in enumerate(rows) if txt(r[1]) == "Item No" and txt(r[2]) == "Item Description")
 dates = [(j, day(v)) for j, v in enumerate(rows[hdr_i]) if isinstance(v, (datetime, date))]
 per_day, per_item = Counter(), []
+# first of the last 7 days (fewer at the start of a month)
+d7 = sorted(d for _, d in dates)[-7:][0] if dates else None
 for r in rows[hdr_i + 1:]:
     if r[1] is None or not code(r[1]).isdigit():
         continue
@@ -194,7 +196,7 @@ for r in rows[hdr_i + 1:]:
     for d, n in counts.items():
         per_day[d] += n
     per_item.append({"item": code(r[1]), "desc": txt(r[2]), "total": sum(counts.values()),
-                     "last7": sum(n for d, n in counts.items() if d >= sorted(counts)[-7])})
+                     "last7": sum(n for d, n in counts.items() if d >= d7)})
 save("t2_short_by_day", [{"day": d, "lines": per_day[d]} for _, d in dates])
 seen, pi = set(), []
 for p in sorted(per_item, key=lambda x: -x["total"]):
