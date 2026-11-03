@@ -184,7 +184,7 @@ if cat_files:
     print(f"category: added {len(extra)} classes with no category (MTD {round(sum(x['m_a'] for x in extra), 2)} thousand baht)")
 save("category", cats)
 
-# ------------------------------------------------------------------ Analysis sheet (sales since 1 June and YTD by department)
+# ------------------------------------------------------------------ Analysis sheet (sales since 1 January and YTD by department)
 ws = wb["Analysis"]
 dept = []
 for r in range(4, ws.max_row + 1):

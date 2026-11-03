@@ -404,7 +404,7 @@ body { padding: 0; }
     <!-- 2. Category & แผนก -->
     <section class="b68-page" id="category" data-page="category" hidden>
       <div class="b68-intro"><h2>Category &amp; แผนก</h2>
-        <p>ยอดขายแต่ละ Category เทียบ BG และ LY (Sheet Category) และยอดขายตามแผนกตั้งแต่ 1 มิ.ย. และ YTD (Sheet Analysis) · Category ใช้การแบ่งกลุ่มของตัวเอง เลือกกลุ่มได้ที่ตัวกรองด้านล่าง</p></div>
+        <p>ยอดขายแต่ละ Category เทียบ BG และ LY (Sheet Category) และยอดขายตามแผนกตั้งแต่ 1 ม.ค. และ YTD (Sheet Analysis) · Category ใช้การแบ่งกลุ่มของตัวเอง เลือกกลุ่มได้ที่ตัวกรองด้านล่าง</p></div>
       <div class="b68-cards" id="cards-category"></div>
       <div class="b68-panel">
         <div class="b68-band">Sales by Category (VS. LY) · <span class="plcat">MTD</span></div>
@@ -430,7 +430,7 @@ body { padding: 0; }
         <div class="b68-tools">
           <div class="b68-seg" role="group" aria-label="Division" id="dpt-div"><button type="button" data-v="ALL">ทั้งหมด</button><button type="button" data-v="FRESH FOOD">Fresh Food</button><button type="button" data-v="DRY FOOD">Dry Food</button><button type="button" data-v="NON FOOD">Non Food</button></div>
           <span class="b68-f">กรองและเรียงตาม</span>
-          <div class="b68-seg" role="group" aria-label="ช่วงที่ใช้กรอง" id="dpt-per"><button type="button" data-v="p">1 มิ.ย.–ปัจจุบัน</button><button type="button" data-v="ytd">YTD</button></div>
+          <div class="b68-seg" role="group" aria-label="ช่วงที่ใช้กรอง" id="dpt-per"><button type="button" data-v="p">1 ม.ค.–ปัจจุบัน</button><button type="button" data-v="ytd">YTD</button></div>
         </div>
         <div class="b68-tools">
           <label class="b68-f" for="f-dptdept">Department <select class="b68-select" id="f-dptdept"></select></label>
@@ -440,9 +440,9 @@ body { padding: 0; }
           <div class="b68-seg" role="group" aria-label="เรียงตาม" id="dpt-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="worst">ต่ำกว่า BG มากสุด</button><button type="button" data-v="best">ดีกว่า BG มากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
         </div>
         <div class="b68-wrap"><table class="b68-t" id="tb-dept" data-source="dept_baht" data-row-key="key">
-          <thead><tr><th class="l" data-field="dept">Department</th><th data-field="p_actual">1 มิ.ย.–ปัจจุบัน</th><th data-field="p_budget">Budget</th><th data-source="dept_var" data-field="p_pct_budget">%Var B</th><th data-field="p_ly">LY</th><th data-source="dept_var" data-field="p_pct_ly">%Var LY</th><th data-field="ytd_actual">YTD Actual</th><th data-field="ytd_budget">YTD Budget</th><th data-source="dept_var" data-field="ytd_pct_budget">%Var B</th><th data-field="ytd_ly">YTD LY</th><th data-source="dept_var" data-field="ytd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
+          <thead><tr><th class="l" data-field="dept">Department</th><th data-field="p_actual">1 ม.ค.–ปัจจุบัน</th><th data-field="p_budget">Budget</th><th data-source="dept_var" data-field="p_pct_budget">%Var B</th><th data-field="p_ly">LY</th><th data-source="dept_var" data-field="p_pct_ly">%Var LY</th><th data-field="ytd_actual">YTD Actual</th><th data-field="ytd_budget">YTD Budget</th><th data-source="dept_var" data-field="ytd_pct_budget">%Var B</th><th data-field="ytd_ly">YTD LY</th><th data-source="dept_var" data-field="ytd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
         </table></div>
-        <p class="b68-note">Sheet Analysis นับยอดตั้งแต่ 1 มิ.ย. จึงไม่เท่ากับยอด MTD</p>
+        <p class="b68-note">Sheet Analysis นับยอดตั้งแต่ 1 ม.ค. จึงไม่เท่ากับยอด MTD</p>
       </div>
     </section>
 
@@ -1135,7 +1135,7 @@ body { padding: 0; }
   dash.calc('dept_var', {
     inputs: ['dept_sales'],
     title: '% เทียบงบและปีก่อน ตามแผนก',
-    description: 'ยอดขายจริงหารงบหรือปีก่อน ลบ 1 คิดเป็น % สำหรับช่วงตั้งแต่ 1 มิ.ย. และ YTD',
+    description: 'ยอดขายจริงหารงบหรือปีก่อน ลบ 1 คิดเป็น % สำหรับช่วงตั้งแต่ 1 ม.ค. และ YTD',
     fn: (dept_sales) => dept_sales.map((r) => ({
       key: r.key,
       p_pct_budget: r.p_budget ? Math.round((r.p_actual / r.p_budget - 1) * 10000) / 100 : null,
@@ -1842,7 +1842,7 @@ body { padding: 0; }
       { get: (r) => cv.get(r.key)?.[cp + '_pct_ly'], fmt: (v) => pc(v), tone }]);
     const dvv = byKey('dept_var');
     const ds = ok('dept_baht');
-    // department table filters use the chosen period (since 1 Jun or YTD); division totals stay unless a result, name or one department is picked
+    // department table filters use the chosen period (since 1 Jan or YTD); division totals stay unless a result, name or one department is picked
     const ddiv = division() !== 'ALL' ? division() : pick.dptdiv;
     pressed('#dpt-div', ddiv); pressed('#dpt-per', pick.dptper); pressed('#dpt-sort', pick.dptsort);
     const dp = pick.dptper;
