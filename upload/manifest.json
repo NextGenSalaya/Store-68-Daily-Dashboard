@@ -133,7 +133,8 @@
         "St68 Negative stock.xlsx",
         "ST68 Gone Forever Sales*.xlsx",
         "ST68 Sales Discontinue.xlsx",
-        "St.68 Soft-servers Rotisserie*.xlsx"
+        "St.68 Soft-servers Rotisserie*.xlsx",
+        "ST.68 CentralReplenishmentList_Report*.xlsx"
       ],
       "outputs": [
         "t5_ag_trend.json",
@@ -171,6 +172,7 @@
         "t5_t4000.json",
         "t5_t4000_sum.json",
         "t5_top50.json",
+        "t5_repl.json",
         "t5_drop_cust.json"
       ]
     }
@@ -1347,6 +1349,31 @@
       "var",
       "profit",
       "lost"
+    ],
+    "t5_repl.json": [
+      "key",
+      "division",
+      "dept",
+      "desc",
+      "supplier",
+      "source",
+      "status",
+      "avg28",
+      "stock",
+      "on_order",
+      "stock_day",
+      "min",
+      "max",
+      "aging",
+      "schedule",
+      "delivery",
+      "flag",
+      "remark",
+      "act",
+      "zero",
+      "below",
+      "over",
+      "err"
     ]
   }
 }
