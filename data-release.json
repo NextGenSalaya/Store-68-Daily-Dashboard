@@ -1,6 +1,6 @@
 {
-  "revision": "18275d21-20bd-4a61-b04b-4380271bf565",
-  "publishedAt": "2026-11-03T04:37:24.021Z",
+  "revision": "0ee8efd1-1058-4edc-9a96-57e5f9645c1e",
+  "publishedAt": "2026-11-03T10:27:00.768Z",
   "groups": [
     {
       "id": "ad",
@@ -15,9 +15,9 @@
       "id": "t2",
       "name": "Service Level · KVI · O2O",
       "files": 17,
-      "rows": 10980,
+      "rows": 11247,
       "dates": [
-        "2026-11-01"
+        "2026-11-02"
       ]
     },
     {
@@ -42,8 +42,8 @@
     {
       "id": "t5",
       "name": "Stock · สินค้า · ลูกค้ารายคน และหัวข้อเสริม",
-      "files": 36,
-      "rows": 31439,
+      "files": 37,
+      "rows": 44034,
       "dates": [
         "2026-11-02",
         "2026-11-03"
@@ -157,11 +157,11 @@
     },
     {
       "name": "t2_ao_day.json",
-      "rows": 7
+      "rows": 8
     },
     {
       "name": "t2_ao_dim.json",
-      "rows": 16
+      "rows": 17
     },
     {
       "name": "t2_items.json",
@@ -177,7 +177,7 @@
     },
     {
       "name": "t2_oos_today.json",
-      "rows": 360
+      "rows": 414
     },
     {
       "name": "t2_pack.json",
@@ -197,11 +197,11 @@
     },
     {
       "name": "t2_short_breakdown.json",
-      "rows": 85
+      "rows": 84
     },
     {
       "name": "t2_short_by_day.json",
-      "rows": 3
+      "rows": 2
     },
     {
       "name": "t2_short_dept.json",
@@ -213,11 +213,11 @@
     },
     {
       "name": "t2_short_items.json",
-      "rows": 197
+      "rows": 243
     },
     {
       "name": "t2_short_lines.json",
-      "rows": 91
+      "rows": 258
     },
     {
       "name": "t2_summary.json",
@@ -365,7 +365,7 @@
     },
     {
       "name": "t5_meta.json",
-      "rows": 6
+      "rows": 7
     },
     {
       "name": "t5_mu13.json",
@@ -430,6 +430,10 @@
     {
       "name": "t5_top50.json",
       "rows": 527
+    },
+    {
+      "name": "t5_repl.json",
+      "rows": 12594
     },
     {
       "name": "t5_drop_cust.json",
