@@ -835,12 +835,12 @@ body { padding: 0; }
         <div class="b68-panel">
           <div class="b68-band">สถานะ Stock / Order ของ Top 1000 (จำนวนรายการ)</div>
           <div class="b68-chart h" id="ch-t3flag" data-source="t3_top_items"></div>
-          <p class="b68-note">แต่ละรายการถูกนับในสถานะเดียว: Stock ติดลบ → หมด มี Order → หมด ไม่มี Order → มีของ มี Order → มีของ In Transit → มีของ ไม่มี Order</p>
+          <p class="b68-note">แต่ละรายการถูกนับในสถานะเดียว: Stock ติดลบ → สินค้าหมด มี On Order → สินค้าหมด ยังไม่มี On Order → มีสินค้า มี On Order → มีสินค้า กำลัง In Transit → มีสินค้า ยังไม่มี On Order</p>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Summary ตาม Division (จาก Sheet Summary)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-t3sum" data-source="t3_top_sum" data-row-key="division">
-            <thead><tr><th class="l" data-field="division">Division</th><th data-field="on_order">On Order</th><th data-field="in_transit">In Transit</th><th data-field="zero_stock">Zero Stock</th><th data-field="zero_on_order">Zero Stock On Order</th><th data-field="no_order">NO ORDER</th><th data-field="negative">Negative stock</th></tr></thead><tbody></tbody></table></div>
+            <thead><tr><th class="l" data-field="division">Division</th><th data-field="on_order">On Order</th><th data-field="in_transit">In Transit</th><th data-field="zero_stock">Zero Stock</th><th data-field="zero_on_order">Zero Stock On Order</th><th data-field="no_order">No Order</th><th data-field="negative">Negative stock</th></tr></thead><tbody></tbody></table></div>
         </div>
       </div>
       <div class="b68-panel">
@@ -2106,14 +2106,14 @@ body { padding: 0; }
     const s0 = (sh || [])[0] || {};
     const ly = (a, b) => (a > b ? 'up' : a < b ? 'down' : '');
     cards('#cards-o2o', [
-      { title: 'O2O ยอดขาย MTD (พันบาท)', v: n0(gt.mtd_sales), cls: ly(gt.mtd_sales, gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales', where: 'key=Grand Total', subs: [
-        { label: 'ปีก่อน', v: n0(gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales_ly', where: 'key=Grand Total' }] },
-      { title: 'O2O จำนวน Bill MTD', v: n0(gt.mtd_inv), cls: ly(gt.mtd_inv, gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv', where: 'key=Grand Total', subs: [
-        { label: 'ปีก่อน', v: n0(gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv_ly', where: 'key=Grand Total' }] },
-      { title: 'O2O ยอดขายวันนี้ (พันบาท)', v: n1(gt.day_sales), cls: ly(gt.day_sales, gt.day_sales_ly), src: 'o2o', field: 'day_sales', where: 'key=Grand Total', subs: [
-        { label: 'ปีก่อน', v: n1(gt.day_sales_ly), src: 'o2o', field: 'day_sales_ly', where: 'key=Grand Total' }] },
-      { title: 'O2O % ของยอดขายร้าน', v: n2(s0.mtd) + '%', src: 'o2o_share', field: 'mtd', where: 'metric=O2O % of store sales', subs: [
-        { label: 'วันนี้', v: n2(s0.daily) + '%', src: 'o2o_share', field: 'daily', where: 'metric=O2O % of store sales' }] },
+      { title: 'ยอดขาย MTD (พันบาท)', v: n0(gt.mtd_sales), cls: ly(gt.mtd_sales, gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales', where: 'key=Grand Total', subs: [
+        { label: 'LY', v: n0(gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales_ly', where: 'key=Grand Total' },
+        { label: '% ของยอดขายร้าน MTD', v: n2(s0.mtd) + '%', src: 'o2o_share', field: 'mtd', where: 'metric=O2O % of store sales' }] },
+      { title: 'จำนวน Bill MTD', v: n0(gt.mtd_inv), cls: ly(gt.mtd_inv, gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv', where: 'key=Grand Total', subs: [
+        { label: 'LY', v: n0(gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv_ly', where: 'key=Grand Total' }] },
+      { title: 'ยอดขายวันนี้ (พันบาท)', v: n1(gt.day_sales), cls: ly(gt.day_sales, gt.day_sales_ly), src: 'o2o', field: 'day_sales', where: 'key=Grand Total', subs: [
+        { label: 'LY', v: n1(gt.day_sales_ly), src: 'o2o', field: 'day_sales_ly', where: 'key=Grand Total' },
+        { label: '% ของยอดขายร้านวันนี้', v: n2(s0.daily) + '%', src: 'o2o_share', field: 'daily', where: 'metric=O2O % of store sales' }] },
     ]);
     const chans = o ? [...new Set(o.filter((r) => !r.is_total).map((r) => r.channel))] : [];
     if (!['ทั้งหมด', ...chans].includes(pick.o2o)) pick.o2o = 'ทั้งหมด';
@@ -2247,12 +2247,9 @@ body { padding: 0; }
     const t = (k) => tot.get(k) || {};
     const dv = division();
     cards('#cards-t2short', [
-      { title: 'บรรทัด order ที่ส่งไม่ครบ · MTD (ทั้งร้าน)', v: n0(t('MTD').lines), cls: 'down', src: 't2_short_tot', field: 'lines', where: 'key=MTD' },
-      { title: `ส่งไม่ครบ · วันล่าสุด · ${divLabel()}`, v: n0(t(dv).lines), cls: 'down', src: 't2_short_tot', field: 'lines', where: `key=${dv}`, subs: [
-        { label: 'จำนวนที่ขาด', v: n1(t(dv).short), src: 't2_short_tot', field: 'short', where: `key=${dv}` }] },
-      { title: 'สาเหตุอันดับ 1 · วันล่าสุด', v: t(dv).top_reason || '—', txt: true, src: 't2_short_tot', field: 'top_reason', where: `key=${dv}`, subs: [
-        { label: 'บรรทัด', v: n0(t(dv).top_reason_lines), src: 't2_short_tot', field: 'top_reason_lines', where: `key=${dv}` }] },
-      { title: 'Order ที่ส่งไม่ครบ · MTD', v: n0(((ok('t2_short_div') || []).find((r) => r.division === 'Grand Total') || {}).orders), src: 't2_short_div', field: 'orders', where: 'division=Grand Total' },
+      { title: 'Total Order ที่สั่งไม่ครบ MTD', v: n0(((ok('t2_short_div') || []).find((r) => r.division === 'Grand Total') || {}).orders), cls: 'down', src: 't2_short_div', field: 'orders', where: 'division=Grand Total' },
+      { title: `Order ที่สั่งไม่ครบ วันล่าสุด${dv === 'ALL' ? '' : ' · ' + dv}`, v: n0(t(dv).lines), cls: 'down', src: 't2_short_tot', field: 'lines', where: `key=${dv}` },
+      { title: `สาเหตุอันดับ 1 วันล่าสุด${dv === 'ALL' ? '' : ' · ' + dv}`, v: t(dv).top_reason || '—', txt: true, src: 't2_short_tot', field: 'top_reason', where: `key=${dv}` },
     ]);
     const bd = ok('t2_short_by_day');
     const box = $('#ch-t2day');
@@ -2321,13 +2318,13 @@ body { padding: 0; }
     const tot = byKey('t2_ao_tot');
     const t = (k) => tot.get(k) || {};
     cards('#cards-t2ao', [
-      { title: 'Orders ทั้งหมดใน File', v: n0(t('ALL').orders), src: 't2_ao_tot', field: 'orders', where: 'key=ALL', subs: [
+      { title: 'Total Orders', v: n0(t('ALL').orders), src: 't2_ao_tot', field: 'orders', where: 'key=ALL', subs: [
         { label: 'ตั้งแต่', v: t('ALL').first || '—', src: 't2_ao_tot', field: 'first', where: 'key=ALL' },
         { label: 'ถึง', v: t('ALL').last || '—', src: 't2_ao_tot', field: 'last', where: 'key=ALL' }] },
-      { title: 'Invoice Amount (บาท)', v: n0(t('ALL').amount), src: 't2_ao_tot', field: 'amount', where: 'key=ALL' },
-      { title: 'เฉลี่ยต่อ Order (บาท)', v: n0(t('ALL').avg), src: 't2_ao_tot', field: 'avg', where: 'key=ALL' },
-      { title: 'Orders วันล่าสุด', v: n0(t('LAST').orders), src: 't2_ao_tot', field: 'orders', where: 'key=LAST', subs: [
-        { label: 'บาท', v: n0(t('LAST').amount), src: 't2_ao_tot', field: 'amount', where: 'key=LAST' }] },
+      { title: 'Total Invoice Amount (บาท)', v: n0(t('ALL').amount), src: 't2_ao_tot', field: 'amount', where: 'key=ALL' },
+      { title: `จำนวน Orders วันล่าสุด · ${t('ALL').last || '—'}`, v: n0(t('LAST').orders), src: 't2_ao_tot', field: 'orders', where: 'key=LAST', subs: [
+        { v: n0(t('LAST').amount), after: 'บาท', src: 't2_ao_tot', field: 'amount', where: 'key=LAST' }] },
+      { title: 'ยอดขายเฉลี่ยต่อ Order (บาท)', v: n0(t('ALL').avg), src: 't2_ao_tot', field: 'avg', where: 'key=ALL' },
     ]);
     const box = $('#ch-t2ao');
     if (!failed(box, 't2_ao_day') && ad) {
@@ -2373,22 +2370,25 @@ body { padding: 0; }
     return rows.slice(0, n);
   };
   const metaVal = (k) => ((ok('t3_meta') || []).find((r) => r.key === k) || {}).value || '—';
-  const BAD = new Set(['Stock ติดลบ', 'หมด มี Order', 'หมด ไม่มี Order']);
-  const FLAGS = ['Stock ติดลบ', 'หมด ไม่มี Order', 'หมด มี Order', 'มีของ ไม่มี Order', 'มีของ In Transit', 'มีของ มี Order'];
+  // Top 1000 status as the file writes it → wording on the page
+  const FLAGTH = { 'หมด ไม่มี Order': 'สินค้าหมด ยังไม่มี On Order', 'หมด มี Order': 'สินค้าหมด มี On Order', 'มีของ ไม่มี Order': 'มีสินค้า ยังไม่มี On Order',
+    'มีของ In Transit': 'มีสินค้า กำลัง In Transit', 'มีของ มี Order': 'มีสินค้า มี On Order' };
+  const BAD = new Set(['Stock ติดลบ', 'สินค้าหมด มี On Order', 'สินค้าหมด ยังไม่มี On Order']);
+  const FLAGS = ['Stock ติดลบ', 'สินค้าหมด ยังไม่มี On Order', 'สินค้าหมด มี On Order', 'มีสินค้า ยังไม่มี On Order', 'มีสินค้า กำลัง In Transit', 'มีสินค้า มี On Order'];
 
   function drawT3Top() {
     const dv = division();
-    const td = (ok('t3_top_items') || []).filter((r) => inDiv(r.division));
+    const td = (ok('t3_top_items') || []).filter((r) => inDiv(r.division)).map((r) => ({ ...r, flag: FLAGTH[r.flag] || r.flag }));
     const sm = ok('t3_top_sum') || [];
     const s = sm.find((r) => r.division === dv) || {};
     const w = `division=${dv}`;
     cards('#cards-t3top', [
-      { title: `On Order · ${divLabel()}`, v: n0(s.on_order), src: 't3_top_sum', field: 'on_order', where: w, subs: [
-        { label: 'In Transit', v: n0(s.in_transit), src: 't3_top_sum', field: 'in_transit', where: w }] },
-      { title: 'Zero Stock', v: n0(s.zero_stock), cls: s.zero_stock > 0 ? 'down' : '', src: 't3_top_sum', field: 'zero_stock', where: w, subs: [
-        { label: 'ในนี้มี Order แล้ว', v: n0(s.zero_on_order), src: 't3_top_sum', field: 'zero_on_order', where: w }] },
-      { title: 'NO ORDER', v: n0(s.no_order), cls: s.no_order > 0 ? 'down' : '', src: 't3_top_sum', field: 'no_order', where: w },
-      { title: 'Negative stock', v: n0(s.negative), cls: s.negative > 0 ? 'down' : '', src: 't3_top_sum', field: 'negative', where: w },
+      { title: `จำนวน On Order ทั้งหมด · ${divLabel()}`, v: n0(s.on_order), after: 'รายการ', src: 't3_top_sum', field: 'on_order', where: w, subs: [
+        { label: 'In Transit', v: n0(s.in_transit), after: 'รายการ', src: 't3_top_sum', field: 'in_transit', where: w }] },
+      { title: 'Negative Stock', v: n0(s.negative), after: 'รายการ', cls: s.negative > 0 ? 'down' : '', src: 't3_top_sum', field: 'negative', where: w },
+      { title: 'Zero Stock', v: n0(s.zero_stock), after: 'รายการ', cls: s.zero_stock > 0 ? 'down' : '', src: 't3_top_sum', field: 'zero_stock', where: w, subs: [
+        { label: 'มี On Order แล้ว', v: n0(s.zero_on_order), after: 'รายการ', src: 't3_top_sum', field: 'zero_on_order', where: w }] },
+      { title: 'ยังไม่มี On Order', v: n0(s.no_order), after: 'รายการ', cls: s.no_order > 0 ? 'down' : '', src: 't3_top_sum', field: 'no_order', where: w },
     ]);
     const cs = getComputedStyle(root);
     const box = $('#ch-t3flag');
@@ -2580,10 +2580,10 @@ body { padding: 0; }
     cards('#cards-t3c20', [
       { title: 'YTD Code 20 : 2026 (บาท)', v: n0(y.shrink), cls: 'down', src: 't3_c20_ytd', field: 'shrink', where: w, subs: [
         { label: 'Diff LY', v: pc(y.change, 1), cls: worse(y.change), src: 't3_c20_ytd', field: 'change', where: w }] },
-      { title: '% ต่อยอดขาย 2026', v: pc(y.pct, 3), src: 't3_c20_ytd', field: 'pct', where: w, subs: [
-        { label: '2025', v: pc(y.pct_ly, 3), src: 't3_c20_ytd', field: 'pct_ly', where: w }] },
+      { title: '% ต่อยอดขาย', v: pc(y.pct, 3), src: 't3_c20_ytd', field: 'pct', where: w, subs: [
+        { label: 'LY', v: pc(y.pct_ly, 3), src: 't3_c20_ytd', field: 'pct_ly', where: w }] },
       { title: `เดือนล่าสุด · ${y.last_month || '—'} (บาท)`, v: n0(y.last_shrink), src: 't3_c20_ytd', field: 'last_shrink', where: w, subs: [
-        { label: 'ปีก่อน', v: n0(y.last_shrink_ly), src: 't3_c20_ytd', field: 'last_shrink_ly', where: w }] },
+        { label: 'LY', v: n0(y.last_shrink_ly), src: 't3_c20_ytd', field: 'last_shrink_ly', where: w }] },
     ]);
     const cm = ok('t3_c20_month');
     const box = $('#ch-t3c20');
@@ -2764,6 +2764,7 @@ body { padding: 0; }
   // open a T5 table with one filter set, then bring it into view
   const t5show = (tid, k, v) => { t5s[T5SEL(tid, k)] = v; draw(); document.getElementById(tid).closest('.b68-panel').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 
+  const SHKCODES = [['c10', '10 Adjust (-)'], ['c11', '11 Adjust (+)'], ['c20', '20 Damaged'], ['c21', '21 Damaged (+)'], ['c52', '52 Expired'], ['c53', '53 Expired (+)'], ['c60', '60 Stolen'], ['c61', '61 Stolen (+)'], ['tc41', 'TC-41 Stock count']];
   const T5 = {
     t5stock: {
       title: 'Stock Days', intro: () => `มูลค่า Stock (บาท) และจำนวนวันที่ Stock พอขาย ตาม Division และแผนก Fresh Food ข้อมูล ณ ${metaT5('Stock Days date')} · รายการที่รับเข้าครั้งล่าสุดเมื่อ 30 วันก่อน · File Stock Days by division, Stock Days by division by dept, Stock Last Received Date 30 Day`,
@@ -2939,15 +2940,16 @@ body { padding: 0; }
       cards: (dv) => {
         const t = byKey('t5_shk_tot').get(dv) || {};
         const w = `key=${dv}`;
-        return [{ title: `Shrinkage MTD · ${divLabel()} (บาท)`, v: n0(t.shrink), cls: tone(t.shrink), src: 't5_shk_tot', field: 'shrink', where: w, subs: [{ label: 'รายการ', v: n0(t.n), src: 't5_shk_tot', field: 'n', where: w }] },
+        return [{ title: `Shrinkage MTD · ${divLabel()} (บาท)`, v: n0(t.shrink), cls: tone(t.shrink), src: 't5_shk_tot', field: 'shrink', where: w, subs: [{ v: n0(t.n), after: 'รายการ', src: 't5_shk_tot', field: 'n', where: w }] },
           { title: '52 Expired (บาท)', v: n0(t.c52), cls: tone(t.c52), src: 't5_shk_tot', field: 'c52', where: w },
           { title: '20 Damaged (บาท)', v: n0(t.c20), cls: tone(t.c20), src: 't5_shk_tot', field: 'c20', where: w },
           { title: 'TC-41 Stock count (บาท)', v: n0(t.tc41), cls: tone(t.tc41), src: 't5_shk_tot', field: 'tc41', where: w }];
       },
       charts: [{ id: 'ch-t5shk', band: 'Shrinkage ตาม Reason Code (บาท)', src: 't5_shk_code',
-        data: () => { const t = byKey('t5_shk_tot').get(division()) || {}; return [['c10', '10 Adjust (-)'], ['c11', '11 Adjust (+)'], ['c20', '20 Damaged'], ['c21', '21 Damaged (+)'], ['c52', '52 Expired'], ['c53', '53 Expired (+)'], ['c60', '60 Stolen'], ['c61', '61 Stolen (+)'], ['tc41', 'TC-41 Stock count']]
+        data: () => { const t = byKey('t5_shk_tot').get(division()) || {}; return SHKCODES
           .filter(([f]) => t[f]).map(([f, l]) => ({ label: l, v: t[f], color: cssv(t[f] < 0 ? '--b-down' : '--b-up'), tip: [] })); }, fmt: n0 }],
       tables: [{ id: 'tb-t5shk', band: 'รายสินค้า', src: 't5_shk_code', dept: true, q: ['item', 'desc'],
+        filters: [['code', 'Code', (r) => SHKCODES.filter(([f]) => r[f]).map(([, l]) => l)]],
         sorts: [['Shrinkage รวม', (a, b) => (a.shrink || 0) - (b.shrink || 0)], ['52 Expired', (a, b) => (a.c52 || 0) - (b.c52 || 0)], ['20 Damaged', (a, b) => (a.c20 || 0) - (b.c20 || 0)], ['10 Adjust', (a, b) => (a.c10 || 0) - (b.c10 || 0)], ['TC-41', (a, b) => (a.tc41 || 0) - (b.tc41 || 0)]],
         cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['c10', '10', 'n0', { tone: TONE.sign }], ['c11', '11', 'n0'], ['c20', '20', 'n0', { tone: TONE.sign }],
           ['c52', '52', 'n0', { tone: TONE.sign }], ['c60', '60', 'n0', { tone: TONE.sign }], ['tc41', 'TC-41', 'n0', { tone: TONE.sign }], ['shrink', 'รวม', 'n0', { tone: TONE.sign }], ['sale', 'Sale', 'n0'], ['pct', '%', 'pc3', { tone: TONE.sign }]] }],
@@ -3125,10 +3127,10 @@ body { padding: 0; }
       (t.filters || []).forEach(([k, , get]) => {
         const g = get || ((r) => r[k]);
         const s = document.getElementById(T5SEL(t.id, k));
-        const vals = [...new Set(rows.map(g).filter((v) => v != null && v !== ''))].sort();
+        const vals = [...new Set(rows.flatMap((r) => [].concat(g(r))).filter((v) => v != null && v !== ''))].sort();
         let cur = t5get(T5SEL(t.id, k), 'ทั้งหมด'); if (!vals.includes(cur)) cur = 'ทั้งหมด';
         fillSelect('#' + CSS.escape(T5SEL(t.id, k)), ['ทั้งหมด', ...vals], cur);
-        if (cur !== 'ทั้งหมด') rows = rows.filter((r) => g(r) === cur);
+        if (cur !== 'ทั้งหมด') rows = rows.filter((r) => [].concat(g(r)).includes(cur));
       });
       const qi = document.getElementById(T5SEL(t.id, 'q'));
       const q = qi ? qi.value.trim().toLowerCase() : '';
