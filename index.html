@@ -492,16 +492,16 @@ body { padding: 0; }
     <!-- 4. Shrinkage -->
     <section class="b68-page" id="shrink" data-page="shrink" hidden>
       <div class="b68-intro"><h2>Shrinkage</h2>
-        <p>ความสูญเสียสินค้าเทียบยอดขายและงบ แยกแผนกและเหตุผล (Adjust, Joblot, Expired, Stock count) และสินค้าที่สูญเสียมากที่สุด · Sheet Shk, CodeID, RA_DATA (Top Shrink) · ใช้ปุ่ม MTD / YTD ของหน้านี้</p></div>
+        <p>ความสูญเสียสินค้าเทียบยอดขายและ BG (Budget) แยกแผนกและเหตุผล (Adjust, Joblot, Expired, Stock count) และสินค้าที่สูญเสียมากที่สุด · Sheet Shk, CodeID, RA_DATA (Top Shrink) · ใช้ปุ่ม MTD / YTD ของหน้านี้</p></div>
       <div class="b68-tools" style="padding:0"><div class="b68-f">ช่วงของ Shrinkage
         <div class="b68-seg" role="group" aria-label="ช่วง Shrinkage" id="shk-period"><button type="button" data-v="MTD">MTD</button><button type="button" data-v="YTD">YTD</button></div></div></div>
       <div class="b68-cards" id="cards-shrink"></div>
       <div class="b68-cols">
         <div class="b68-panel">
           <div class="b68-band">% Shrinkage to Sales by Department · <span class="psh">MTD</span></div>
-          <div class="b68-legend"><span><i style="background:color-mix(in srgb, var(--color-fg) 14%, transparent);border-radius:2px;width:16px"></i>งบ</span><span><i style="background:var(--b-down);border-radius:2px;width:16px;height:6px"></i>จริง แย่กว่างบ</span><span><i style="background:var(--b-up);border-radius:2px;width:16px;height:6px"></i>จริง อยู่ในงบ</span></div>
+          <div class="b68-legend"><span><i style="background:color-mix(in srgb, var(--color-fg) 14%, transparent);border-radius:2px;width:16px"></i>BG</span><span><i style="background:var(--b-down);border-radius:2px;width:16px;height:6px"></i>Actual (เกิน BG)</span><span><i style="background:var(--b-up);border-radius:2px;width:16px;height:6px"></i>Actual (ยังไม่เกิน BG)</span></div>
           <div class="b68-chart h" id="ch-shk" data-source="shrink_budget"></div>
-          <p class="b68-note">% Shrinkage ต่อยอดขาย (ยิ่งแท่งยาว ยิ่งเสียมาก) · เรียงแผนกที่แย่กว่างบมากสุดไว้บน · แท่งที่ยาวเกินกราฟจะมีลูกศร ▸ ที่ปลาย</p>
+          <p class="b68-note">% Shrinkage ต่อยอดขาย (ยิ่งแท่งยาว ยิ่งเสียมาก) · เรียงแผนกที่เกิน BG มากที่สุดไว้บน · แท่งที่ยาวเกินกราฟจะมีลูกศร ▸ ที่ปลาย</p>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Shrinkage by Department · <span class="psh">MTD</span> (บาท)</div>
@@ -510,9 +510,9 @@ body { padding: 0; }
           </div>
           <div class="b68-tools">
             <label class="b68-f" for="f-shkbdept">Department <select class="b68-select" id="f-shkbdept"></select></label>
-            <label class="b68-f" for="f-shkbst">เทียบงบ <select class="b68-select" id="f-shkbst"></select></label>
+            <label class="b68-f" for="f-shkbst">เทียบ BG <select class="b68-select" id="f-shkbst"></select></label>
             <label class="b68-f" for="q-shkb">ค้นหา <input class="b68-search" id="q-shkb" type="search" placeholder="ชื่อแผนก หรือเลข"></label>
-            <div class="b68-seg" role="group" aria-label="เรียงตาม" id="shkb-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="gap">เกินงบมากสุด</button><button type="button" data-v="shrink">Shrinkage มากสุด</button></div>
+            <div class="b68-seg" role="group" aria-label="เรียงตาม" id="shkb-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="gap">เกิน BG มากที่สุด</button><button type="button" data-v="shrink">Shrinkage มากสุด</button></div>
           </div>
           <div class="b68-wrap"><table class="b68-t" id="tb-shkbud" data-source="shrink_budget" data-row-key="key">
             <thead><tr><th class="l" data-field="dept">Dept.</th><th data-field="sales">Sales</th><th data-field="shrink">Shrinkage</th><th data-field="pct_sales">% to Sales</th><th data-field="pct_budget">% Budget</th></tr></thead><tbody></tbody>
@@ -583,7 +583,7 @@ body { padding: 0; }
     <!-- 6. Service level -->
     <section class="b68-page" id="service" data-page="service" hidden>
       <div class="b68-intro"><h2>Service level</h2>
-        <p>สัดส่วนสินค้าที่มีของบนชั้นของรายการ KVI, Makro Mail และ Top 100 แยกสินค้าที่ขาดว่ามี order แล้วหรือยัง · Sheet KVI-mm, tOP100 · เป้าหมาย 95% ขึ้นไป</p></div>
+        <p>สัดส่วนสินค้าที่มีของบนชั้นของรายการ KVI, Makro Mail และ Top 100 แยกสินค้าที่ขาดว่ามี On Order แล้วหรือยัง · Sheet KVI-mm, tOP100 · Target 95% ขึ้นไป</p></div>
       <div class="b68-cards" id="cards-service"></div>
       <div class="b68-cols">
         <div class="b68-panel">
@@ -605,7 +605,7 @@ body { padding: 0; }
         </table></div>
       </div>
       <div class="b68-panel">
-        <div class="b68-band">Summary GAP Loss</div>
+        <div class="b68-band">Summary Gap Loss</div>
         <div class="b68-wrap"><table class="b68-t" id="tb-gap" data-source="gap_loss" data-row-key="week">
           <thead><tr><th class="l" data-field="week">Week</th><th data-field="gap_round1">No of Gap Round 1</th><th data-field="gap_round2">Round 2</th><th data-field="gap_total">Total</th><th data-field="loss_sale">Loss Sale (บาท)</th></tr></thead><tbody></tbody>
         </table></div>
@@ -641,7 +641,7 @@ body { padding: 0; }
       <div class="b68-cols">
         <div class="b68-panel">
           <div class="b68-band">Service level by List &amp; Division</div>
-          <div class="b68-legend"><span><i style="background:var(--b-up)"></i>≥ 95%</span><span><i style="background:var(--b-down)"></i>ต่ำกว่า 95%</span><span><i style="background:var(--color-fg);border-radius:0;width:2px"></i>เป้า 95%</span></div>
+          <div class="b68-legend"><span><i style="background:var(--b-up)"></i>≥ 95%</span><span><i style="background:var(--b-down)"></i>ต่ำกว่า 95%</span><span><i style="background:var(--color-fg);border-radius:0;width:2px"></i>Target 95%</span></div>
           <div class="b68-chart h" id="ch-t2sum" data-source="t2_summary"></div>
         </div>
         <div class="b68-panel">
@@ -669,7 +669,7 @@ body { padding: 0; }
         <div class="b68-band"><span class="t2-list">KVI</span> · รายการสินค้า</div>
         <div class="b68-tools">
           <label class="b68-f" for="f-t2status">สถานะ <select class="b68-select" id="f-t2status">
-            <option value="ทั้งหมด">ทั้งหมด</option><option value="ขาด ไม่มี order">ขาด ไม่มี order</option><option value="ขาด มี order">ขาด มี order</option><option value="มีของ">มีของ</option></select></label>
+            <option value="ทั้งหมด">ทั้งหมด</option><option value="ขาด ไม่มี order">สินค้าขาดไม่มี On Order</option><option value="ขาด มี order">สินค้าขาดที่ On Order แล้ว</option><option value="มีของ">มีสินค้า</option></select></label>
           <label class="b68-f" for="f-t2item">Item Status <select class="b68-select" id="f-t2item"></select></label>
           <label class="b68-f" for="q-t2">ค้นหา <input class="b68-search" id="q-t2" type="search" placeholder="สินค้า รหัส หรือแผนก"></label>
         </div>
@@ -704,13 +704,13 @@ body { padding: 0; }
       <div class="b68-panel">
         <div class="b68-band">Pack and Component</div>
         <div class="b68-tools">
-          <label class="b68-f" for="f-t2pgrp">กลุ่ม <select class="b68-select" id="f-t2pgrp"></select></label>
+          <label class="b68-f" for="f-t2pgrp">Division <select class="b68-select" id="f-t2pgrp"></select></label>
           <label class="b68-f" for="f-t2pflag">สถานะ <select class="b68-select" id="f-t2pflag"></select></label>
           <label class="b68-f" for="q-t2p">ค้นหา <input class="b68-search" id="q-t2p" type="search" placeholder="Pack / Component / รหัส"></label>
         </div>
         <p class="b68-note t2p-count"></p>
         <div class="b68-wrap"><table class="b68-t" id="tb-t2pack" data-source="t2_pack" data-row-key="key">
-          <thead><tr><th class="l" data-field="flag">สถานะ</th><th class="l" data-field="group">กลุ่ม</th><th class="l" data-field="pack_item">Pack Item</th><th class="l" data-field="pack_desc">Pack</th><th data-field="pack_stock">Pack Stock</th><th data-field="pack_price">Sell Pr</th><th class="l" data-field="comp_item">Comp Item</th><th class="l" data-field="comp_desc">Component</th><th data-field="comp_stock">Comp Stock</th><th data-field="comp_price">Sell Pr</th><th data-field="dms">Dms</th></tr></thead><tbody></tbody>
+          <thead><tr><th class="l" data-field="flag">สถานะ</th><th class="l" data-field="group">Division</th><th class="l" data-field="pack_item">Pack Item</th><th class="l" data-field="pack_desc">Pack</th><th data-field="pack_stock">Pack Stock</th><th data-field="pack_price">Sell Pr</th><th class="l" data-field="comp_item">Comp Item</th><th class="l" data-field="comp_desc">Component</th><th data-field="comp_stock">Comp Stock</th><th data-field="comp_price">Sell Pr</th><th data-field="dms">Dms</th></tr></thead><tbody></tbody>
         </table></div>
       </div>
     </section>
@@ -931,18 +931,18 @@ body { padding: 0; }
 
     <section class="b68-page" id="t3shk" data-page="t3shk" hidden>
       <div class="b68-intro"><h2>Focus Shrinkage</h2>
-        <p>Shrinkage ต่อยอดขายเทียบงบ ตามแผนก Class และรายสินค้าตาม Reason Code · ข้อมูล ณ <b data-source="t3_meta" data-field="value" data-where="key=Shrinkage date" id="t3-shkdate">—</b> · File Focus Shrinkage (Sheet Sum, data, shk by item)</p></div>
+        <p>Shrinkage ต่อยอดขายเทียบ BG ตามแผนก Class และรายสินค้าตาม Reason Code · ข้อมูล ณ <b data-source="t3_meta" data-field="value" data-where="key=Shrinkage date" id="t3-shkdate">—</b> · File Focus Shrinkage (Sheet Sum, data, shk by item)</p></div>
       <div class="b68-tools"><span class="b68-f">ช่วงเวลา</span><div class="b68-seg" role="group" aria-label="ช่วงเวลา" id="t3-shkper"><button type="button" data-v="d">วันนี้</button><button type="button" data-v="m">MTD</button><button type="button" data-v="y">YTD</button></div></div>
       <div class="b68-cards" id="cards-t3shk"></div>
       <div class="b68-panel">
-        <div class="b68-band">% Shrinkage ต่อยอดขาย เทียบงบ ตามแผนก (แผนกที่มี Shrinkage)</div>
+        <div class="b68-band">% Shrinkage เทียบ Budget ตามแผนก (แผนกที่มี Shrinkage)</div>
         <div class="b68-chart h" id="ch-t3shk" data-source="t3_shk_dept"></div>
-        <p class="b68-note">แถบสีเทา = งบ · แถบสี = จริง (แดง = เกินงบ, เขียว = อยู่ในงบ) · วันนี้ไม่มีงบใน File</p>
+        <p class="b68-note">แถบสีเทา = BG · แถบสี = Actual (แดง = เกิน BG, เขียว = ยังไม่เกิน BG) · วันนี้ไม่มี BG ใน File</p>
       </div>
       <div class="b68-panel">
         <div class="b68-band">ตามแผนก</div>
         <div class="b68-wrap"><table class="b68-t" id="tb-t3shkd" data-source="t3_shk_dept" data-row-key="key">
-          <thead><tr><th class="l" data-field="division">Division</th><th class="l" data-field="desc">Dept</th><th data-field="d_sales">Sales วันนี้</th><th data-field="d_shrink">Shrink วันนี้</th><th data-field="d_pct">%</th><th data-field="m_sales">Sales MTD</th><th data-field="m_shrink">Shrink MTD</th><th data-field="m_pct">%</th><th data-field="m_budget">งบ %</th><th data-field="y_sales">Sales YTD</th><th data-field="y_shrink">Shrink YTD</th><th data-field="y_pct">%</th><th data-field="y_budget">งบ %</th></tr></thead><tbody></tbody></table></div>
+          <thead><tr><th class="l" data-field="division">Division</th><th class="l" data-field="desc">Dept</th><th data-field="d_sales">Sales วันนี้</th><th data-field="d_shrink">Shrink วันนี้</th><th data-field="d_pct">%</th><th data-field="m_sales">Sales MTD</th><th data-field="m_shrink">Shrink MTD</th><th data-field="m_pct">%</th><th data-field="m_budget">BG %</th><th data-field="y_sales">Sales YTD</th><th data-field="y_shrink">Shrink YTD</th><th data-field="y_pct">%</th><th data-field="y_budget">BG %</th></tr></thead><tbody></tbody></table></div>
       </div>
       <div class="b68-panel">
         <div class="b68-band">ตาม Class · แยกประเภท Shrinkage (บาท)</div>
@@ -1634,7 +1634,7 @@ body { padding: 0; }
     const tmp = d3.select(box).append('svg').attr('width', 0).attr('height', 0);
     const tw = (s, size = 13) => { const n = tmp.append('text').attr('font-size', size).text(s); const w = n.node().getComputedTextLength(); n.remove(); return w; };
     const valText = (r) => `${n2(r.pct_sales)}%`;
-    const budText = (r) => `งบ ${n2(r.pct_budget)}%`;
+    const budText = (r) => `BG ${n2(r.pct_budget)}%`;
     const lw = Math.min(W * 0.38, (d3.max(rows, (r) => tw(r.dept)) || 0) + 12);
     // values are bold, so leave extra room on the right
     const rw = (d3.max(rows, (r) => tw(valText(r), 13) * 1.12 + tw(budText(r), 12)) || 0) + 40;
@@ -1667,7 +1667,7 @@ body { padding: 0; }
       v.append('tspan').attr('font-weight', 700).style('fill', worse ? col('--b-down') : col('--b-up')).text(valText(r));
       v.append('tspan').attr('dx', 8).attr('font-size', 12).style('fill', 'var(--color-fg-muted)').text(budText(r));
       g.append('rect').attr('x', 0).attr('y', y0).attr('width', W).attr('height', rowH).style('fill', 'transparent')
-        .on('mousemove', (ev) => t.show(ev, [[r.dept], ['% Shrinkage ต่อยอดขาย', n2(r.pct_sales) + '%'], ['งบ', n2(r.pct_budget) + '%'],
+        .on('mousemove', (ev) => t.show(ev, [[r.dept], ['% Shrinkage ต่อยอดขาย', n2(r.pct_sales) + '%'], ['BG', n2(r.pct_budget) + '%'],
           ['Shrinkage', n0(r.shrink) + ' บาท'], ['ยอดขาย', n0(r.sales) + ' บาท']]))
         .on('mouseleave', () => t.hide());
     });
@@ -1936,12 +1936,18 @@ body { padding: 0; }
   }
 
   // ----- 4. Shrinkage
+  const SHKDEPT = { 19: 'FRESH FOOD - D/N, C/N', 21: 'Fresh Premium', 22: 'Dry Premium', 23: 'Hardline Premium', 24: 'Softline Premium' };
   function drawShrink() {
     pressed('#shk-period', pick.shk);
     $$('.psh').forEach((el) => { el.textContent = pick.shk; });
     const per = pick.shk;
     const TOT = { ALL: 'Total Store', 'FRESH FOOD': 'Total Fresh', 'DRY FOOD': 'Total Dry Food', 'NON FOOD': 'Total Non Food' };
-    const sb = ok('shrink_budget'), sc = ok('shrink_code');
+    const sc = ok('shrink_code');
+    // the Shk sheet leaves 22–24 without names and calls 19 FROZEN & DAIRY like 5; names as in Focus Shrinkage
+    const sb = ok('shrink_budget') && ok('shrink_budget').map((r) => {
+      const no = /^\d+/.exec(r.dept || '');
+      return no && SHKDEPT[no[0]] ? { ...r, dept: `${no[0]} ${SHKDEPT[no[0]]}` } : r;
+    });
     const tk = `${per}|${TOT[division()]}`;
     const tot = (sb || []).find((r) => r.key === tk) || {};
     const reasons = division() === 'ALL' ? ((sc || []).find((r) => r.key === `${per}|TOTAL`) || {}) : (byKey('shrink_div').get(`${per}|${division()}`) || {});
@@ -1951,8 +1957,8 @@ body { padding: 0; }
       { title: `Shrinkage · ${per} · ${divLabel()} (บาท)`, v: n0(tot.shrink), cls: 'down', src: 'shrink_budget', field: 'shrink', where: `key=${tk}`, subs: [
         { label: 'ยอดขาย', v: n0(tot.sales), src: 'shrink_budget', field: 'sales', where: `key=${tk}` }] },
       { title: '% Shrinkage ต่อยอดขาย', v: n2(tot.pct_sales) + '%', cls: tot.pct_sales < tot.pct_budget ? 'down' : 'up', src: 'shrink_budget', field: 'pct_sales', where: `key=${tk}`, subs: [
-        { label: 'งบ', v: n2(tot.pct_budget) + '%', src: 'shrink_budget', field: 'pct_budget', where: `key=${tk}` }] },
-      { title: 'หมดอายุ (52:Expired)', v: n0(reasons.expired), cls: 'down', src: rsrc, field: 'expired', where: rwhere, subs: [
+        { label: 'BG (Budget)', v: n2(tot.pct_budget) + '%', src: 'shrink_budget', field: 'pct_budget', where: `key=${tk}` }] },
+      { title: 'สินค้าหมดอายุ (52: Expired) · มูลค่า (บาท)', v: n0(reasons.expired), cls: 'down', src: rsrc, field: 'expired', where: rwhere, subs: [
         { label: 'Joblot (20)', v: n0(reasons.joblot), src: rsrc, field: 'joblot', where: rwhere }] },
       { title: 'Sale Markdown (บาท)', v: n0(reasons.markdown), src: rsrc, field: 'markdown', where: rwhere },
     ]);
@@ -1970,10 +1976,10 @@ body { padding: 0; }
     const bdepts = bud.filter((r) => !r.is_total).map((r) => r.dept);
     if (!['ทั้งหมด', ...bdepts].includes(pick.shkbdept)) pick.shkbdept = 'ทั้งหมด';
     fillSelect('#f-shkbdept', ['ทั้งหมด', ...bdepts], pick.shkbdept);
-    const ST = ['ทั้งหมด', 'เกินงบ', 'อยู่ในงบ', 'ไม่มี Shrinkage'];
+    const ST = ['ทั้งหมด', 'เกิน BG', 'ไม่เกิน BG', 'ไม่มี Shrinkage'];
     fillSelect('#f-shkbst', ST, pick.shkbst);
     pressed('#shkb-sort', pick.shkbsort);
-    const status = (r) => (!r.shrink ? 'ไม่มี Shrinkage' : r.pct_budget != null && r.pct_sales < r.pct_budget ? 'เกินงบ' : 'อยู่ในงบ');
+    const status = (r) => (!r.shrink ? 'ไม่มี Shrinkage' : r.pct_budget != null && r.pct_sales < r.pct_budget ? 'เกิน BG' : 'ไม่เกิน BG');
     const qb = query('#q-shkb');
     const filtered = pick.shkbdept === 'ทั้งหมด' && pick.shkbst === 'ทั้งหมด' && !qb;
     const brows = bud.filter((r) => (r.is_total ? filtered : (pick.shkbdept === 'ทั้งหมด' || r.dept === pick.shkbdept)
@@ -2067,19 +2073,19 @@ body { padding: 0; }
     const slTone = (v) => (v == null ? '' : v >= 95 ? 'up' : 'down');
     cards('#cards-service', [
       { title: `KVI · ${divLabel()}`, v: n1(kvi.service_level) + '%', cls: slTone(kvi.service_level), src: 'service_level', field: 'service_level', where: `key=KVI|${sk}`, subs: [
-        { label: 'ขาด ยังไม่มี order', v: n0(kvi.oos_not_on_order), cls: kvi.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=KVI|${sk}` }] },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(kvi.oos_not_on_order), cls: kvi.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=KVI|${sk}` }] },
       { title: `Makro Mail · ${divLabel()}`, v: n1(mm.service_level) + '%', cls: slTone(mm.service_level), src: 'service_level', field: 'service_level', where: `key=Makro Mail|${sk}`, subs: [
-        { label: 'ขาด ยังไม่มี order', v: n0(mm.oos_not_on_order), cls: mm.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=Makro Mail|${sk}` }] },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(mm.oos_not_on_order), cls: mm.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=Makro Mail|${sk}` }] },
       { title: `Top 100 · ${divLabel()}`, v: n1(tp.service_level) + '%', cls: slTone(tp.service_level), src: 'top100', field: 'service_level', where: `section=${t100key}`, subs: [
-        { label: 'ขาด ยังไม่มี order', v: n0(tp.oos_not_on_order), cls: tp.oos_not_on_order > 0 ? 'down' : '', src: 'top100', field: 'oos_not_on_order', where: `section=${t100key}` },
-        { label: 'Stock ติดลบ', v: n0(tp.stock_neg), src: 'top100', field: 'stock_neg', where: `section=${t100key}` }] },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(tp.oos_not_on_order), cls: tp.oos_not_on_order > 0 ? 'down' : '', src: 'top100', field: 'oos_not_on_order', where: `section=${t100key}` },
+        { label: 'Stock ติดลบ', after: 'รายการ', v: n0(tp.stock_neg), src: 'top100', field: 'stock_neg', where: `section=${t100key}` }] },
     ]);
     const box = $('#ch-svc');
     if (!failed(box, 'top100') && t1) {
       const cs = getComputedStyle(root);
       hbars(box, t1.filter((r) => !r.is_total && inDiv(r.division)).map((r) => ({ label: r.section, v: r.service_level, ref: 95,
         color: cs.getPropertyValue(r.service_level >= 95 ? '--b-up' : '--b-down').trim(), r })),
-        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['ขาด มี order', n0(it.r.oos_on_order)], ['ขาด ไม่มี order', n0(it.r.oos_not_on_order)]] });
+        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['มี On Order แล้ว', n0(it.r.oos_on_order)], ['ยังไม่มี On Order', n0(it.r.oos_not_on_order)]] });
     }
     fillTable('#tb-svc', sl && sl.filter((r) => division() === 'ALL' || r.division === sk), 'key', [
       { f: 'list', l: true }, { f: 'division', l: true }, { f: 'in_stock', fmt: n0 }, { f: 'oos_not_on_order', fmt: n0, tone: (v) => (v > 0 ? 'down' : '') },
@@ -2144,9 +2150,8 @@ body { padding: 0; }
       const r = (sm || []).find((x) => x.key === `${l}|${pick.t2view}|${dv}`) || {};
       const w = `key=${l}|${pick.t2view}|${dv}`;
       return { title: `${l} · ${divLabel()} · ${pick.t2view}`, v: n1(r.service_level) + '%', cls: slTone(r.service_level), src: 't2_summary', field: 'service_level', where: w, subs: [
-        { label: 'มีของ', v: n0(r.in_stock), src: 't2_summary', field: 'in_stock', where: w },
-        { label: 'จากทั้งหมด', v: n0(r.total), src: 't2_summary', field: 'total', where: w },
-        { label: 'ขาด ไม่มี order', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : '', src: 't2_summary', field: 'oos_not_on_order', where: w }] };
+        { label: 'มีสินค้า', v: n0(r.in_stock), after: `รายการ จากทั้งหมด ${n0(r.total)} รายการ`, src: 't2_summary', field: 'in_stock', where: w },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : '', src: 't2_summary', field: 'oos_not_on_order', where: w }] };
     }));
     const rows = (sm || []).filter((r) => r.view === pick.t2view && (division() === 'ALL' || r.division === division() || r.division === 'Total'));
     const box = $('#ch-t2sum');
@@ -2154,7 +2159,7 @@ body { padding: 0; }
       const cs = getComputedStyle(root);
       hbars(box, rows.map((r) => ({ label: `${r.list} · ${r.division}`, v: r.service_level, ref: 95,
         color: cs.getPropertyValue(r.service_level >= 95 ? '--b-up' : '--b-down').trim(), r })),
-        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['มีของ', n0(it.r.in_stock) + ' / ' + n0(it.r.total)], ['ขาด ไม่มี order', n0(it.r.oos_not_on_order)]] });
+        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['มีสินค้า', n0(it.r.in_stock) + ' / ' + n0(it.r.total)], ['ยังไม่มี On Order', n0(it.r.oos_not_on_order)]] });
     }
     fillTable('#tb-t2sum', rows, 'key', [
       { f: 'list', l: true }, { f: 'division', l: true }, { f: 'total', fmt: n0 }, { f: 'in_stock', fmt: n0 },
@@ -2162,6 +2167,8 @@ body { padding: 0; }
       { total: (r) => r.division === 'Total' });
   }
 
+  // item status as the file writes it → wording on the page
+  const T2ST = { 'ขาด ไม่มี order': 'สินค้าขาดไม่มี On Order', 'ขาด มี order': 'สินค้าขาดที่ On Order แล้ว', 'มีของ': 'มีสินค้า' };
   function drawT2Items() {
     const L = pick.t2list;
     pressed('#t2-list', L);
@@ -2175,10 +2182,10 @@ body { padding: 0; }
     const w = `key=${L}|ทุกรายการ|${dv}`;
     cards('#cards-t2items', [
       { title: `Service level · ${divLabel()}`, v: n1(r.service_level) + '%', cls: slTone(r.service_level), src: 't2_summary', field: 'service_level', where: w },
-      { title: 'สินค้าทั้งหมด', v: n0(r.total), src: 't2_summary', field: 'total', where: w, subs: [
-        { label: 'มีของ', v: n0(r.in_stock), src: 't2_summary', field: 'in_stock', where: w }] },
-      { title: 'ขาด · ยังไม่มี order', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : 'up', src: 't2_summary', field: 'oos_not_on_order', where: w },
-      { title: 'ขาด · มี order แล้ว', v: n0(r.oos_on_order), src: 't2_summary', field: 'oos_on_order', where: w },
+      { title: 'มีสินค้า', v: n0(r.in_stock), after: 'รายการ', src: 't2_summary', field: 'in_stock', where: w, subs: [
+        { label: 'จากทั้งหมด', v: n0(r.total), after: 'รายการ', src: 't2_summary', field: 'total', where: w }] },
+      { title: 'สินค้าขาด ยังไม่มี On Order', after: 'รายการ', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : 'up', src: 't2_summary', field: 'oos_not_on_order', where: w },
+      { title: 'สินค้าขาด มี On Order แล้ว', after: 'รายการ', v: n0(r.oos_on_order), src: 't2_summary', field: 'oos_on_order', where: w },
     ]);
     options('#f-t2item', all, 'item_status', 't2item');
     const q = query('#q-t2');
@@ -2186,9 +2193,9 @@ body { padding: 0; }
     const rows = all.filter((x) => (pick.t2status === 'ทั้งหมด' || x.status === pick.t2status) && (pick.t2item === 'ทั้งหมด' || x.item_status === pick.t2item)
       && (!q || `${x.item} ${x.desc} ${x.dept}`.toLowerCase().includes(q)))
       .sort((a, b) => ORDER[a.status] - ORDER[b.status] || (b.dms || 0) - (a.dms || 0));
-    $('.t2-count').textContent = `แสดง ${n0(rows.length)} รายการ · เรียง: ขาดไม่มี order ก่อน แล้วตามยอดขายต่อวัน (Dms)`;
+    $('.t2-count').textContent = `แสดง ${n0(rows.length)} รายการ · เรียง: สินค้าขาดไม่มี On Order ก่อน แล้วตามยอดขายต่อวัน (Dms)`;
     fillTable('#tb-t2items', rows, 'key', [
-      { f: 'status', l: true, tone: (v) => (v === 'มีของ' ? 'up' : 'down') }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'dms', fmt: n2 },
+      { f: 'status', l: true, fmt: (v) => T2ST[v] || v, tone: (v) => (v === 'มีของ' ? 'up' : 'down') }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'dms', fmt: n2 },
       { f: 'stock', fmt: n1, tone: (v) => (v <= 0 ? 'down' : '') }, { f: 'stock_day', fmt: n0 }, { f: 'on_order', fmt: n0 }, { f: 'reorder', l: true },
       { f: 'last_sale', l: true }, { f: 'last_del', l: true }, { f: 'item_status', l: true }, { f: 'dept' }, { f: 'division', l: true }]);
   }
@@ -2204,8 +2211,8 @@ body { padding: 0; }
     const cnt = byKey('t2_kvi_cnt');
     const c = (k) => cnt.get(k) || {};
     cards('#cards-t2survey', [
-      { title: 'สินค้าใน KVI List', v: n0(c('ALL').items), src: 't2_kvi_cnt', field: 'items', where: 'key=ALL' },
-      ...['S', 'SS', 'OB-F3'].map((t) => ({ title: `KVI Type ${t}`, v: n0(c(t).items), src: 't2_kvi_cnt', field: 'items', where: `key=${t}` })),
+      { title: 'สินค้าใน KVI List', after: 'รายการ', v: n0(c('ALL').items), src: 't2_kvi_cnt', field: 'items', where: 'key=ALL' },
+      ...['S', 'SS', 'OB-F3'].map((t) => ({ title: `KVI Type ${t}`, after: 'รายการ', v: n0(c(t).items), src: 't2_kvi_cnt', field: 'items', where: `key=${t}` })),
     ]);
     fillTable('#tb-t2survey', rows, 'key', [
       { f: 'div', l: true }, { f: 'buyer', l: true }, { f: 'class', l: true }, { f: 'item', l: true }, { f: 'name_th', wrap: true }, { f: 'name_en', wrap: true },
@@ -2218,7 +2225,7 @@ body { padding: 0; }
     options('#f-t2pflag', pk, 'flag', 't2pflag');
     const cnt = byKey('t2_pack_cnt');
     cards('#cards-t2pack', ['ALL', 'Component มีของ', 'Component หมด', 'Pack มีของ'].map((k) => ({
-      title: k === 'ALL' ? 'Pack ทั้งหมด' : k, v: n0((cnt.get(k) || {}).items ?? 0), cls: k === 'Component หมด' ? 'down' : '',
+      title: k === 'ALL' ? 'Pack ทั้งหมด' : k, after: 'รายการ', v: n0((cnt.get(k) || {}).items ?? 0), cls: k === 'Component หมด' ? 'down' : '',
       src: 't2_pack_cnt', field: 'items', where: `key=${k}` })));
     const q = query('#q-t2p');
     const rows = pk.filter((r) => (pick.t2pgrp === 'ทั้งหมด' || r.group === pick.t2pgrp) && (pick.t2pflag === 'ทั้งหมด' || r.flag === pick.t2pflag)
@@ -2525,11 +2532,11 @@ body { padding: 0; }
     cards('#cards-t3shk', [
       { title: `Shrinkage · ${L} · ${divLabel()} (บาท)`, v: n0(t[p + '_shrink']), cls: tone(t[p + '_shrink']), src: 't3_shk_tot', field: p + '_shrink', where: w, subs: [
         { label: 'Sales', v: n0(t[p + '_sales']), src: 't3_shk_tot', field: p + '_sales', where: w }] },
-      { title: '% ต่อยอดขาย', v: pc(t[p + '_pct']), cls: p !== 'd' && t[p + '_pct'] < t[p + '_budget'] ? 'down' : 'up', src: 't3_shk_tot', field: p + '_pct', where: w,
-        subs: p === 'd' ? [] : [{ label: 'งบ', v: pc(t[p + '_budget']), src: 't3_shk_tot', field: p + '_budget', where: w }] },
-      { title: 'แผนกที่เกินงบมากสุด', v: worst ? worst.desc : (p === 'd' ? 'ไม่มีงบรายวัน' : 'ไม่มี'), txt: true, src: worst ? 't3_shk_dept' : null, field: 'desc', where: worst ? `key=${worst.key}` : null,
-        subs: worst ? [{ label: '% จริง', v: pc(worst[p + '_pct']), cls: 'down', src: 't3_shk_dept', field: p + '_pct', where: `key=${worst.key}` },
-          { label: 'งบ', v: pc(worst[p + '_budget']), src: 't3_shk_dept', field: p + '_budget', where: `key=${worst.key}` }] : [] },
+      { title: '% Shrinkage เทียบ Budget', v: pc(t[p + '_pct']), cls: p !== 'd' && t[p + '_pct'] < t[p + '_budget'] ? 'down' : 'up', src: 't3_shk_tot', field: p + '_pct', where: w,
+        subs: p === 'd' ? [] : [{ label: 'BG', v: pc(t[p + '_budget']), src: 't3_shk_tot', field: p + '_budget', where: w }] },
+      { title: 'แผนกที่ Shrinkage เกิน BG มากที่สุด', v: worst ? worst.desc : (p === 'd' ? 'ไม่มี BG รายวัน' : 'ไม่มี'), txt: true, src: worst ? 't3_shk_dept' : null, field: 'desc', where: worst ? `key=${worst.key}` : null,
+        subs: worst ? [{ label: 'Actual', v: pc(worst[p + '_pct']), cls: 'down', src: 't3_shk_dept', field: p + '_pct', where: `key=${worst.key}` },
+          { label: 'Budget', v: pc(worst[p + '_budget']), src: 't3_shk_dept', field: p + '_budget', where: `key=${worst.key}` }] : [] },
     ]);
     const box = $('#ch-t3shk');
     if (!failed(box, 't3_shk_dept')) {
@@ -2546,7 +2553,7 @@ body { padding: 0; }
     const last = p === 'd' ? 'budget_pct' : 'ly';
     const ths = $$('#tb-t3cls th');
     ['sales', 'adj', 'count', 'damage', 'stolen', 'markdown', 'donation', 'shrink', 'pct', last].forEach((f, i) => { ths[i + 2].dataset.field = `${p}_${f}`; });
-    ths[11].textContent = p === 'd' ? 'งบ %' : 'LY';
+    ths[11].textContent = p === 'd' ? 'BG %' : 'LY';
     const cl = (ok('t3_shk_class') || []).filter((r) => inDiv(r.division) && (r[p + '_sales'] || r[p + '_shrink']));
     deptSel('#f-t3shkdept', cl, 't3shkdept');
     const qc = query('#q-t3cls');
@@ -2571,9 +2578,8 @@ body { padding: 0; }
     const w = 'key=YTD';
     const worse = (v) => (v == null ? '' : v > 0 ? 'down' : 'up');
     cards('#cards-t3c20', [
-      { title: `Code 20 ปี 2026 · ${y.months || 0} เดือน (บาท)`, v: n0(y.shrink), cls: 'down', src: 't3_c20_ytd', field: 'shrink', where: w, subs: [
-        { label: '2025 เดือนเดียวกัน', v: n0(y.shrink_ly), src: 't3_c20_ytd', field: 'shrink_ly', where: w },
-        { label: 'เปลี่ยน', v: pc(y.change, 1), cls: worse(y.change), src: 't3_c20_ytd', field: 'change', where: w }] },
+      { title: 'YTD Code 20 : 2026 (บาท)', v: n0(y.shrink), cls: 'down', src: 't3_c20_ytd', field: 'shrink', where: w, subs: [
+        { label: 'Diff LY', v: pc(y.change, 1), cls: worse(y.change), src: 't3_c20_ytd', field: 'change', where: w }] },
       { title: '% ต่อยอดขาย 2026', v: pc(y.pct, 3), src: 't3_c20_ytd', field: 'pct', where: w, subs: [
         { label: '2025', v: pc(y.pct_ly, 3), src: 't3_c20_ytd', field: 'pct_ly', where: w }] },
       { title: `เดือนล่าสุด · ${y.last_month || '—'} (บาท)`, v: n0(y.last_shrink), src: 't3_c20_ytd', field: 'last_shrink', where: w, subs: [
