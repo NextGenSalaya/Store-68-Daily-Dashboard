@@ -1,6 +1,6 @@
 {
-  "revision": "2b2f5483-7a46-4dfc-9023-b44bf98a82b1",
-  "publishedAt": "2026-11-04T03:59:15.219Z",
+  "revision": "0318cc6e-b385-4faf-99e3-58a9a70d37dd",
+  "publishedAt": "2026-11-05T01:37:56.193Z",
   "groups": [
     {
       "id": "ad",
@@ -8,45 +8,45 @@
       "files": 26,
       "rows": 660,
       "dates": [
-        "2026-11-03"
+        "2026-11-04"
       ]
     },
     {
       "id": "t2",
       "name": "Service Level · KVI · O2O",
       "files": 17,
-      "rows": 10778,
+      "rows": 10837,
       "dates": [
-        "2026-11-03"
+        "2026-11-02"
       ]
     },
     {
       "id": "t3",
       "name": "Fresh Food · Top 1000 · Shrinkage",
       "files": 14,
-      "rows": 24596,
+      "rows": 25078,
       "dates": [
-        "2026-11-03",
-        "2026-11-04"
+        "2026-11-04",
+        "2026-11-05"
       ]
     },
     {
       "id": "t4",
       "name": "Over Stock และ On Order",
       "files": 3,
-      "rows": 6995,
+      "rows": 7647,
       "dates": [
-        "2026-11-04"
+        "2026-11-05"
       ]
     },
     {
       "id": "t5",
       "name": "Stock · สินค้า · ลูกค้ารายคน และหัวข้อเสริม",
       "files": 37,
-      "rows": 45392,
+      "rows": 46304,
       "dates": [
-        "2026-11-03",
-        "2026-11-04"
+        "2026-11-04",
+        "2026-11-05"
       ]
     }
   ],
@@ -157,7 +157,7 @@
     },
     {
       "name": "t2_ao_day.json",
-      "rows": 9
+      "rows": 8
     },
     {
       "name": "t2_ao_dim.json",
@@ -177,7 +177,7 @@
     },
     {
       "name": "t2_oos_today.json",
-      "rows": 379
+      "rows": 414
     },
     {
       "name": "t2_pack.json",
@@ -197,15 +197,15 @@
     },
     {
       "name": "t2_short_breakdown.json",
-      "rows": 93
+      "rows": 84
     },
     {
       "name": "t2_short_by_day.json",
-      "rows": 3
+      "rows": 2
     },
     {
       "name": "t2_short_dept.json",
-      "rows": 15
+      "rows": 14
     },
     {
       "name": "t2_short_div.json",
@@ -213,11 +213,11 @@
     },
     {
       "name": "t2_short_items.json",
-      "rows": 321
+      "rows": 243
     },
     {
       "name": "t2_short_lines.json",
-      "rows": 144
+      "rows": 258
     },
     {
       "name": "t2_summary.json",
@@ -225,7 +225,7 @@
     },
     {
       "name": "t3_c20_items.json",
-      "rows": 10543
+      "rows": 10561
     },
     {
       "name": "t3_c20_month.json",
@@ -233,15 +233,15 @@
     },
     {
       "name": "t3_c20_names.json",
-      "rows": 3598
+      "rows": 3600
     },
     {
       "name": "t3_ff_c52.json",
-      "rows": 502
+      "rows": 596
     },
     {
       "name": "t3_ff_items.json",
-      "rows": 5612
+      "rows": 5811
     },
     {
       "name": "t3_ff_sum.json",
@@ -261,7 +261,7 @@
     },
     {
       "name": "t3_shk_class.json",
-      "rows": 483
+      "rows": 484
     },
     {
       "name": "t3_shk_dept.json",
@@ -269,7 +269,7 @@
     },
     {
       "name": "t3_shk_items.json",
-      "rows": 719
+      "rows": 887
     },
     {
       "name": "t3_top_items.json",
@@ -281,7 +281,7 @@
     },
     {
       "name": "t4_floor.json",
-      "rows": 4673
+      "rows": 5318
     },
     {
       "name": "t4_meta.json",
@@ -289,15 +289,15 @@
     },
     {
       "name": "t4_over.json",
-      "rows": 2320
+      "rows": 2327
     },
     {
       "name": "t5_ag_trend.json",
-      "rows": 3
+      "rows": 4
     },
     {
       "name": "t5_aging_items.json",
-      "rows": 841
+      "rows": 839
     },
     {
       "name": "t5_cat_cat.json",
@@ -313,7 +313,7 @@
     },
     {
       "name": "t5_disc_day.json",
-      "rows": 3
+      "rows": 4
     },
     {
       "name": "t5_disc_items.json",
@@ -325,7 +325,7 @@
     },
     {
       "name": "t5_drop_item.json",
-      "rows": 2248
+      "rows": 2247
     },
     {
       "name": "t5_drop_type.json",
@@ -333,7 +333,7 @@
     },
     {
       "name": "t5_gone_day.json",
-      "rows": 3
+      "rows": 4
     },
     {
       "name": "t5_gone_items.json",
@@ -357,7 +357,7 @@
     },
     {
       "name": "t5_last3.json",
-      "rows": 623
+      "rows": 760
     },
     {
       "name": "t5_last3_sum.json",
@@ -369,11 +369,11 @@
     },
     {
       "name": "t5_mu13.json",
-      "rows": 731
+      "rows": 710
     },
     {
       "name": "t5_mu15.json",
-      "rows": 1256
+      "rows": 1204
     },
     {
       "name": "t5_nbs_items.json",
@@ -381,7 +381,7 @@
     },
     {
       "name": "t5_neg_items.json",
-      "rows": 102
+      "rows": 119
     },
     {
       "name": "t5_neg_sum.json",
@@ -389,11 +389,11 @@
     },
     {
       "name": "t5_recv30.json",
-      "rows": 95
+      "rows": 51
     },
     {
       "name": "t5_sale_item.json",
-      "rows": 14136
+      "rows": 14779
     },
     {
       "name": "t5_sd_dept.json",
@@ -405,7 +405,7 @@
     },
     {
       "name": "t5_shk_code.json",
-      "rows": 668
+      "rows": 800
     },
     {
       "name": "t5_soft.json",
@@ -433,11 +433,11 @@
     },
     {
       "name": "t5_repl.json",
-      "rows": 12582
+      "rows": 12594
     },
     {
       "name": "t5_drop_cust.json",
-      "rows": 4332
+      "rows": 4420
     }
   ]
 }
