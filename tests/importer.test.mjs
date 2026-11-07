@@ -7,17 +7,17 @@ import {planFiles,validateDatasets,gitBlobSha} from '../upload/import-core.mjs';
 import {githubClient,publishDatasets,waitForPublication} from '../upload/publish.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const manifest=JSON.parse(fs.readFileSync(path.join(root,'upload/manifest.json')));
-test('recognizes all 31 workbook names, including Thai and mixed-case extensions',()=>{
+test('recognizes all 32 workbook names, including Thai and mixed-case extensions',()=>{
   const names=[...new Set(manifest.groups.flatMap(g=>g.patterns))].map(p=>({name:p.replaceAll('*','')}));
   const plan=planFiles(names,manifest.groups);
-  assert.equal(plan.assignments.length,31);assert.equal(plan.missing.length,0);assert.equal(plan.duplicates.length,0);
+  assert.equal(plan.assignments.length,32);assert.equal(plan.missing.length,0);assert.equal(plan.duplicates.length,0);
   assert.equal(planFiles(names.slice(1),manifest.groups).missing.length,1);
   assert.equal(planFiles([...names,names[0]],manifest.groups).duplicates.length,1);
   assert.equal(planFiles([...names,{name:'~$'+names[0].name}],manifest.groups).duplicates.length,0);
 });
 test('all currently published datasets meet the import schema; reject missing/unexpected/bad payloads',()=>{
   const all=manifest.groups.flatMap(g=>g.outputs).map(name=>({name,content:fs.readFileSync(path.join(root,name),'utf8')}));
-  assert.equal(validateDatasets(all,manifest.groups,manifest.schemas).length,96);
+  assert.equal(validateDatasets(all,manifest.groups,manifest.schemas).length,97);
   assert.throws(()=>validateDatasets(all.slice(1),manifest.groups,manifest.schemas),/ไม่ครบ/);
   assert.throws(()=>validateDatasets([{name:'index.html',content:'[]'}],manifest.groups,manifest.schemas),/ไม่อยู่/);
   assert.throws(()=>validateDatasets([{name:'sales.json',content:'[{"bad":1}]'}],manifest.groups,manifest.schemas),/คอลัมน์/);
@@ -74,4 +74,13 @@ test('missing and unauthorized credentials never report success',async()=>{
   assert.throws(()=>githubClient(''),/รหัสสิทธิ์/);
   const api=githubClient('test-token',async()=>({ok:false,status:401,json:async()=>({message:'Bad credentials'})}));
   await assert.rejects(api('/git/ref/heads/main'),/หมดอายุ/);
+});
+test('a dropped connection or a 502 is tried again; moving the branch is sent once',async()=>{
+  let n=0;const flaky=async()=>{if(++n<3)throw TypeError('Failed to fetch');return {ok:true,status:201,json:async()=>({sha:'blob'})};};
+  assert.equal((await githubClient('t',flaky,{wait:async()=>{}})('/git/blobs','POST',{content:'x'})).sha,'blob');assert.equal(n,3);
+  n=0;const busy=async()=>(++n<2?{ok:false,status:502,json:async()=>{throw SyntaxError('html');}}:{ok:true,status:200,json:async()=>({object:{sha:'head'}})});
+  assert.equal((await githubClient('t',busy,{wait:async()=>{}})('/git/ref/heads/main')).object.sha,'head');assert.equal(n,2);
+  n=0;const down=async()=>{n++;throw TypeError('Failed to fetch');};
+  await assert.rejects(githubClient('t',down,{wait:async()=>{}})('/git/refs/heads/main','PATCH',{sha:'next'}),/ไม่สำเร็จ/);assert.equal(n,1);
+  n=0;await assert.rejects(githubClient('t',down,{wait:async()=>{}})('/git/blobs','POST',{content:'x'}),/ลองแล้ว 3 ครั้ง/);assert.equal(n,3);
 });
