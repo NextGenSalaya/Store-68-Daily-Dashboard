@@ -2,14 +2,24 @@ import {gitBlobSha} from './import-core.mjs';
 export const REPO='NextGenSalaya/Store-68-Daily-Dashboard';
 export const SITE='https://nextgensalaya.github.io/Store-68-Daily-Dashboard/';
 const BASE='https://api.github.com/repos/'+REPO;
-export function githubClient(token,request=fetch) {
+export function githubClient(token,request=fetch,{tries=3,wait=ms=>new Promise(r=>setTimeout(r,ms))}={}) {
   if(!token?.trim()) throw Error('กรุณาใส่รหัสสิทธิ์ GitHub ก่อนเผยแพร่');
   return async (path,method='GET',body)=>{
     if(!path.startsWith('/')||path.includes('..')) throw Error('Invalid API path');
+    // A dropped connection, a timeout or a GitHub 502/503/504 is tried again: reads and new blobs/trees/commits are safe
+    // to repeat. Moving the branch (PATCH) is sent once; publishDatasets reads the branch when its reply is lost.
+    const attempts=method==='PATCH'?1:tries;
     let response;
-    try {response=await request(BASE+path,{method,signal:AbortSignal.timeout(60000),cache:'no-store',redirect:'error',headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token.trim(),'X-GitHub-Api-Version':'2022-11-28',...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});}
-    catch {throw Error('ติดต่อ GitHub ไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ต ยังไม่ควรกดเผยแพร่ซ้ำจนกว่าจะตรวจสอบสถานะ');}
-    const result=await response.json();
+    for(let i=1;;i++) {
+      try {
+        response=await request(BASE+path,{method,signal:AbortSignal.timeout(180000),cache:'no-store',redirect:'error',headers:{Accept:'application/vnd.github+json',Authorization:'Bearer '+token.trim(),'X-GitHub-Api-Version':'2022-11-28',...(body?{'Content-Type':'application/json'}:{})},...(body?{body:JSON.stringify(body)}:{})});
+        if(![502,503,504].includes(response.status)||i>=attempts) break;
+      } catch {
+        if(i>=attempts) throw Error(`ติดต่อ GitHub ไม่สำเร็จ (ลองแล้ว ${attempts} ครั้ง) กรุณาตรวจสอบอินเทอร์เน็ต ยังไม่ควรกดเผยแพร่ซ้ำจนกว่าจะตรวจสอบสถานะ`);
+      }
+      await wait(5000*i);
+    }
+    const result=await response.json().catch(()=>({}));
     if(!response.ok) {
       const hints={401:'รหัสสิทธิ์ไม่ถูกต้องหรือหมดอายุ',403:'บัญชีไม่มีสิทธิ์เขียน หรือใช้งาน GitHub เกินขีดจำกัด',404:'ไม่พบ repository หรือรหัสสิทธิ์เข้าถึง repository นี้ไม่ได้',409:'มีข้อมูลใหม่บน GitHub กรุณาตรวจสอบก่อนเผยแพร่อีกครั้ง',422:'GitHub ไม่รับการอัปเดต อาจมีข้อมูลใหม่จากผู้ใช้อื่น กรุณาโหลดใหม่'};
       throw Error(hints[response.status]||'GitHub ตอบกลับข้อผิดพลาด '+response.status);
@@ -36,7 +46,7 @@ export async function publishDatasets(api,datasets,summary,onProgress=()=>{}) {
   // Upload blobs sequentially: a failed stage never advances the branch.
   const entries=[];
   for(let i=0;i<changed.length;i++) {
-    onProgress(`กำลังส่งชุดข้อมูล ${i+1} / ${changed.length}`);
+    onProgress(`กำลังส่งชุดข้อมูล ${i+1} / ${changed.length} · ${changed[i].name}`);
     const d=changed[i]; const blob=await api('/git/blobs','POST',{content:d.content,encoding:'utf-8'});
     entries.push({path:d.name,mode:'100644',type:'blob',sha:blob.sha});
   }
