@@ -100,6 +100,8 @@ body { padding: 0; }
 .b68-grp:hover { background: rgb(255 255 255 / .08); }
 .b68-menu { display: flex; flex-direction: column; }
 .b68-menu[hidden] { display: none; }
+/* anything the page hides stays hidden, whatever display its class sets */
+.b68 [hidden] { display: none !important; }
 .b68-menu button { padding: 10px 14px 10px 30px; color: rgb(255 255 255 / .9); }
 .b68-menu button:hover { background: rgb(255 255 255 / .08); color: #fff; }
 .b68-menu button[aria-current="true"] { background: var(--b-navy-2); color: #fff; font-weight: 700; }
@@ -257,21 +259,51 @@ body { padding: 0; }
 .b68-note { font-size: 13.5px; color: var(--b-muted); padding: 10px 18px 14px; }
 .b68-legend { font-size: 13.5px; }
 .b68-tip { font-size: 13.5px; line-height: 1.5; }
+.b68-mtoggle { display: none; }
+/* phone: the menu folds into one bar at the top; tapping it opens the full menu */
 @media (max-width: 760px) {
   .b68 { grid-template-columns: minmax(0, 1fr); border-radius: 0; }
-  .b68-side { padding: 8px 0; gap: 6px; }
-  .b68-brand, .b68-grp { display: none !important; }
-  .b68-menu, .b68-menu[hidden] { display: flex; flex-direction: row; overflow-x: auto; }
-  .b68-menu button { white-space: nowrap; padding: 8px 10px; width: auto; }
-  .b68-main { padding: 10px; }
-  .b68-top { position: static; }
+  .b68-side { position: sticky; top: 0; z-index: 20; padding: 0; gap: 0; box-shadow: 0 2px 8px rgb(0 0 0 / .25); }
+  .b68-brand { display: none; }
+  .b68-mtoggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; background: none; border: 0; color: #fff; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+  .b68-mtoggle svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+  .b68-mtoggle span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .b68-nav { display: none; position: static; max-height: calc(100dvh - 48px); overflow-y: auto; padding-bottom: 8px; }
+  .b68-side.open .b68-nav { display: flex; }
+  .b68-menu button { padding: 11px 14px 11px 28px; }
+  .b68-main { padding: 8px; gap: 10px; }
+  .b68-top { position: static; padding: 10px 12px; gap: 8px; }
+  .b68-title { font-size: 1.1rem; }
+  .b68-filters { gap: 8px 12px; }
+  .b68-intro { padding: 12px 14px; }
+  .b68-intro h2 { font-size: 1.15rem; }
+  .b68-intro p { font-size: 13px; line-height: 1.6; }
+  .b68-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  .b68-card { padding: 12px 10px 10px; gap: 4px; }
+  .b68-card:has(.v.txt) { grid-column: 1 / -1; }
+  .b68-card h3 { font-size: 12.5px; }
+  .b68-card .v { font-size: 1.55rem; }
+  .b68-card .s { font-size: 12.5px; line-height: 1.45; }
+  .b68-band { font-size: 14.5px; padding: 9px 12px; }
+  .b68-tools { padding: 10px 12px 4px; gap: 8px 10px; }
+  .b68-tools label.b68-f { flex: 1 1 9rem; }
+  .b68-tools .b68-select, .b68-tools .b68-search { width: 100%; }
+  .b68-seg { max-width: 100%; overflow-x: auto; }
+  .b68-seg button { padding: 7px 12px; font-size: 13.5px; white-space: nowrap; }
+  .b68-wrap { max-height: 70vh; }
+  .b68-t { font-size: 13px; }
+  .b68-t th { font-size: 12px; padding: 8px 9px; }
+  .b68-t td { padding: 7px 9px; }
+  .b68-t td.wrap { min-width: 10rem; }
+  .b68-note { padding: 8px 12px 10px; font-size: 12.5px; }
 }
 </style>
 
 <div class="b68">
   <aside class="b68-side">
     <div class="b68-brand">Store 68 Salaya<span>District 5</span></div>
-    <nav class="b68-nav" aria-label="Menu">
+    <button type="button" class="b68-mtoggle" aria-expanded="false" aria-controls="b68-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="m-page">เมนู</span></button>
+    <nav class="b68-nav" id="b68-nav" aria-label="Menu">
       <div class="b68-group">
         <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-sales">
           <span>Overall Trend</span>
@@ -1694,10 +1726,15 @@ body { padding: 0; }
     $('#topic-name').textContent = btn.closest('.b68-group').querySelector('.b68-grp span').textContent;
     // Date Period only matters on pages that read it (Shrinkage and O2O files are MTD only)
     $('#f-period-wrap').hidden = pages.every((pg) => /^t\d/.test(pg) || pg === 'shrink' || pg === 'o2o');
+    $('#m-page').textContent = `${$('#topic-name').textContent} · ${btn.textContent.trim()}`;
+    showMenu(false);
     if (push) dash.setLink(btn.id.slice(4));
     draw();
     if (scroll) root.scrollIntoView({ block: 'start' });
   }
+  // phone menu: one bar that opens the full menu
+  const showMenu = (open) => { $('.b68-side').classList.toggle('open', open); $('.b68-mtoggle').setAttribute('aria-expanded', String(open)); };
+  $('.b68-mtoggle').addEventListener('click', () => showMenu(!$('.b68-side').classList.contains('open')));
   $$('.b68-menu button').forEach((b) => b.addEventListener('click', () => goTo(b.id.slice(4), true)));
   $$('.b68-grp').forEach((g) => g.addEventListener('click', () => {
     const open = g.getAttribute('aria-expanded') !== 'true';
