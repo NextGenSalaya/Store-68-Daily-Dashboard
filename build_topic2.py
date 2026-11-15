@@ -13,14 +13,16 @@ import openpyxl
 warnings.filterwarnings("ignore")
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
+# the Excel files are looked for here; EXCEL_DIR (set by daily_build.py) narrows it to a day folder (+ fill-ins)
+XL = os.environ.get("EXCEL_DIR") or HERE
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "data_t2")
 os.makedirs(OUT, exist_ok=True)
 
 
 def find(pattern):
-    hits = sorted(glob.glob(os.path.join(HERE, "**", pattern), recursive=True), key=os.path.getmtime)
+    hits = sorted([h for d in XL.split(os.pathsep) for h in glob.glob(os.path.join(d, "**", pattern), recursive=True)], key=os.path.getmtime)
     if not hits:
-        sys.exit(f"{pattern} not found under {HERE}")
+        sys.exit(f"{pattern} not found under {XL}")
     print("reading", hits[-1])
     return hits[-1]
 

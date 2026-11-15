@@ -16,15 +16,17 @@ import openpyxl
 warnings.filterwarnings("ignore")
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
+# the Excel files are looked for here; EXCEL_DIR (set by daily_build.py) narrows it to a day folder (+ fill-ins)
+XL = os.environ.get("EXCEL_DIR") or HERE
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "data_t5")
 os.makedirs(OUT, exist_ok=True)
 meta = []
 
 
 def find(pattern):
-    hits = sorted(glob.glob(os.path.join(HERE, "**", pattern), recursive=True), key=os.path.getmtime)
+    hits = sorted([h for d in XL.split(os.pathsep) for h in glob.glob(os.path.join(d, "**", pattern), recursive=True)], key=os.path.getmtime)
     if not hits:
-        sys.exit(f"{pattern} not found under {HERE}")
+        sys.exit(f"{pattern} not found under {XL}")
     print("reading", hits[-1])
     return hits[-1]
 
@@ -486,7 +488,7 @@ save("t5_soft", [{"key": day(r[0]), "date": day(r[0]), "label": txt(r[1]), "soft
 # ---------- Central Replenishment (Min-Max) ----------
 # items still in play: Active / Inactive, or anything with stock or on order. Flags (0/1) are summed per division by the page:
 # act = Active, zero = Active with stock <= 0, below = Active under Min, over = Active over Max, err = Min = Max (the file's remark)
-rp = sorted(glob.glob(os.path.join(HERE, "**", "ST.68 CentralReplenishmentList_Report*.xlsx"), recursive=True), key=os.path.getmtime)
+rp = sorted([h for d in XL.split(os.pathsep) for h in glob.glob(os.path.join(d, "**", "ST.68 CentralReplenishmentList_Report*.xlsx"), recursive=True)], key=os.path.getmtime)
 if rp:
     print("reading", rp[-1])
     REPL_DIV = {"1": "DRY FOOD", "2": "FRESH FOOD", "3": "NON FOOD"}

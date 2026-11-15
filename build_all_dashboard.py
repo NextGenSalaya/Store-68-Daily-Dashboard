@@ -11,12 +11,14 @@ from openpyxl.utils import column_index_from_string as ci, get_column_letter as 
 warnings.filterwarnings("ignore")
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
+# the Excel files are looked for here; EXCEL_DIR (set by daily_build.py) narrows it to a day folder (+ fill-ins)
+XL = os.environ.get("EXCEL_DIR") or HERE
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "data_ad")
 os.makedirs(OUT, exist_ok=True)
 
-found = sorted(glob.glob(os.path.join(HERE, "**", "All Dashboard Store68*.xlsx"), recursive=True), key=os.path.getmtime)
+found = sorted([h for d in XL.split(os.pathsep) for h in glob.glob(os.path.join(d, "**", "All Dashboard Store68*.xlsx"), recursive=True)], key=os.path.getmtime)
 if not found:
-    sys.exit("All Dashboard Store68.xlsx not found under " + HERE)
+    sys.exit("All Dashboard Store68.xlsx not found under " + XL)
 SRC = found[-1]
 print("reading", SRC)
 wb = openpyxl.load_workbook(SRC, data_only=True)
@@ -163,7 +165,7 @@ for r in range(4, ws.max_row + 1):
         cats.append(rec)
 # classes in no category (from ST.68 Sales By Category, its "Check Diff") form a group per store division and join the
 # store total, so the Category total equals the store's sales
-cat_files = sorted(glob.glob(os.path.join(HERE, "**", "ST.68 Sales By Category.xlsx"), recursive=True), key=os.path.getmtime)
+cat_files = sorted([h for d in XL.split(os.pathsep) for h in glob.glob(os.path.join(d, "**", "ST.68 Sales By Category.xlsx"), recursive=True)], key=os.path.getmtime)
 if cat_files:
     from unmapped import unmapped_classes, GROUP, LABEL
     extra = unmapped_classes(cat_files[-1])
@@ -248,7 +250,19 @@ for r in ra_block("A", "H", "B"):
                  "profit_pct": rnd(r["Profit %"])})
 save("top_class", rows)
 
-ly = {code(r["Item Number"]): rnd(r[[k for k in r if k.startswith("Net Sales")][0]], 0) for r in ra_block("BD", "BG", "BE")}
+# the blocks right of the stock table move between days (a block may be dropped), so find each by its title on row 1
+TITLES = {txt(ra.cell(1, c).value): c for c in range(1, ra.max_column + 1) if txt(ra.cell(1, c).value)}
+
+
+def block_at(title, width):
+    """(first, last) column letters of the block whose row-1 title starts with title, or None when the file has none."""
+    c = next((c for t, c in TITLES.items() if t.startswith(title)), None)
+    return (cl(c), cl(c + width - 1)) if c else None
+
+
+ly_at = block_at("8.LY Sales", 4)
+ly = {code(r["Item Number"]): rnd(r[[k for k in r if k.startswith("Net Sales")][0]], 0)
+      for r in ra_block(ly_at[0], ly_at[1], cl(ci(ly_at[0]) + 1))} if ly_at else {}
 rows = []
 for r in ra_block("J", "U", "N"):
     if not num(r["Rank"]):
@@ -265,14 +279,19 @@ save("stock_div", [{"division": re.sub(r"^\d\.", "", txt(r["DIVISION"])), "sales
                     "avg_sales": rnd(r["Avg Sales Amt"], 0), "stock": rnd(r["Stock Amount"], 0), "stock_day": rnd(r["Stock Day"], 1)}
                    for r in ra_block("W", "AA", "W", carry=False) if num(r["Stock Amount"])])
 
-save("aging_items", [{"key": f"{r['Division']}|{int(num(r['RANK']))}", "division": r["Division"], "rank": int(num(r["RANK"])),
-                      "status": txt(r["Status"]), "dept": code(r["Dept"]), "item": code(r["Item Number"]), "desc": txt(r["Item"]),
-                      "price": rnd(r["Price"]), "qty": rnd(r["EOH Qty"], 1), "cost": rnd(r["EOH Cost"], 0),
-                      "last_sold": iso(r["Last Sold Date"]), "last_received": iso(r["Last Received Date"])}
-                     for r in ra_block("AC", "AN", "AH") if num(r["RANK"])])
+ag_at = block_at("5.Top10 Aging", 12)
+if ag_at:
+    save("aging_items", [{"key": f"{r['Division']}|{int(num(r['RANK']))}", "division": r["Division"], "rank": int(num(r["RANK"])),
+                          "status": txt(r["Status"]), "dept": code(r["Dept"]), "item": code(r["Item Number"]), "desc": txt(r["Item"]),
+                          "price": rnd(r["Price"]), "qty": rnd(r["EOH Qty"], 1), "cost": rnd(r["EOH Cost"], 0),
+                          "last_sold": iso(r["Last Sold Date"]), "last_received": iso(r["Last Received Date"])}
+                         for r in ra_block(ag_at[0], ag_at[1], cl(ci(ag_at[0]) + 5)) if num(r["RANK"])])
+else:
+    print("aging_items: this file has no Top10 Aging table, the previous data is kept")
 
+sk_at = block_at("TopShk.", 9)
 rows = []
-for r in [dict(zip([t for _, t in header(ra, 1, "BI", "BQ")], [ra.cell(rr, c).value for c in range(ci("BI"), ci("BQ") + 1)]))
+for r in [dict(zip([t for _, t in header(ra, 1, *sk_at)], [ra.cell(rr, c).value for c in range(ci(sk_at[0]), ci(sk_at[1]) + 1)]))
           for rr in range(2, ra.max_row + 1)]:
     if not num(r["TopShk."]):
         continue
@@ -284,7 +303,8 @@ for r in [dict(zip([t for _, t in header(ra, 1, "BI", "BQ")], [ra.cell(rr, c).va
 shrink_rows = rows  # division is added once the Shk sheet has been read
 
 profit = []
-for lst, c1, c2 in (("กำไรสูงสุด", "BS", "CB"), ("ขาดทุนมากสุด", "CD", "CM")):
+for lst, title in (("กำไรสูงสุด", "Top10 Margin MTD"), ("ขาดทุนมากสุด", "Top 10 Loss Margin MTD")):
+    c1, c2 = block_at(title, 10)
     for r in ra_block(c1, c2, cl(ci(c1) + 4)):
         if not num(r["Rank"]):
             continue
