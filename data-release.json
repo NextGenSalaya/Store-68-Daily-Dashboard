@@ -1,6 +1,6 @@
 {
-  "revision": "5d24f2db-26ae-4e01-ae9b-518c80b4f272",
-  "publishedAt": "2026-11-25T08:53:19.307Z",
+  "revision": "25c1872d-f72d-4db6-b770-574a8c103b29",
+  "publishedAt": "2026-11-25T09:17:33.486Z",
   "groups": [
     {
       "id": "ad",
@@ -42,10 +42,9 @@
     {
       "id": "t5",
       "name": "Stock · สินค้า · ลูกค้ารายคน และหัวข้อเสริม",
-      "files": 37,
-      "rows": 52586,
+      "files": 32,
+      "rows": 48433,
       "dates": [
-        "2026-11-03",
         "2026-11-24",
         "2026-11-25"
       ]
@@ -345,18 +344,6 @@
       "rows": 4
     },
     {
-      "name": "t5_hamper_day.json",
-      "rows": 18
-    },
-    {
-      "name": "t5_hamper_items.json",
-      "rows": 120
-    },
-    {
-      "name": "t5_hamper_sup.json",
-      "rows": 9
-    },
-    {
       "name": "t5_last3.json",
       "rows": 682
     },
@@ -366,7 +353,7 @@
     },
     {
       "name": "t5_meta.json",
-      "rows": 7
+      "rows": 5
     },
     {
       "name": "t5_mu13.json",
@@ -419,14 +406,6 @@
     {
       "name": "t5_t1000_sum.json",
       "rows": 10
-    },
-    {
-      "name": "t5_t4000.json",
-      "rows": 4000
-    },
-    {
-      "name": "t5_t4000_sum.json",
-      "rows": 4
     },
     {
       "name": "t5_top50.json",
