@@ -1,11 +1,11 @@
-"""Topic 5 of the Store 68 Daily Board: stock days, stock MU, aging & NBS, Top 1000 / 4000 / 50 FF, sales by category,
+"""Topic 5 of the Store 68 Daily Board: stock days, stock MU, aging & NBS, Top 1000 / 50 FF, sales by category,
 sale by item, top drop customers, shrinkage by code, last sales 3 days, negative stock, gone forever & discontinue,
-hamper and soft-serve / rotisserie sales. Reads the 19 source files from anywhere under this folder.
+soft-serve / rotisserie sales. Reads the 18 source files from anywhere under this folder.
 
 Customer names and numbers (Top drop Customer) go only to data_private/t5_drop_cust.json, for the private claude.ai
 dashboard; the public datasets in data_t5 only count and sum customers. User ids / comments (Negative stock, Adj
 sheet) are never written out. Sheets whose run date is older than the rest (Top Aging: Item, sum;
-Top1000: store 68, FV..NF2; Top_4000: Data2 with #REF!) are skipped. Percent values are in percent units.
+Top1000: store 68, FV..NF2) are skipped. Percent values are in percent units.
 Usage: python build_topic5.py [out_folder]
 """
 import glob, json, os, re, sys, warnings
@@ -181,30 +181,7 @@ for r in xlsb_rows(f, "RA_NBS")[1:]:
                "cls": code(r[23]) if num(r[23]) else ""})
 save("t5_nbs_items", dedupe(nb))
 
-# ---------- Top 4000 / Top 1000 ----------
-f = find("Top_4000.xlsx")
-ws = sheet(f, "Summary")
-meta.append({"key": "Top 4000 date", "value": day(ws["B4"].value)})
-t4s = []
-for r in ws.iter_rows(min_row=7, max_row=10, max_col=6, values_only=True):
-    if txt(r[0]):
-        t4s.append({"key": txt(r[0]), "label": txt(r[0]), "ff": rnd(r[2]), "df": rnd(r[3]), "nf": rnd(r[4]), "total": rnd(r[5])})
-save("t5_t4000_sum", t4s)
-
-
-t4 = []
-for i, r in enumerate(sheet(f, "Data").iter_rows(min_row=2, max_col=16, values_only=True)):
-    if not txt(r[2]):
-        continue
-    stock, avg, oo = num(r[11]) or 0, num(r[9]) or 0, num(r[14]) or 0
-    flag = ("Stock ≤ 0 ไม่มี Order" if stock <= 0 and oo <= 0 else "Stock ≤ 0 มี Order" if stock <= 0 else
-            "Stock Day < 1" if avg and stock / avg < 1 else "มีของ")
-    t4.append({"key": code(r[2]), "rank": i + 1, "dept": code(r[0]), "division": div_of(r[0]), "cls": code(r[1]), "item": code(r[2]),
-               "name": txt(r[3]), "status": txt(r[4]), "ordering": txt(r[5]), "reorder": txt(r[6]), "last_del": day(r[7]), "last_sold": day(r[8]),
-               "avg_qty": rnd(r[9]), "avg_amt": rnd(r[10]), "stock": rnd(stock), "stock_day": round(stock / avg, 1) if avg else None,
-               "on_order": rnd(oo), "promotion": txt(r[15]), "flag": flag})
-save("t5_t4000", dedupe(t4))
-
+# ---------- Top 1000 ----------
 f = find("St68 Top1000.xlsx")
 ws = sheet(f, "Stock 0")
 t1s = []
@@ -358,34 +335,6 @@ os.makedirs(PRIV, exist_ok=True)
 with open(os.path.join(PRIV, "t5_drop_cust.json"), "w", encoding="utf-8") as f:
     json.dump(cust, f, ensure_ascii=False, separators=(",", ":"))
 print(f"t5_drop_cust: {len(cust)} rows (private, claude.ai link only)")
-
-# ---------- Hamper ----------
-f = find("Sales_Hamper 2026.xlsm")
-ws = sheet(f, "Summary")
-meta.append({"key": "Hamper period", "value": txt(ws["F2"].value)})
-save("t5_hamper_sup", [{"key": code(r[1]) or "Total", "supplier": txt(r[2]) or "Total", "is_total": not txt(r[2]), "stock_qty": rnd(r[3]),
-                        "stock_amt": rnd(r[4]), "ly_qty": rnd(r[5]), "ly_amt": rnd(r[6]), "cy_qty": rnd(r[7]), "cy_amt": rnd(r[8])}
-                       for r in ws.iter_rows(min_row=6, max_row=20, max_col=9, values_only=True) if num(r[3]) is not None])
-hi = []
-for r in sheet(f, "SalesLYCY").iter_rows(min_row=5, max_col=22, values_only=True):
-    if not txt(r[5]):
-        continue
-    hi.append({"key": code(r[5]), "dept": code(r[1]), "cls": code(r[3]), "item": code(r[5]), "desc": txt(r[6]), "ly_qty": rnd(r[7]),
-               "ly_amt": rnd(r[8]), "ly_profit": rnd(r[9]), "cy_qty": rnd(r[11]), "cy_amt": rnd(r[12]), "cy_profit": rnd(r[13]),
-               "var": rnd(r[15]), "soh": rnd(r[19]), "soh_cost": rnd(r[20]), "on_order": rnd(r[21])})
-save("t5_hamper_items", dedupe(hi))
-ws = sheet(f, "Daily_Sales")
-rows = list(ws.iter_rows(min_row=4, max_col=40, values_only=True))
-dates = rows[0]
-hd = []
-for c in range(4, 40, 2):
-    dd = day(dates[c])
-    if not dd:
-        continue
-    q = sum(num(r[c]) or 0 for r in rows[2:] if txt(r[2]))
-    a = sum(num(r[c + 1]) or 0 for r in rows[2:] if txt(r[2]))
-    hd.append({"key": dd, "date": dd, "qty": round(q, 2), "amount": round(a, 2)})
-save("t5_hamper_day", hd)
 
 # ---------- Shrinkage by code MTD ----------
 ws = sheet(find("Shrinkage_by_code_by_Div_MTD.xlsx"))

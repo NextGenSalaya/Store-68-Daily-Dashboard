@@ -201,7 +201,7 @@
           <button type="button" id="tab-category" data-page="category t5cat">Category &amp; Class</button>
           <button type="button" id="tab-items" data-page="items t5item">สินค้า &amp; Top Drop Customer</button>
           <button type="button" id="tab-t3ff" data-page="t3ff t5top50">Fresh Food Sale &amp; Top 50</button>
-          <button type="button" id="tab-t5hamper" data-page="t5hamper t5soft">Hamper &amp; Soft-serve</button>
+          <button type="button" id="tab-t5soft" data-page="t5soft">Soft-serve &amp; Rotisserie</button>
         </div>
       </div>
       <div class="b68-group">
@@ -2621,18 +2621,13 @@
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['provision', 'Provision %', 'txt'], ['qty', 'EOH Qty', 'n0'], ['cost', 'EOH Cost (บาท)', 'n0']] }],
     },
     t5top: {
-      title: 'Top 1000 & Top 4000', intro: () => `สินค้าขายดี 1,000 และ 4,000 อันดับแรก · Stock 0 และ Stock Day < 1 แยกว่ามี Order แล้วหรือยัง · Top 4000 ข้อมูล ณ ${metaT5('Top 4000 date')} · File St68 Top1000 (Sheet Stock 0, Data), Top_4000 (Sheet Summary, Data) · Sheet store 68 และ FV–NF2 เป็นข้อมูลเดือน ม.ค. จึงไม่ได้ใช้`,
-      cards: (dv) => {
+      title: 'Top 1000', intro: () => 'สินค้าขายดี 1,000 อันดับแรก · Stock 0 และ Stock Day < 1 แยกว่ามี Order แล้วหรือยัง · File St68 Top1000 (Sheet Stock 0, Data)',
+      cards: () => {
         const t = (ok('t5_t1000_sum') || []).find((r) => r.key === 'Total') || {};
-        const f = { 'FRESH FOOD': 'ff', 'DRY FOOD': 'df', 'NON FOOD': 'nf', ALL: 'total' }[dv];
-        const s4 = (k) => ((ok('t5_t4000_sum') || []).find((r) => r.key === k) || {});
         return [{ title: 'Top 1000 · Stock 0 (รายการ)', v: n0(t.s0), cls: t.s0 ? 'down' : '', src: 't5_t1000_sum', field: 's0', where: 'key=Total',
           subs: [{ label: 'ยังไม่สั่ง', v: n0(t.s0_no), cls: 'down', src: 't5_t1000_sum', field: 's0_no', where: 'key=Total' }] },
         { title: 'Top 1000 · Stock Day < 1', v: n0(t.sd1), src: 't5_t1000_sum', field: 'sd1', where: 'key=Total',
-          subs: [{ label: 'ยังไม่สั่ง', v: n0(t.sd1_no), src: 't5_t1000_sum', field: 'sd1_no', where: 'key=Total' }] },
-        { title: `Top 4000 มีของ · ${divLabel()}`, v: n0(s4('Item in Stock')[f]), src: 't5_t4000_sum', field: f, where: 'key=Item in Stock' },
-        { title: 'Top 4000 · Stock ≤ 0 ไม่มี Order', v: n0(s4('Stock <= 0   Not On Order')[f]), cls: 'down', src: 't5_t4000_sum', field: f, where: 'key=Stock <= 0   Not On Order',
-          subs: [{ label: 'มี Order', v: n0(s4('Stock <= 0   On Order')[f]), src: 't5_t4000_sum', field: f, where: 'key=Stock <= 0   On Order' }] }];
+          subs: [{ label: 'ยังไม่สั่ง', v: n0(t.sd1_no), src: 't5_t1000_sum', field: 'sd1_no', where: 'key=Total' }] }];
       },
       charts: [{ id: 'ch-t5t1', band: 'Top 1000 · Stock 0 ตาม Section (รายการ)', src: 't5_t1000_sum',
         data: () => (ok('t5_t1000_sum') || []).filter((r) => r.key !== 'Total').map((r) => ({ label: r.section, v: r.s0, color: cssv('--b-down'), tip: [['มี Order', n0(r.s0_oo)], ['ยังไม่สั่ง', n0(r.s0_no)], ['Stock Day < 1', n0(r.sd1)]] })), fmt: n0 }],
@@ -2643,10 +2638,7 @@
           cols: [['rank', 'อันดับ', 'n0'], ['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['name', 'Item Name', 'txt', { wrap: true }], ['supplier', 'Supplier', 'txt', { wrap: true }],
             ['reorder', 'Reorder', 'txt'], ['avg_qty', 'Avg Sales 28 วัน', 'n2'], ['stock', 'Stock', 'n2', { tone: (v) => (v <= 0 ? 'down' : '') }], ['stock_day', 'Stock Day', 'n1'], ['on_order', 'On Order', 'n2'],
             ['flag', 'สถานะ', 'txt', { tone: (v) => (v !== 'มีของ' ? 'down' : '') }], ['last_del', 'ส่งล่าสุด', 'txt'], ['last_sold', 'ขายล่าสุด', 'txt']] },
-        { id: 'tb-t5t4', band: 'Top 4000 รายการ', src: 't5_t4000', dept: true, filters: [['flag', 'สถานะ'], ['reorder', 'Reorder Way']], q: ['item', 'name'],
-          cols: [['rank', 'อันดับ', 'n0'], ['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['name', 'Item Name', 'txt', { wrap: true }], ['status', 'Status', 'txt'],
-            ['reorder', 'Reorder', 'txt'], ['avg_qty', 'Avg Sales 28 วัน', 'n2'], ['avg_amt', 'Avg Sales (บาท)', 'n0'], ['stock', 'Stock', 'n2', { tone: (v) => (v <= 0 ? 'down' : '') }], ['stock_day', 'Stock Day', 'n1'],
-            ['on_order', 'On Order', 'n2'], ['flag', 'สถานะ', 'txt', { tone: (v) => (v !== 'มีของ' ? 'down' : '') }], ['last_sold', 'ขายล่าสุด', 'txt']] }],
+      ],
     },
     t5top50: {
       title: 'Top 50 Fresh Food', intro: () => `สินค้าขายดีของแต่ละ Section ใน Fresh Food · ยอดวันนี้ ราคา Stock ยอด MTD เทียบปีก่อน · ข้อมูล ณ ${metaT5('Top 50 FF date')} · File St.68 Top50FF · หน้านี้มีเฉพาะ FRESH FOOD`,
@@ -2778,24 +2770,6 @@
             ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0'], ['last_sale', 'ขายล่าสุด', 'txt']] },
         { id: 'tb-t5dsi', band: 'Discontinue · รายการ', src: 't5_disc_items', q: ['item', 'desc'], sorts: [['Stock มากสุด', (a, b) => (b.stock_amt || 0) - (a.stock_amt || 0)]],
           cols: [['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['on_order', 'On Order', 'n0'], ['stock_qty', 'Stock', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'], ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0'], ['last_sale', 'ขายล่าสุด', 'txt']] }],
-    },
-    t5hamper: {
-      title: 'Hamper 2026', intro: () => `กระเช้า / ของขวัญปีใหม่ ช่วง ${metaT5('Hamper period')} · Stock และยอดขาย 2026 เทียบ 2025 ตาม Supplier และรายสินค้า · File Sales_Hamper 2026`,
-      cards: () => {
-        const t = (ok('t5_hamper_sup') || []).find((r) => r.is_total) || {};
-        const w = `key=${t.key}`;
-        return [{ title: 'ยอดขาย 2026 (บาท)', v: n0(t.cy_amt), src: 't5_hamper_sup', field: 'cy_amt', where: w, subs: [{ label: '2025', v: n0(t.ly_amt), src: 't5_hamper_sup', field: 'ly_amt', where: w }] },
-          { title: 'จำนวนที่ขาย 2026 (ชิ้น)', v: n0(t.cy_qty), src: 't5_hamper_sup', field: 'cy_qty', where: w, subs: [{ label: '2025', v: n0(t.ly_qty), src: 't5_hamper_sup', field: 'ly_qty', where: w }] },
-          { title: 'Stock คงเหลือ (บาท)', v: n0(t.stock_amt), src: 't5_hamper_sup', field: 'stock_amt', where: w, subs: [{ label: 'ชิ้น', v: n0(t.stock_qty), src: 't5_hamper_sup', field: 'stock_qty', where: w }] }];
-      },
-      charts: [{ id: 'ch-t5hd', band: 'ยอดขาย Hamper รายวัน (บาท)', src: 't5_hamper_day', kind: 'bic',
-        data: () => (ok('t5_hamper_day') || []).map((r) => ({ x: r.date, label: r.date.slice(8), cy: r.amount })) }],
-      tables: [
-        { id: 'tb-t5hs', band: 'ตาม Supplier', src: 't5_hamper_sup', nodiv: true,
-          cols: [['supplier', 'Supplier', 'txt', { wrap: true }], ['stock_qty', 'Stock (ชิ้น)', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'], ['ly_qty', '2025 ชิ้น', 'n0'], ['ly_amt', '2025 บาท', 'n0'], ['cy_qty', '2026 ชิ้น', 'n0'], ['cy_amt', '2026 บาท', 'n0']] },
-        { id: 'tb-t5hi', band: 'รายสินค้า', src: 't5_hamper_items', nodiv: true, q: ['item', 'desc'], sorts: [['ขาย 2026 สูงสุด', (a, b) => (b.cy_amt || 0) - (a.cy_amt || 0)], ['Stock มากสุด', (a, b) => (b.soh_cost || 0) - (a.soh_cost || 0)]],
-          cols: [['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['ly_qty', '2025 ชิ้น', 'n0'], ['ly_amt', '2025 บาท', 'n0'], ['cy_qty', '2026 ชิ้น', 'n0'], ['cy_amt', '2026 บาท', 'n0'], ['cy_profit', 'กำไร 2026', 'n0', { tone: TONE.sign }],
-            ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }], ['soh', 'SOH', 'n0'], ['soh_cost', 'SOH Cost', 'n0'], ['on_order', 'On Order', 'n0']] }],
     },
     t5soft: {
       title: 'Soft-serve & Rotisserie', intro: () => 'ยอดขายไอศกรีม Soft-serve ไก่อบ Rotisserie และทุเรียน รายวัน (จำนวนและบาท) · File St.68 Soft-servers Rotisserie chicken sales (Sheet Sum)',

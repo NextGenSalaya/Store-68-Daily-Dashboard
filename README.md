@@ -8,7 +8,7 @@ Dashboard ประจำวันของ Makro สาขา 68 Salaya (Distri
 
 | หัวข้อ | หน้า |
 |---|---|
-| Overall Trend | ยอดขาย & ลูกค้า, Category, Class & สินค้า, Sale by Item & Top Drop Customer, Fresh Food Sale & Top 50, Hamper & Soft-serve |
+| Overall Trend | ยอดขาย & ลูกค้า, Category, Class & สินค้า, Sale by Item & Top Drop Customer, Fresh Food Sale & Top 50, Soft-serve & Rotisserie |
 | Stock & Order | Stock & Stock Days, Stock ใกล้หมด & ติดลบ, Over Stock & On Order, Aging NBS & Clearance, Top Items & Item List |
 | Service Level · KVI | Service level, KVI · OB · Makro Mail Monitoring, KVI Price Survey List, Pack & Component |
 | Shrinkage | Shrinkage ภาพรวม & แผนก, Shrinkage by Code |
@@ -26,7 +26,7 @@ Dashboard ประจำวันของ Makro สาขา 68 Salaya (Distri
 4. ใส่ Fine-grained GitHub personal access token ที่อนุญาตเฉพาะ repository นี้ และมีสิทธิ์ **Contents: Read and write** รหัสนี้อยู่ในหน่วยความจำเฉพาะตอนส่งข้อมูล ไม่บันทึกไว้ใน localStorage/sessionStorage หรือซอร์ส
 5. ยืนยันการเผยแพร่ แล้วกด **เผยแพร่ข้อมูลใหม่** ระบบส่งเฉพาะ JSON ที่เปลี่ยนเป็น commit เดียว โดยไม่ทับไฟล์หน้าเว็บหรือข้อมูลกลุ่มอื่น และรอให้เว็บยืนยัน `data-release.json` เวอร์ชันใหม่ก่อนแสดงว่าสำเร็จ
 
-รองรับ 31 ไฟล์ต้นฉบับตามชื่อ/โครงสร้างรายงานเดิม รวม `.xlsx`, `.xlsm`, `.xls`, `.xlsb` ต้องเลือกไฟล์ครบสำหรับแต่ละกลุ่ม ไม่ประมวลผลบางส่วนเมื่อไฟล์ขาด ใช้ค่าผลลัพธ์สูตรที่ Excel บันทึกไว้ จึงควรเปิดคำนวณและบันทึกไฟล์ใน Excel ก่อนนำเข้า แนะนำใช้คอมพิวเตอร์และเปิดแท็บไว้ระหว่างประมวลผล
+รองรับ 30 ไฟล์ต้นฉบับตามชื่อ/โครงสร้างรายงานเดิม รวม `.xlsx`, `.xlsm`, `.xls`, `.xlsb` ต้องเลือกไฟล์ครบสำหรับแต่ละกลุ่ม ไม่ประมวลผลบางส่วนเมื่อไฟล์ขาด ใช้ค่าผลลัพธ์สูตรที่ Excel บันทึกไว้ จึงควรเปิดคำนวณและบันทึกไฟล์ใน Excel ก่อนนำเข้า แนะนำใช้คอมพิวเตอร์และเปิดแท็บไว้ระหว่างประมวลผล
 
 การเผยแพร่รวมข้อมูลลูกค้ารายคนตามสิทธิ์ที่เจ้าของยืนยันไว้ ผู้เผยแพร่ต้องตรวจสอบข้อมูลและยืนยันในหน้าจอทุกครั้ง ไม่มีการอัปโหลดอัตโนมัติเมื่อเลือกไฟล์ หาก token ไม่มีสิทธิ์หรือหมดอายุ GitHub จะปฏิเสธการเขียน
 

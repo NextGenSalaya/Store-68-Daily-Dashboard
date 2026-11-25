@@ -19,6 +19,8 @@ for f in glob.glob(os.path.join(DATA, "*.json")):
 n = 0
 for d in ("data_ad", "data_t2", "data_t3", "data_t4", "data_t5"):
     for f in glob.glob(os.path.join(HERE, d, "*.json")):
+        if os.path.basename(f) in ["t5_t4000.json","t5_t4000_sum.json","t5_hamper_day.json","t5_hamper_items.json","t5_hamper_sup.json"]:
+            continue
         shutil.copy2(f, DATA)
         n += 1
 CUST = os.path.join(HERE, "data_private", "t5_drop_cust.json")

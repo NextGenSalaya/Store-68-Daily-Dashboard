@@ -12,7 +12,7 @@ GROUPS = [
         ("category", "category t5cat items", "Category, Class & สินค้า"),
         ("t5item", "t5item", "Sale by Item & Top Drop Customer"),
         ("t3ff", "t3ff t5top50", "Fresh Food Sale & Top 50"),
-        ("t5hamper", "t5hamper t5soft", "Hamper & Soft-serve")]),
+        ("t5soft", "t5soft", "Soft-serve & Rotisserie")]),
     ("grp-stock", "Stock & Order", [
         ("stock", "stock t5stock", "Stock & Stock Days"),
         ("t5mu", "t5mu t5watch", "Stock ใกล้หมด & ติดลบ"),
