@@ -77,330 +77,309 @@ body { padding: 0; }
 <body>
 <div class="site-loading" hidden>กำลังโหลดข้อมูล…</div>
 <style>
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap");
-/* Layout: BIC-style store board. Navy menu on the left: each topic (a source file) opens to its pages, one page at a time.
-   A filter bar stays on top; every page opens with a short description and summary cards, then charts and tables.
-   Flat white panels with blue title bands; numbers green when better, red when worse. */
+
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap");
+/* Store 68 board. Navy menu on the left (topic > page); a filter bar stays on top; each page has a short heading,
+summary cards, then white panels with charts and tables. Calm surfaces, one accent blue; green better, red worse. */
 .b68 {
-  --b-blue: #1f63d1; --b-navy: #0b3a8a; --b-navy-2: #07275e; --b-up: #1e9e47; --b-down: #d4343b;
-  --b-ly: #b7bec9; --b-cy: #2f7ce0; --b-bud: #f26b38;
-  --b-ground: color-mix(in srgb, var(--color-fg) 6%, var(--color-bg));
-  font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; color: var(--color-fg);
-  display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); background: var(--b-ground); border-radius: 6px; overflow: hidden;
+--b-blue: #1677ff; --b-navy: #103b70; --b-up: #0f8a43; --b-down: #d92d20;
+--b-ly: #b7bec9; --b-cy: #2f7ce0; --b-bud: #f26b38;
+--b-font: "Sarabun", "Noto Sans Thai", "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
+--b-ground: color-mix(in srgb, #1d5fb8 5%, var(--color-bg));
+--b-line: color-mix(in srgb, var(--color-fg) 11%, transparent);
+--b-soft: color-mix(in srgb, var(--color-fg) 3.5%, var(--color-panel));
+--b-head: var(--b-soft);
+--b-muted: color-mix(in srgb, var(--color-fg) 62%, var(--color-bg));
+--b-ink: color-mix(in srgb, var(--color-fg) 35%, #103b70);
+--b-shadow: 0 1px 2px rgb(16 59 112 / .05), 0 2px 8px rgb(16 59 112 / .04);
+font-family: var(--b-font); font-size: 15px; line-height: 1.55; font-variant-numeric: tabular-nums; color: var(--color-fg);
+display: grid; grid-template-columns: 15rem minmax(0, 1fr); background: var(--b-ground); border-radius: 10px; overflow: clip;
 }
-.b68-side { background: var(--b-navy); color: #fff; padding: 16px 0; display: flex; flex-direction: column; gap: 12px; }
-.b68-brand { font-weight: 600; font-size: 1.05rem; padding: 4px 18px 12px; border-bottom: 1px solid rgb(255 255 255 / .2); }
-.b68-brand span { display: block; font-weight: 400; font-size: 12px; opacity: .75; margin-top: 2px; }
-.b68-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
-.b68-nav button { background: none; border: 0; text-align: left; font: inherit; cursor: pointer; color: #fff; width: 100%; }
-.b68-nav button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
-.b68-grp { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; font-weight: 700 !important; font-size: 1.02rem !important; }
-.b68-grp svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
-.b68-grp[aria-expanded="false"] svg { transform: rotate(180deg); }
-.b68-grp:hover { background: rgb(255 255 255 / .08); }
-.b68-menu { display: flex; flex-direction: column; }
-.b68-menu[hidden] { display: none; }
-/* anything the page hides stays hidden, whatever display its class sets */
+.b68 button, .b68 select, .b68 input, .b68 svg text { font-family: var(--b-font); }
 .b68 [hidden] { display: none !important; }
-.b68-menu button { padding: 10px 14px 10px 30px; color: rgb(255 255 255 / .9); }
-.b68-menu button:hover { background: rgb(255 255 255 / .08); color: #fff; }
-.b68-menu button[aria-current="true"] { background: var(--b-navy-2); color: #fff; font-weight: 700; }
-
-.b68-main { min-width: 0; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-.b68-top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; flex-direction: column; gap: 10px; background: var(--color-panel);
-  border: 1px solid var(--color-border-line); border-radius: 4px; padding: 10px 14px; }
-.b68-title { margin: 0; font-size: 1.2rem; font-weight: 600; text-wrap: balance; }
-.b68-sub { margin: 2px 0 0; font-size: 12px; color: var(--color-fg-muted); }
-.b68-sub b { color: var(--color-fg); font-weight: 600; }
-.b68-filters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end; }
-.b68-f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--color-fg-muted); }
-.b68-select, .b68-search { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--color-border-line); border-radius: 2px;
-  background: var(--color-bg); color: var(--color-fg); min-width: 10rem; }
-.b68-search { width: min(100%, 16rem); }
-.b68-reset { border: 1px solid var(--b-blue); color: var(--b-blue); background: var(--color-panel); padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; border-radius: 2px; }
-.b68-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
-.b68-seg button { border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; border-radius: 2px; }
-.b68-seg button[aria-pressed="true"] { background: var(--b-blue); border-color: var(--b-blue); color: #fff; }
-.b68-seg button:focus-visible, .b68-reset:focus-visible, .b68-select:focus-visible, .b68-search:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 2px; }
-
-.b68-page { display: flex; flex-direction: column; gap: 12px; }
-.b68-intro { background: var(--color-panel); border: 1px solid var(--color-border-line); border-left: 0; border-radius: 4px; padding: 10px 14px; }
-.b68-intro h2 { margin: 0 0 2px; font-size: 1.15rem; font-weight: 700; }
-.b68-intro p { margin: 0; color: var(--color-fg-muted); font-size: 13px; max-width: 70rem; }
-.b68-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 12px; }
-.b68-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 4px; padding: 12px 14px; text-align: center;
-  display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.b68-card h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--color-fg-muted); }
-.b68-card .v { font-size: 1.9rem; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
-.b68-card .v.txt { font-size: 1.05rem; line-height: 1.35; }
-.b68-card .s { font-size: 12.5px; color: var(--color-fg-muted); }
-.b68-card .s b { font-weight: 600; }
-.b68-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: 12px; align-items: start; }
-.b68-panel { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 4px; min-width: 0; overflow: hidden; }
-.b68-band { background: var(--b-blue); color: #fff; text-align: center; font-weight: 600; padding: 6px 10px; }
-.b68-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px 0; }
-.b68-wrap { overflow: auto; max-height: 34rem; }
-.b68-t { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-.b68-t th { position: sticky; top: 0; background: var(--color-panel); padding: 7px 9px; text-align: right; font-weight: 600; border-bottom: 1px solid var(--color-border-line);
-  white-space: nowrap; color: var(--color-fg-muted); font-size: 12.5px; z-index: 1; }
-.b68-t td { padding: 6px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid color-mix(in srgb, var(--color-border-line) 55%, transparent); }
-.b68-t th.l, .b68-t td.l { text-align: left; }
-.b68-t td.wrap { white-space: normal; min-width: 11rem; }
-.b68-t tbody tr:hover td { background: var(--b-ground); }
-.b68-t tr.total td { font-weight: 700; border-top: 1.5px solid var(--color-fg-muted); background: var(--b-ground); }
 .b68 .up { color: var(--b-up); }
 .b68 .down { color: var(--b-down); }
-.b68-note { margin: 0; padding: 6px 12px 10px; font-size: 12px; color: var(--color-fg-muted); }
-.b68-sum { margin: 8px 10px 4px; padding: 8px 12px; background: var(--b-ground); border-radius: 4px; font-size: 14px; }
-.b68-sum b { font-size: 1.05rem; }
-.b68-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; padding: 8px 12px 0; color: var(--color-fg-muted); }
-.b68-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
-.b68-chart { position: relative; padding: 0 8px 6px; min-height: 330px; }
-.b68-chart.h { min-height: 160px; padding: 8px 10px; }
-.b68-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius);
-  box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
-.b68-tip .k { color: var(--cds-text-secondary); }
-.b68 [data-dash-source-state=empty] { color: transparent; }
-.b68 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-.b68-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.b68-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
-/* Finish: Segoe UI as in BIC with Leelawadee UI for Thai (both ship with Windows), softer panels, roomier tables */
-.b68 {
-  --b-font: "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, var(--font-anthropic-sans), sans-serif;
-  --b-ground: color-mix(in srgb, #1f63d1 5%, var(--color-bg));
-  --b-head: color-mix(in srgb, #1f63d1 9%, var(--color-panel));
-  --b-zebra: color-mix(in srgb, #1f63d1 3%, var(--color-panel));
-  --b-ink: color-mix(in srgb, var(--color-fg) 40%, #1f63d1);
-  --b-shadow: 0 1px 2px rgb(15 40 90 / .06), 0 4px 14px rgb(15 40 90 / .06);
-  font-family: var(--b-font); font-size: 14.5px; letter-spacing: .1px; line-height: 1.5;
-  border-radius: 10px;
-}
-.b68 button, .b68 select, .b68 input { font-family: var(--b-font); }
-.b68-side { background: linear-gradient(180deg, #0d47a8 0%, #0b3a8a 45%, #082d6c 100%); }
-.b68-brand { font-size: 1.15rem; letter-spacing: .2px; }
-.b68-menu button { font-size: 14.5px; border-left: 3px solid transparent; }
-.b68-menu button[aria-current="true"] { background: rgb(0 0 0 / .22); border-left-color: #fff; }
-.b68-top, .b68-intro, .b68-card, .b68-panel { border: 0; border-radius: 8px; box-shadow: var(--b-shadow); }
-.b68-top { padding: 14px 18px; gap: 12px; }
-.b68-title { font-size: 1.35rem; font-weight: 700; color: var(--b-ink); }
-.b68-f { font-size: 12px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
-.b68-seg { gap: 0; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px; background: var(--b-ground); }
-.b68-seg button { border: 0; border-radius: 999px; background: transparent; padding: 6px 16px; font-weight: 600; }
-.b68-seg button[aria-pressed="true"] { box-shadow: 0 1px 3px rgb(15 40 90 / .25); }
-.b68-select, .b68-search { border-radius: 6px; padding: 7px 10px; }
-.b68-reset { border-radius: 999px; font-weight: 600; padding: 7px 16px; }
-.b68-intro { padding: 14px 18px; }
-.b68-intro h2 { font-size: 1.3rem; color: var(--b-ink); }
-.b68-intro p { font-size: 14px; line-height: 1.6; }
-.b68-card { padding: 16px 16px 14px; gap: 4px; }
-.b68-card h3 { font-size: 12.5px; font-weight: 600; letter-spacing: .2px; }
-.b68-card .v { font-size: 2.15rem; font-weight: 700; color: var(--b-ink); letter-spacing: -.3px; white-space: nowrap; overflow-wrap: normal; }
+/* menu */
+.b68-side { background: var(--b-navy); color: #fff; padding: 18px 10px; display: flex; flex-direction: column; gap: 14px; }
+.b68-brand { font-weight: 700; font-size: 1.15rem; padding: 2px 10px 14px; border-bottom: 1px solid rgb(255 255 255 / .14); }
+.b68-brand span { display: block; font-weight: 400; font-size: 12.5px; opacity: .65; margin-top: 1px; }
+.b68-nav { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: thin; }
+.b68-nav button { background: none; border: 0; text-align: left; font: inherit; cursor: pointer; color: #fff; width: 100%; border-radius: 8px; }
+.b68-nav button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+.b68-grp { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; font-size: 12.5px; font-weight: 600; letter-spacing: .4px; color: rgb(255 255 255 / .6) !important; }
+.b68-grp:hover { color: #fff !important; }
+.b68-grp svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+.b68-grp[aria-expanded="false"] svg { transform: rotate(180deg); }
+.b68-menu { display: flex; flex-direction: column; gap: 2px; padding-bottom: 6px; }
+.b68-menu button { padding: 8px 12px; font-size: 14px; line-height: 1.4; color: rgb(255 255 255 / .82); }
+.b68-menu button:hover { background: rgb(255 255 255 / .08); color: #fff; }
+.b68-menu button[aria-current="true"] { background: #fff; color: var(--b-navy); font-weight: 600; }
+.b68-mtoggle { display: none; }
+/* top bar */
+.b68-main { min-width: 0; padding: 0 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+.b68-top { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px;
+margin: 0 -24px; padding: 14px 24px; background: color-mix(in srgb, var(--color-panel) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--b-line); }
+.b68-title { margin: 0; font-size: 1.3rem; line-height: 1.3; font-weight: 700; color: var(--b-ink); text-wrap: balance; }
+.b68-sub { margin: 4px 0 0; font-size: 13px; color: var(--b-muted); }
+.b68-sub b { color: var(--color-fg); font-weight: 600; }
+.b68-filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.b68-f { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 500; color: var(--b-muted); }
+.b68-select, .b68-search { font: inherit; font-size: 14px; padding: 7px 12px; min-height: 2.4rem; min-width: 10rem; border: 1px solid var(--b-line); border-radius: 8px; background: var(--color-panel); color: var(--color-fg); }
+.b68-search { width: min(100%, 16rem); }
+.b68-select:hover, .b68-search:hover { border-color: color-mix(in srgb, var(--b-blue) 45%, transparent); }
+.b68-reset { border: 0; background: none; color: var(--b-blue); padding: 8px 6px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 8px; }
+.b68-reset:hover { text-decoration: underline; }
+.b68-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 10px; background: color-mix(in srgb, var(--color-fg) 6%, var(--color-panel)); }
+.b68-seg button { border: 0; background: transparent; color: var(--b-muted); padding: 6px 14px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; border-radius: 8px; }
+.b68-seg button:hover { color: var(--color-fg); }
+.b68-seg button[aria-pressed="true"] { background: var(--color-panel); color: var(--b-blue); box-shadow: 0 1px 3px rgb(16 32 64 / .14); }
+.b68-seg button:focus-visible, .b68-reset:focus-visible, .b68-select:focus-visible, .b68-search:focus-visible, .b68-card.go:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 2px; }
+/* page */
+.b68-page { display: flex; flex-direction: column; gap: 16px; }
+.b68-page:not([hidden]) ~ .b68-page:not([hidden]) { margin-top: 20px; padding-top: 28px; border-top: 1px solid var(--b-line); }
+.b68-intro { padding: 4px 2px 0; }
+.b68-intro h2 { margin: 0 0 4px; font-size: 1.25rem; line-height: 1.35; font-weight: 700; color: var(--b-ink); }
+.b68-intro p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--b-muted); max-width: 72rem; }
+/* summary cards */
+.b68-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 12px; }
+.b68-card { position: relative; background: var(--color-panel); border: 1px solid var(--b-line); border-radius: 14px; box-shadow: var(--b-shadow); padding: 16px 18px; min-width: 0;
+display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.b68-card h3 { margin: 0; font-size: 13.5px; line-height: 1.4; font-weight: 500; color: var(--b-muted); }
+.b68-card .v { font-size: 2.1rem; line-height: 1.2; font-weight: 700; letter-spacing: -.3px; color: var(--b-ink); white-space: nowrap; }
 .b68-card .v.up { color: var(--b-up); }
 .b68-card .v.down { color: var(--b-down); }
-.b68-card .v.txt { font-size: 1.1rem; font-weight: 600; }
-.b68-card .s { font-size: 13px; }
-.b68-band { text-align: left; padding: 9px 16px; font-size: 15px; letter-spacing: .2px; background: linear-gradient(90deg, #1f63d1, #2f7ce0); }
-.b68-t { font-size: 14px; }
-.b68-t th { background: var(--b-head); color: color-mix(in srgb, var(--color-fg) 75%, transparent); font-size: 12.5px; letter-spacing: .2px; padding: 9px 12px; border-bottom: 0; }
-.b68-t td { padding: 8px 12px; }
-.b68-t tbody tr:nth-child(even) td { background: var(--b-zebra); }
-.b68-t tbody tr:hover td { background: color-mix(in srgb, #1f63d1 10%, var(--color-panel)); }
-.b68-t tr.total td { background: var(--b-head); border-top: 1.5px solid color-mix(in srgb, #1f63d1 35%, transparent); }
-.b68-legend { font-size: 12.5px; padding: 10px 16px 0; }
-.b68-note { padding: 8px 16px 12px; font-size: 12.5px; }
-.b68-sum { border-radius: 6px; background: var(--b-head); }
-.b68-tools { padding: 10px 16px 2px; gap: 12px; }
-.b68 svg text { font-family: var(--b-font); }
-/* Readability: one clear Thai/English font, larger text, darker secondary text, more room in tables and between sections */
-.b68 {
-  --b-font: "IBM Plex Sans Thai", "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
-  --b-muted: color-mix(in srgb, var(--color-fg) 68%, var(--color-bg));
-  font-size: 15px; line-height: 1.6; letter-spacing: 0;
-  overflow: clip; /* clips the rounded corners without breaking the sticky menu and filter bar */
-}
-.b68-nav { max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: thin; }
-.b68-brand { font-size: 1.2rem; font-weight: 700; }
-.b68-brand span { font-size: 13px; }
-.b68-grp { font-size: 15px !important; letter-spacing: .2px; padding: 12px 16px; }
-.b68-grp + .b68-menu { padding-bottom: 6px; }
-.b68-group + .b68-group { border-top: 1px solid rgb(255 255 255 / .14); }
-.b68-menu button { font-size: 14.5px; line-height: 1.4; padding: 9px 14px 9px 28px; }
-.b68-title { font-size: 1.45rem; line-height: 1.3; }
-.b68-sub { font-size: 13.5px; color: var(--b-muted); }
-.b68-f { font-size: 12.5px; color: var(--b-muted); text-transform: none; letter-spacing: .2px; }
-.b68-select, .b68-search { font-size: 14.5px; padding: 8px 12px; min-height: 2.5rem; }
-.b68-seg button { font-size: 14px; padding: 7px 16px; }
-.b68-reset { font-size: 14px; padding: 8px 18px; }
-.b68-intro { border-left: 5px solid var(--b-blue); padding: 16px 20px; }
-.b68-intro h2 { font-size: 1.4rem; line-height: 1.35; margin-bottom: 4px; }
-.b68-intro p { font-size: 14.5px; line-height: 1.7; color: var(--b-muted); }
-/* merged menu items stack several sections: give each its own clear start */
-.b68-page[hidden] { display: none; }
-.b68-page:not([hidden]) ~ .b68-page:not([hidden]) { margin-top: 22px; padding-top: 22px; border-top: 2px dashed color-mix(in srgb, var(--b-blue) 30%, transparent); }
-.b68-cards { gap: 14px; }
-.b68-card { padding: 18px 18px 16px; gap: 6px; border-top: 4px solid color-mix(in srgb, var(--b-blue) 70%, transparent); }
-.b68-card h3 { font-size: 14px; line-height: 1.4; color: var(--b-muted); }
-.b68-card .v { font-size: 2.3rem; line-height: 1.15; }
-.b68-card .v.txt { font-size: 1.2rem; line-height: 1.4; white-space: normal; }
-.b68-card .s { font-size: 14px; line-height: 1.55; color: var(--b-muted); }
-.b68-card .s b { color: var(--color-fg); }
+.b68-card .v.txt { font-size: 1.1rem; line-height: 1.4; font-weight: 600; white-space: normal; }
+.b68-card .s { font-size: 13px; line-height: 1.5; color: var(--b-muted); }
+.b68-card .s b { font-weight: 600; color: var(--color-fg); }
 .b68-card .s b.up { color: var(--b-up); }
 .b68-card .s b.down { color: var(--b-down); }
-.b68-card.go { cursor: pointer; }
-.b68-card.go:hover, .b68-card.go:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 1px; }
-.b68-card .go-hint { color: var(--b-blue); font-weight: 600; }
-.b68-band { font-size: 16px; padding: 11px 18px; font-weight: 600; }
-.b68-tools { padding: 12px 18px 4px; gap: 14px; }
-.b68-t { font-size: 14.5px; }
-.b68-t th { font-size: 13.5px; font-weight: 600; color: color-mix(in srgb, var(--color-fg) 82%, transparent); padding: 11px 14px; }
-.b68-t td { padding: 9px 14px; line-height: 1.45; }
-.b68-t td.wrap { min-width: 15rem; }
+.b68-card.go { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.b68-card.go:hover { border-color: color-mix(in srgb, var(--b-blue) 50%, transparent); box-shadow: 0 4px 14px rgb(16 32 64 / .08); }
+.b68-card .go-hint { margin-top: auto; padding-top: 4px; color: var(--b-blue); font-weight: 600; }
+/* panels */
+.b68-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: 16px; align-items: start; }
+.b68-panel { background: var(--color-panel); border: 1px solid var(--b-line); border-radius: 14px; box-shadow: var(--b-shadow); min-width: 0; overflow: hidden; }
+.b68-band { display: flex; align-items: center; gap: 10px; padding: 13px 18px; font-size: 15px; font-weight: 600; color: var(--color-fg); border-bottom: 1px solid var(--b-line); }
+.b68-band::before { content: ""; width: 4px; height: 1.05em; border-radius: 2px; background: var(--b-blue); flex: none; }
+.b68-panel > * + .b68-band, .b68-band[style] { margin-top: 0 !important; border-top: 1px solid var(--b-line); }
+.b68-tools { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; padding: 12px 18px 4px; }
+.b68-wrap { overflow: auto; max-height: 34rem; }
+.b68-t { width: 100%; border-collapse: collapse; font-size: 14px; }
+.b68-t th { position: sticky; top: 0; z-index: 1; background: var(--b-soft); padding: 10px 12px; text-align: right; white-space: nowrap;
+font-size: 12.5px; font-weight: 600; color: var(--b-muted); border-bottom: 1px solid var(--b-line); }
+.b68-t td { padding: 9px 12px; text-align: right; white-space: nowrap; line-height: 1.45; border-bottom: 1px solid color-mix(in srgb, var(--color-fg) 6%, transparent); }
+.b68-t th.l, .b68-t td.l { text-align: left; }
+.b68-t td.wrap { white-space: normal; min-width: 15rem; }
 .b68-t td.up, .b68-t td.down { font-weight: 600; }
-.b68-note { font-size: 13.5px; color: var(--b-muted); padding: 10px 18px 14px; }
-.b68-legend { font-size: 13.5px; }
-.b68-tip { font-size: 13.5px; line-height: 1.5; }
-.b68-mtoggle { display: none; }
+.b68-t tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--color-fg) 2.2%, var(--color-panel)); }
+.b68-t tbody tr:hover td { background: color-mix(in srgb, var(--b-blue) 5%, var(--color-panel)); }
+.b68-t tbody tr:last-child td { border-bottom: 0; }
+.b68-t tr.total td { font-weight: 700; background: var(--b-soft); border-top: 1px solid var(--b-line); }
+.b68-note { margin: 0; padding: 10px 18px 14px; font-size: 12.5px; color: var(--b-muted); border-top: 1px solid color-mix(in srgb, var(--color-fg) 6%, transparent); }
+.b68-sum { margin: 10px 18px 6px; padding: 10px 14px; background: var(--b-soft); border-radius: 8px; font-size: 14px; }
+.b68-sum b { font-size: 1.05rem; }
+.b68-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; padding: 12px 18px 0; color: var(--b-muted); }
+.b68-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+.b68-chart { position: relative; padding: 0 10px 8px; min-height: 330px; }
+.b68-chart.h { min-height: 160px; padding: 10px 14px; }
+.b68-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover, var(--color-panel)); border: 1px solid var(--cds-border, var(--b-line)); border-radius: 8px;
+box-shadow: 0 6px 20px rgb(16 32 64 / .14); padding: 8px 12px; font-size: 13px; line-height: 1.5; white-space: nowrap; z-index: 2; }
+.b68-tip .k { color: var(--b-muted); }
+.b68 [data-dash-source-state=empty] { color: transparent; }
+.b68 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity .3s; }
+.b68-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--b-muted); font-size: 13px; }
+.b68-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--b-down); }
+/* header: store, page, report date vs upload time, Excel update link; menu can fold away on a computer */
+.b68-head { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 26rem; }
+.b68-ht { min-width: 0; flex: 1; }
+.b68-eyebrow { margin: 0; font-size: 12.5px; font-weight: 700; letter-spacing: .6px; color: var(--b-blue); }
+.b68-sub .sep { margin: 0 8px; opacity: .5; }
+.b68-ntoggle, .b68-up { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 10px; text-decoration: none; }
+.b68-ntoggle { flex: none; width: 40px; height: 40px; justify-content: center; border: 1px solid var(--b-line); background: var(--color-panel); color: var(--b-navy); }
+.b68-ntoggle:hover { border-color: var(--b-blue); color: var(--b-blue); }
+.b68-up { flex: none; padding: 9px 16px; background: var(--b-blue); color: #fff; border: 0; }
+.b68-up:hover { background: color-mix(in srgb, var(--b-blue) 85%, #000); }
+.b68 svg.ic { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.b68-ntoggle:focus-visible, .b68-up:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 2px; }
+.b68.nav-off { grid-template-columns: minmax(0, 1fr); }
+.b68.nav-off .b68-side { display: none; }
+.b68-grp > span { display: inline-flex; align-items: center; gap: 8px; }
+.b68-fsum { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--b-muted); }
+.b68-fsum b { color: var(--color-fg); font-weight: 600; }
+.b68-filters { flex: 1 1 100%; padding-top: 12px; border-top: 1px solid var(--b-line); }
+.b68-cards.six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .b68-cards.six { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.b68-watch { list-style: none; margin: 0; padding: 12px 18px 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 8px 20px; font-size: 14px; }
+.b68-watch li { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed var(--b-line); }
+.b68-watch li::before { content: "!"; flex: none; width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; background: var(--b-down); transform: translateY(2px); }
+.b68-watch li.ok::before { content: "✓"; background: var(--b-up); }
+.b68-t td.b68-empty { text-align: center; padding: 22px 12px; color: var(--b-muted); background: none !important; }
 /* phone: the menu folds into one bar at the top; tapping it opens the full menu */
 @media (max-width: 760px) {
-  .b68 { grid-template-columns: minmax(0, 1fr); border-radius: 0; }
-  .b68-side { position: sticky; top: 0; z-index: 20; padding: 0; gap: 0; box-shadow: 0 2px 8px rgb(0 0 0 / .25); }
-  .b68-brand { display: none; }
-  .b68-mtoggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; background: none; border: 0; color: #fff; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
-  .b68-mtoggle svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
-  .b68-mtoggle span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .b68-nav { display: none; position: static; max-height: calc(100dvh - 48px); overflow-y: auto; padding-bottom: 8px; }
-  .b68-side.open .b68-nav { display: flex; }
-  .b68-menu button { padding: 11px 14px 11px 28px; }
-  .b68-main { padding: 8px; gap: 10px; }
-  .b68-top { position: static; padding: 10px 12px; gap: 8px; }
-  .b68-title { font-size: 1.1rem; }
-  .b68-filters { gap: 8px 12px; }
-  .b68-intro { padding: 12px 14px; }
-  .b68-intro h2 { font-size: 1.15rem; }
-  .b68-intro p { font-size: 13px; line-height: 1.6; }
-  .b68-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-  .b68-card { padding: 12px 10px 10px; gap: 4px; }
-  .b68-card:has(.v.txt) { grid-column: 1 / -1; }
-  .b68-card h3 { font-size: 12.5px; }
-  .b68-card .v { font-size: 1.55rem; }
-  .b68-card .s { font-size: 12.5px; line-height: 1.45; }
-  .b68-band { font-size: 14.5px; padding: 9px 12px; }
-  .b68-tools { padding: 10px 12px 4px; gap: 8px 10px; }
-  .b68-tools label.b68-f { flex: 1 1 9rem; }
-  .b68-tools .b68-select, .b68-tools .b68-search { width: 100%; }
-  .b68-seg { max-width: 100%; overflow-x: auto; }
-  .b68-seg button { padding: 7px 12px; font-size: 13.5px; white-space: nowrap; }
-  .b68-wrap { max-height: 70vh; }
-  .b68-t { font-size: 13px; }
-  .b68-t th { font-size: 12px; padding: 8px 9px; }
-  .b68-t td { padding: 7px 9px; }
-  .b68-t td.wrap { min-width: 10rem; }
-  .b68-note { padding: 8px 12px 10px; font-size: 12.5px; }
+.b68 { grid-template-columns: minmax(0, 1fr); border-radius: 0; }
+.b68-side { position: sticky; top: 0; z-index: 20; padding: 0; gap: 0; box-shadow: 0 2px 8px rgb(0 0 0 / .25); }
+.b68-brand { display: none; }
+.b68-mtoggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; background: none; border: 0; color: #fff; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+.b68-mtoggle svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.b68-mtoggle span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b68-nav { display: none; position: static; max-height: calc(100dvh - 48px); padding: 0 8px 10px; }
+.b68-side.open .b68-nav { display: flex; }
+.b68-menu button { padding: 10px 12px; }
+.b68-main { padding: 0 10px 16px; gap: 12px; }
+.b68-top { position: static; margin: 0 -10px; padding: 10px 12px; }
+.b68.nav-off .b68-side { display: flex; }
+.b68-ntoggle, .b68-eyebrow { display: none; }
+.b68-up { padding: 8px 12px; font-size: 13px; }
+.b68-filters { padding-top: 10px; }
+.b68-title { font-size: 1.1rem; }
+.b68-filters { gap: 8px 10px; }
+.b68-intro h2 { font-size: 1.1rem; }
+.b68-intro p { font-size: 13px; }
+.b68-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.b68-card { padding: 12px; border-radius: 10px; }
+.b68-card:has(.v.txt) { grid-column: 1 / -1; }
+.b68-card h3 { font-size: 12.5px; }
+.b68-card .v { font-size: 1.5rem; }
+.b68-card .s { font-size: 12.5px; line-height: 1.45; }
+.b68-band { font-size: 14.5px; padding: 11px 12px; }
+.b68-tools { padding: 10px 12px 4px; gap: 8px 10px; }
+.b68-tools label.b68-f { flex: 1 1 9rem; }
+.b68-tools .b68-select, .b68-tools .b68-search { width: 100%; }
+.b68-seg { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+.b68-seg button { padding: 6px 12px; font-size: 13px; white-space: nowrap; }
+.b68-wrap { max-height: 70vh; }
+.b68-t { font-size: 13px; }
+.b68-t th { font-size: 12px; padding: 8px 9px; }
+.b68-t td { padding: 7px 9px; }
+.b68-t td.wrap { min-width: 10rem; }
+.b68-note { padding: 8px 12px 10px; font-size: 12.5px; }
+}
+
+/* Keep dense tables readable and narrow screens within the viewport. */
+.b68, .b68 * { box-sizing: border-box; }
+.b68-t th { background: var(--color-panel); }
+.b68-grp[aria-expanded="false"] svg.ic { transform: none; }
+@media (max-width: 600px) {
+  .b68-head { flex-wrap: wrap; }
+  .b68-ht { flex-basis: 100%; }
+  .b68-cards.six { grid-template-columns: minmax(0, 1fr); }
+  .b68-sub .sep { display: block; height: 2px; visibility: hidden; }
 }
 </style>
 
 <div class="b68">
   <aside class="b68-side">
-    <div class="b68-brand">Store 68 Salaya<span>District 5</span></div>
-    <button type="button" class="b68-mtoggle" aria-expanded="false" aria-controls="b68-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg><span id="m-page">เมนู</span></button>
-    <nav class="b68-nav" id="b68-nav" aria-label="Menu">
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-sales">
-          <span>Overall Trend</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-sales">
-          <button type="button" id="tab-sales" data-page="sales">ยอดขาย &amp; ลูกค้า</button>
-          <button type="button" id="tab-category" data-page="category t5cat items">Category, Class &amp; สินค้า</button>
-          <button type="button" id="tab-t5item" data-page="t5item">Sale by Item &amp; Top Drop Customer</button>
-          <button type="button" id="tab-t3ff" data-page="t3ff t5top50 t3c52">Fresh Food Sale &amp; Top 50</button>
-          <button type="button" id="tab-t5soft" data-page="t5soft">Soft-serve &amp; Rotisserie</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-stock">
-          <span>Stock &amp; Order</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-stock">
-          <button type="button" id="tab-stock" data-page="stock t5stock">Stock &amp; Stock Days</button>
-          <button type="button" id="tab-t5mu" data-page="t5mu t5watch">Stock ใกล้หมด &amp; ติดลบ</button>
-          <button type="button" id="tab-t4over" data-page="t4over t4floor">Over Stock &amp; On Order</button>
-          <button type="button" id="tab-t5aging" data-page="t5aging t5gone">Aging, NBS &amp; Clearance</button>
-          <button type="button" id="tab-t5top" data-page="t5top t3il">Top Items &amp; Item List</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-repl">
-          <span>Central Replenishment</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-repl">
-          <button type="button" id="tab-t5repl" data-page="t5repl">Stock vs Min-Max</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-svc">
-          <span>Service Level · KVI</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-svc">
-          <button type="button" id="tab-service" data-page="service t2sum">Service level</button>
-          <button type="button" id="tab-t2kvi" data-page="t2items">KVI · OB · Makro Mail Monitoring</button>
-          <button type="button" id="tab-t2survey" data-page="t2survey">KVI Price Survey List</button>
-          <button type="button" id="tab-t2pack" data-page="t2pack">Pack &amp; Component</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-shk">
-          <span>Shrinkage</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-shk">
-          <button type="button" id="tab-shrink" data-page="shrink t3shk">Shrinkage ภาพรวม &amp; แผนก</button>
-          <button type="button" id="tab-t3c20" data-page="t3c20 t5shk">Shrinkage by Code</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-o2o">
-          <span>O2O</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-o2o">
-          <button type="button" id="tab-o2o" data-page="o2o t2ao">O2O ภาพรวม &amp; Orders</button>
-          <button type="button" id="tab-t3top" data-page="t3top">Focus Top 1000 O2O</button>
-          <button type="button" id="tab-t2short" data-page="t2short t2pick">Item Shortage &amp; OOS</button>
-        </div>
-      </div>
-    </nav>
-  </aside>
+<div class="b68-brand">Store 68 Salaya<span>Makro · District 5 · Daily Dashboard</span></div>
+<button type="button" class="b68-mtoggle" aria-expanded="false" aria-controls="b68-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><span id="m-page">ยอดขาย &amp; ภาพรวม · ยอดขาย &amp; ลูกค้า</span></button>
+<nav class="b68-nav" id="b68-nav" aria-label="Menu">
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-sales">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"></path></svg>ยอดขาย &amp; ภาพรวม</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-sales">
+<button type="button" id="tab-sales" data-page="sales" aria-current="true">ยอดขาย &amp; ลูกค้า</button>
+<button type="button" id="tab-category" data-page="category t5cat items" aria-current="false">Category, Class &amp; สินค้า</button>
+<button type="button" id="tab-t5item" data-page="t5item" aria-current="false">Sale by Item &amp; Top Drop Customer</button>
+<button type="button" id="tab-t3ff" data-page="t3ff t5top50 t3c52" aria-current="false">Fresh Food Sale &amp; Top 50</button>
+<button type="button" id="tab-t5soft" data-page="t5soft" aria-current="false">Soft-serve &amp; Rotisserie</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-stock">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4zM4 8l8 4 8-4M12 12v8"></path></svg>Stock &amp; การสั่งซื้อ</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-stock">
+<button type="button" id="tab-stock" data-page="stock t5stock" aria-current="false">Stock &amp; Stock Days</button>
+<button type="button" id="tab-t5mu" data-page="t5mu t5watch" aria-current="false">Stock ใกล้หมด &amp; ติดลบ</button>
+<button type="button" id="tab-t4over" data-page="t4over t4floor" aria-current="false">Over Stock &amp; On Order</button>
+<button type="button" id="tab-t5aging" data-page="t5aging t5gone" aria-current="false">Aging, NBS &amp; Clearance</button>
+<button type="button" id="tab-t5top" data-page="t5top t3il" aria-current="false">Top Items &amp; Item List</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-repl">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"></path></svg>เติมสินค้า (Central Repl.)</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-repl">
+<button type="button" id="tab-t5repl" data-page="t5repl" aria-current="false">Stock vs Min-Max</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-svc">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18z"></path></svg>Service Level &amp; KVI</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-svc">
+<button type="button" id="tab-service" data-page="service t2sum" aria-current="false">Service level</button>
+<button type="button" id="tab-t2kvi" data-page="t2items" aria-current="false">KVI · OB · Makro Mail Monitoring</button>
+<button type="button" id="tab-t2survey" data-page="t2survey" aria-current="false">KVI Price Survey List</button>
+<button type="button" id="tab-t2pack" data-page="t2pack" aria-current="false">Pack &amp; Component</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-shk">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3zM12 10v4M12 17v.5"></path></svg>Shrinkage (ของเสีย)</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-shk">
+<button type="button" id="tab-shrink" data-page="shrink t3shk" aria-current="false">Shrinkage ภาพรวม &amp; แผนก</button>
+<button type="button" id="tab-t3c20" data-page="t3c20 t5shk" aria-current="false">Shrinkage by Code</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-o2o">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11l2-8H6.2M9 20h.01M18 20h.01"></path></svg>O2O &amp; ออนไลน์</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-o2o">
+<button type="button" id="tab-o2o" data-page="o2o t2ao" aria-current="false">O2O ภาพรวม &amp; Orders</button>
+<button type="button" id="tab-t3top" data-page="t3top" aria-current="false">Focus Top 1000 O2O</button>
+<button type="button" id="tab-t2short" data-page="t2short t2pick" aria-current="false">Item Shortage &amp; OOS</button>
+</div>
+</div>
+</nav>
+</aside>
 
   <main class="b68-main">
     <header class="b68-top">
-      <div>
-        <h1 class="b68-title"><span id="topic-name">All Dashboard Store68</span> · <span id="page-name">ยอดขาย &amp; ลูกค้า</span></h1>
-        <p class="b68-sub">ข้อมูล ณ วันที่ <b data-source="kpi" data-field="value" data-where="metric=Data date">—</b> · <a href="upload/" style="color:#1f63d1;font-weight:600">ใส่ไฟล์ Excel / อัปเดตข้อมูล</a></p>
-      </div>
-      <div class="b68-filters">
-        <div class="b68-f" id="f-period-wrap">Date Period
-          <div class="b68-seg" role="group" aria-label="ช่วงเวลา" id="period">
-            <button type="button" data-p="Daily">วันนี้</button><button type="button" data-p="WTD">WTD</button><button type="button" data-p="MTD">MTD</button><button type="button" data-p="YTD">YTD</button>
-          </div>
-        </div>
-        <label class="b68-f" for="f-div">Division
-          <select class="b68-select" id="f-div">
-            <option value="ALL">ทั้งหมด</option><option value="DRY FOOD">DRY FOOD</option><option value="FRESH FOOD">FRESH FOOD</option><option value="NON FOOD">NON FOOD</option>
-          </select>
-        </label>
-        <button type="button" class="b68-reset" id="f-reset">ล้างตัวกรอง</button>
-      </div>
-    </header>
+<div class="b68-head">
+<button type="button" class="b68-ntoggle" aria-expanded="true" aria-controls="b68-nav" aria-label="ซ่อนหรือแสดงเมนู" title="ซ่อน / แสดงเมนู">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+<div class="b68-ht">
+<p class="b68-eyebrow">Store 68 Salaya</p>
+<h1 class="b68-title"><span id="topic-name">ยอดขาย &amp; ภาพรวม</span> · <span id="page-name">ยอดขาย &amp; ลูกค้า</span></h1>
+<p class="b68-sub">ข้อมูลรายงาน ณ <b data-source="kpi" data-field="value" data-where="metric=Data date">—</b><span class="sep">|</span>อัปโหลดล่าสุด <b id="up-at">—</b></p>
+</div>
+<a class="b68-up" href="https://nextgensalaya.github.io/Store-68-Daily-Dashboard/upload/" target="_blank" rel="noopener">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+อัปเดตข้อมูล Excel</a>
+</div>
+<div class="b68-filters">
+<div class="b68-f" id="f-period-wrap">ช่วงเวลา
+<div class="b68-seg" aria-label="ช่วงเวลา" id="period">
+<button type="button" data-p="Daily" aria-pressed="false">วันนี้</button><button type="button" data-p="WTD" aria-pressed="false">WTD</button><button type="button" data-p="MTD" aria-pressed="true">MTD</button><button type="button" data-p="YTD" aria-pressed="false">YTD</button>
+</div>
+</div>
+<label class="b68-f" for="f-div">Division
+<select class="b68-select" id="f-div">
+<option value="ALL">ทั้งหมด</option><option value="DRY FOOD">DRY FOOD</option><option value="FRESH FOOD">FRESH FOOD</option><option value="NON FOOD">NON FOOD</option>
+</select>
+</label>
+<button type="button" class="b68-reset" id="f-reset">ล้างตัวกรอง</button>
+<p class="b68-fsum" id="f-sum" aria-live="polite">กำลังแสดง: ช่วงเวลา <b>MTD</b> · Division <b>ทั้งร้าน</b></p>
+</div>
+</header>
 
     <!-- 1. ยอดขาย & ลูกค้า -->
     <section class="b68-page" id="sales" data-page="sales">
       <div class="b68-intro"><h2>ยอดขาย &amp; ลูกค้า</h2>
         <p>ยอดขายและ Margin เทียบ BG และ LY ตามช่วงเวลาที่เลือก ยอดที่ต้องขายต่อวันเพื่อให้ถึง BG และพฤติกรรมลูกค้าแต่ละกลุ่ม · Sheet Dashboard · ตาราง Customer ไม่แยก Division</p></div>
-      <div class="b68-cards" id="cards-sales"></div>
+      <div class="b68-cards six" id="cards-sales"></div>
+<div class="b68-panel"><div class="b68-band">รายการที่ต้องติดตาม</div><ul class="b68-watch" id="sales-watch" aria-live="polite"></ul></div>
       <div class="b68-cols">
         <div class="b68-panel">
           <div class="b68-band">Sales Table · <span class="pl">MTD</span> (บาท)</div>
@@ -1735,6 +1714,23 @@ body { padding: 0; }
   // phone menu: one bar that opens the full menu
   const showMenu = (open) => { $('.b68-side').classList.toggle('open', open); $('.b68-mtoggle').setAttribute('aria-expanded', String(open)); };
   $('.b68-mtoggle').addEventListener('click', () => showMenu(!$('.b68-side').classList.contains('open')));
+  $('.b68-ntoggle').addEventListener('click', () => {
+    const collapsed = root.classList.toggle('nav-off');
+    $('.b68-ntoggle').setAttribute('aria-expanded', String(!collapsed));
+    requestAnimationFrame(draw);
+  });
+  // Publication time comes from the upload release, independently of the report date.
+  fetch("data-release.json", { cache: 'no-cache' }).then(r => {
+    if (!r.ok) throw new Error('release unavailable');
+    return r.json();
+  }).then(release => {
+    const date = new Date(release.publishedAt);
+    if (!Number.isFinite(date.getTime())) throw new Error('invalid release date');
+    $('#up-at').textContent = new Intl.DateTimeFormat('th-TH-u-ca-gregory', {
+      dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Bangkok'
+    }).format(date) + ' น.';
+  }).catch(() => { $('#up-at').textContent = 'ไม่ทราบวันที่'; });
+
   $$('.b68-menu button').forEach((b) => b.addEventListener('click', () => goTo(b.id.slice(4), true)));
   $$('.b68-grp').forEach((g) => g.addEventListener('click', () => {
     const open = g.getAttribute('aria-expanded') !== 'true';
@@ -1801,7 +1797,7 @@ body { padding: 0; }
     const ct = (cu || []).find((r) => r.key === `${cp}|Total`) || {};
     const dt = (dn || []).find((r) => r.division === dv) || {};
     cards('#cards-sales', [
-      { title: `Sales Total · ${PL[p]} · ${divLabel()} (บาท)`, v: n0(st.actual), src: 'sales_baht', field: 'actual', where: `key=${key}`, subs: [
+      { title: `ยอดขาย · ${PL[p]} · ${divLabel()} (บาท)`, v: n0(st.actual), src: 'sales_baht', field: 'actual', where: `key=${key}`, subs: [
         { label: 'LY', v: n0(st.ly), src: 'sales_baht', field: 'ly', where: `key=${key}` },
         { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales_baht', field: 'pct_ly', where: `key=${key}` },
         { label: 'Budget', v: n0(st.budget), src: 'sales_baht', field: 'budget', where: `key=${key}` },
@@ -1813,14 +1809,40 @@ body { padding: 0; }
         { label: 'LY', v: n2(mt.ly) + '%', src: 'margin', field: 'ly', where: `key=${key}` },
         { label: 'vs LY', v: sg(mt.var_ly) + ' pt', cls: tone(mt.var_ly), src: 'margin', field: 'var_ly', where: `key=${key}` },
         { label: 'vs Budget', v: sg(mt.var_budget) + ' pt', cls: tone(mt.var_budget), src: 'margin', field: 'var_budget', where: `key=${key}` }] },
-      { title: 'ต้องขายต่อวันให้ถึง BG (บาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'need_baht', field: 'need_day', where: `key=${dv}`, subs: [
+      { title: 'ต้องขายต่อวันให้ถึง BG · เดือนนี้ (บาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'need_baht', field: 'need_day', where: `key=${dv}`, subs: [
         { label: 'ขายได้เฉลี่ย/วัน', v: n0(dt.avg_day), src: 'need_baht', field: 'avg_day', where: `key=${dv}` },
         { label: 'BG ต่อวัน', v: n0(dt.budget_day), src: 'need_baht', field: 'budget_day', where: `key=${dv}` }] },
-      { title: `Transactions (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'cust_baht', field: 'invoices', where: `key=${cp}|Total`, subs: [
+      { title: `จำนวนบิล (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'cust_baht', field: 'invoices', where: `key=${cp}|Total`, subs: [
         { label: '%SPLY', v: pc(ct.invoices_sply), cls: tone(ct.invoices_sply), src: 'cust_baht', field: 'invoices_sply', where: `key=${cp}|Total` },
         { label: 'Active', v: n0(ct.active), src: 'cust_baht', field: 'active', where: `key=${cp}|Total` },
         { label: 'Visit/คน', v: n2(ct.visits), src: 'cust_baht', field: 'visits', where: `key=${cp}|Total` }] },
+
+      { title: `ยอดเฉลี่ยต่อบิล · ${cp} · ทั้งร้าน (บาท)`,
+        v: Number.isFinite(ct.sales) && ct.invoices > 0 ? n0(ct.sales / ct.invoices) : '—',
+        subs: [{ label: 'คำนวณจาก', v: 'ยอดขาย ÷ จำนวนบิล' },
+          { label: 'ขอบเขต', v: `Customer · ${cp} · ทั้งร้าน` }] },
     ]);
+
+
+    const watch = [];
+    const finite = v => typeof v === 'number' && Number.isFinite(v);
+    if (finite(dt.need_day) && finite(dt.avg_day) && dt.need_day > dt.avg_day)
+      watch.push(`${divLabel()} · เป้ารายเดือน: ต้องเพิ่มยอดเฉลี่ยต่อวันอีก ${n0(dt.need_day - dt.avg_day)} บาท เพื่อถึง BG`);
+    (sd || []).filter(r => r.period === p && r.division !== 'Total' && (division() === 'ALL' || r.division === division())).forEach(r => {
+      if (finite(r.diff_budget) && r.diff_budget < 0)
+        watch.push(`${r.division} · ${PL[p]}: ยอดขายต่ำกว่า BG ${n0(Math.abs(r.diff_budget))} บาท (${pc(r.pct_budget, 1)})`);
+    });
+    if (finite(ct.visits_sply) && ct.visits_sply < 0)
+      watch.push(`ทั้งร้าน · ${cp}: ความถี่ซื้อเทียบ LY ${pc(ct.visits_sply, 1)}`);
+    if (finite(mt.var_budget) && mt.var_budget < 0)
+      watch.push(`${divLabel()} · ${PL[p]}: Front Margin ต่ำกว่า BG ${n2(Math.abs(mt.var_budget))} จุดเปอร์เซ็นต์`);
+    const list = $('#sales-watch');
+    list.replaceChildren(...(watch.length ? watch : ['ไม่พบรายการต่ำกว่าเป้าจากข้อมูลที่โหลดได้ในขอบเขตนี้']).map(text => {
+      const li = document.createElement('li'); li.textContent = text;
+      if (!watch.length) li.className = 'ok';
+      return li;
+    }));
+    if (!sd || !md || !cu || !dn) list.replaceChildren(Object.assign(document.createElement('li'), { textContent: 'ข้อมูลยังไม่ครบ กรุณารอโหลดหรือตรวจสอบแหล่งข้อมูล' }));
 
     const showDiv = (r) => (division() === 'ALL' ? true : r.division === division());
     const isTotal = (r) => /total/i.test(r.division);
@@ -3165,6 +3187,7 @@ body { padding: 0; }
     const p = period();
     $$('#period button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === p)));
     $('#f-div').value = division();
+    $('#f-sum').textContent = `ตัวกรองหลัก: ช่วงเวลา ${PL[p]} · Division ${divLabel()} · ตารางที่มีช่วงเวลาเฉพาะระบุไว้ในหัวข้อ`;
     $$('.pl').forEach((el) => { el.textContent = PL[p]; });
     $$('.plc').forEach((el) => { el.textContent = p === 'WTD' ? 'WTD' : 'MTD'; });
     const kpi = ok('kpi');

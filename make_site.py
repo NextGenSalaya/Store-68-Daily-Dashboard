@@ -110,7 +110,7 @@ body { padding: 0; }
 page = open(os.path.join(HERE, "board", "index.html"), encoding="utf-8").read()
 DATE = '<b data-source="kpi" data-field="value" data-where="metric=Data date">—</b>'
 assert page.count(DATE) == 1, "data date not found in the page"
-page = page.replace(DATE, DATE + ' · <a href="upload/" style="color:#1f63d1;font-weight:600">ใส่ไฟล์ Excel / อัปเดตข้อมูล</a>')
+# The dashboard source already includes the Excel upload link.
 html = RUNTIME + page + "\n</body>\n</html>\n"
 open(os.path.join(SITE, "index.html"), "w", encoding="utf-8").write(html)
 open(os.path.join(SITE, ".nojekyll"), "w").close()
@@ -128,4 +128,8 @@ flat = html.replace("fetch(`data/${encodeURIComponent(id)}.json`", "fetch(`${enc
 assert flat != html, "data path not found in the runtime"
 open(os.path.join(PUB, "index.html"), "w", encoding="utf-8").write(flat)
 open(os.path.join(PUB, ".nojekyll"), "w").close()
+release = os.path.join(HERE, "data-release.json")
+if os.path.exists(release):
+    for destination in (SITE, PUB):
+        shutil.copy2(release, destination)
 print(f"publish/ written: index.html + {n} data files (flat)")

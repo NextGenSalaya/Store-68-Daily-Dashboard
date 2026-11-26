@@ -1,323 +1,346 @@
 <style>
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap");
-/* Layout: BIC-style store board. Navy menu on the left: each topic (a source file) opens to its pages, one page at a time.
-   A filter bar stays on top; every page opens with a short description and summary cards, then charts and tables.
-   Flat white panels with blue title bands; numbers green when better, red when worse. */
+
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap");
+/* Store 68 board. Navy menu on the left (topic > page); a filter bar stays on top; each page has a short heading,
+summary cards, then white panels with charts and tables. Calm surfaces, one accent blue; green better, red worse. */
 .b68 {
-  --b-blue: #1f63d1; --b-navy: #0b3a8a; --b-navy-2: #07275e; --b-up: #1e9e47; --b-down: #d4343b;
-  --b-ly: #b7bec9; --b-cy: #2f7ce0; --b-bud: #f26b38;
-  --b-ground: color-mix(in srgb, var(--color-fg) 6%, var(--color-bg));
-  font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-body); font-variant-numeric: tabular-nums; color: var(--color-fg);
-  display: grid; grid-template-columns: 13.5rem minmax(0, 1fr); background: var(--b-ground); border-radius: 6px; overflow: hidden;
+--b-blue: #1677ff; --b-navy: #103b70; --b-up: #0f8a43; --b-down: #d92d20;
+--b-ly: #b7bec9; --b-cy: #2f7ce0; --b-bud: #f26b38;
+--b-font: "Sarabun", "Noto Sans Thai", "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
+--b-ground: color-mix(in srgb, #1d5fb8 5%, var(--color-bg));
+--b-line: color-mix(in srgb, var(--color-fg) 11%, transparent);
+--b-soft: color-mix(in srgb, var(--color-fg) 3.5%, var(--color-panel));
+--b-head: var(--b-soft);
+--b-muted: color-mix(in srgb, var(--color-fg) 62%, var(--color-bg));
+--b-ink: color-mix(in srgb, var(--color-fg) 35%, #103b70);
+--b-shadow: 0 1px 2px rgb(16 59 112 / .05), 0 2px 8px rgb(16 59 112 / .04);
+font-family: var(--b-font); font-size: 15px; line-height: 1.55; font-variant-numeric: tabular-nums; color: var(--color-fg);
+display: grid; grid-template-columns: 15rem minmax(0, 1fr); background: var(--b-ground); border-radius: 10px; overflow: clip;
 }
-.b68-side { background: var(--b-navy); color: #fff; padding: 16px 0; display: flex; flex-direction: column; gap: 12px; }
-.b68-brand { font-weight: 600; font-size: 1.05rem; padding: 4px 18px 12px; border-bottom: 1px solid rgb(255 255 255 / .2); }
-.b68-brand span { display: block; font-weight: 400; font-size: 12px; opacity: .75; margin-top: 2px; }
-.b68-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
-.b68-nav button { background: none; border: 0; text-align: left; font: inherit; cursor: pointer; color: #fff; width: 100%; }
-.b68-nav button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
-.b68-grp { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 14px; font-weight: 700 !important; font-size: 1.02rem !important; }
-.b68-grp svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
-.b68-grp[aria-expanded="false"] svg { transform: rotate(180deg); }
-.b68-grp:hover { background: rgb(255 255 255 / .08); }
-.b68-menu { display: flex; flex-direction: column; }
-.b68-menu[hidden] { display: none; }
-.b68-menu button { padding: 10px 14px 10px 30px; color: rgb(255 255 255 / .9); }
-.b68-menu button:hover { background: rgb(255 255 255 / .08); color: #fff; }
-.b68-menu button[aria-current="true"] { background: var(--b-navy-2); color: #fff; font-weight: 700; }
-
-.b68-main { min-width: 0; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
-.b68-top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; flex-direction: column; gap: 10px; background: var(--color-panel);
-  border: 1px solid var(--color-border-line); border-radius: 4px; padding: 10px 14px; }
-.b68-title { margin: 0; font-size: 1.2rem; font-weight: 600; text-wrap: balance; }
-.b68-sub { margin: 2px 0 0; font-size: 12px; color: var(--color-fg-muted); }
-.b68-sub b { color: var(--color-fg); font-weight: 600; }
-.b68-filters { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end; }
-.b68-f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--color-fg-muted); }
-.b68-select, .b68-search { font: inherit; font-size: 13px; padding: 6px 8px; border: 1px solid var(--color-border-line); border-radius: 2px;
-  background: var(--color-bg); color: var(--color-fg); min-width: 10rem; }
-.b68-search { width: min(100%, 16rem); }
-.b68-reset { border: 1px solid var(--b-blue); color: var(--b-blue); background: var(--color-panel); padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; border-radius: 2px; }
-.b68-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; }
-.b68-seg button { border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); padding: 6px 14px; font: inherit; font-size: 13px; cursor: pointer; border-radius: 2px; }
-.b68-seg button[aria-pressed="true"] { background: var(--b-blue); border-color: var(--b-blue); color: #fff; }
-.b68-seg button:focus-visible, .b68-reset:focus-visible, .b68-select:focus-visible, .b68-search:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 2px; }
-
-.b68-page { display: flex; flex-direction: column; gap: 12px; }
-.b68-intro { background: var(--color-panel); border: 1px solid var(--color-border-line); border-left: 0; border-radius: 4px; padding: 10px 14px; }
-.b68-intro h2 { margin: 0 0 2px; font-size: 1.15rem; font-weight: 700; }
-.b68-intro p { margin: 0; color: var(--color-fg-muted); font-size: 13px; max-width: 70rem; }
-.b68-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 12px; }
-.b68-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 4px; padding: 12px 14px; text-align: center;
-  display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.b68-card h3 { margin: 0; font-size: 13px; font-weight: 600; color: var(--color-fg-muted); }
-.b68-card .v { font-size: 1.9rem; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
-.b68-card .v.txt { font-size: 1.05rem; line-height: 1.35; }
-.b68-card .s { font-size: 12.5px; color: var(--color-fg-muted); }
-.b68-card .s b { font-weight: 600; }
-.b68-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: 12px; align-items: start; }
-.b68-panel { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 4px; min-width: 0; overflow: hidden; }
-.b68-band { background: var(--b-blue); color: #fff; text-align: center; font-weight: 600; padding: 6px 10px; }
-.b68-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 8px 10px 0; }
-.b68-wrap { overflow: auto; max-height: 34rem; }
-.b68-t { width: 100%; border-collapse: collapse; font-size: 13.5px; }
-.b68-t th { position: sticky; top: 0; background: var(--color-panel); padding: 7px 9px; text-align: right; font-weight: 600; border-bottom: 1px solid var(--color-border-line);
-  white-space: nowrap; color: var(--color-fg-muted); font-size: 12.5px; z-index: 1; }
-.b68-t td { padding: 6px 9px; text-align: right; white-space: nowrap; border-bottom: 1px solid color-mix(in srgb, var(--color-border-line) 55%, transparent); }
-.b68-t th.l, .b68-t td.l { text-align: left; }
-.b68-t td.wrap { white-space: normal; min-width: 11rem; }
-.b68-t tbody tr:hover td { background: var(--b-ground); }
-.b68-t tr.total td { font-weight: 700; border-top: 1.5px solid var(--color-fg-muted); background: var(--b-ground); }
+.b68 button, .b68 select, .b68 input, .b68 svg text { font-family: var(--b-font); }
+.b68 [hidden] { display: none !important; }
 .b68 .up { color: var(--b-up); }
 .b68 .down { color: var(--b-down); }
-.b68-note { margin: 0; padding: 6px 12px 10px; font-size: 12px; color: var(--color-fg-muted); }
-.b68-sum { margin: 8px 10px 4px; padding: 8px 12px; background: var(--b-ground); border-radius: 4px; font-size: 14px; }
-.b68-sum b { font-size: 1.05rem; }
-.b68-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; padding: 8px 12px 0; color: var(--color-fg-muted); }
-.b68-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 4px; }
-.b68-chart { position: relative; padding: 0 8px 6px; min-height: 330px; }
-.b68-chart.h { min-height: 160px; padding: 8px 10px; }
-.b68-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius);
-  box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
-.b68-tip .k { color: var(--cds-text-secondary); }
-.b68 [data-dash-source-state=empty] { color: transparent; }
-.b68 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-.b68-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.b68-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
-/* Finish: Segoe UI as in BIC with Leelawadee UI for Thai (both ship with Windows), softer panels, roomier tables */
-.b68 {
-  --b-font: "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, var(--font-anthropic-sans), sans-serif;
-  --b-ground: color-mix(in srgb, #1f63d1 5%, var(--color-bg));
-  --b-head: color-mix(in srgb, #1f63d1 9%, var(--color-panel));
-  --b-zebra: color-mix(in srgb, #1f63d1 3%, var(--color-panel));
-  --b-ink: color-mix(in srgb, var(--color-fg) 40%, #1f63d1);
-  --b-shadow: 0 1px 2px rgb(15 40 90 / .06), 0 4px 14px rgb(15 40 90 / .06);
-  font-family: var(--b-font); font-size: 14.5px; letter-spacing: .1px; line-height: 1.5;
-  border-radius: 10px;
-}
-.b68 button, .b68 select, .b68 input { font-family: var(--b-font); }
-.b68-side { background: linear-gradient(180deg, #0d47a8 0%, #0b3a8a 45%, #082d6c 100%); }
-.b68-brand { font-size: 1.15rem; letter-spacing: .2px; }
-.b68-menu button { font-size: 14.5px; border-left: 3px solid transparent; }
-.b68-menu button[aria-current="true"] { background: rgb(0 0 0 / .22); border-left-color: #fff; }
-.b68-top, .b68-intro, .b68-card, .b68-panel { border: 0; border-radius: 8px; box-shadow: var(--b-shadow); }
-.b68-top { padding: 14px 18px; gap: 12px; }
-.b68-title { font-size: 1.35rem; font-weight: 700; color: var(--b-ink); }
-.b68-f { font-size: 12px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
-.b68-seg { gap: 0; border: 1px solid var(--color-border-line); border-radius: 999px; padding: 3px; background: var(--b-ground); }
-.b68-seg button { border: 0; border-radius: 999px; background: transparent; padding: 6px 16px; font-weight: 600; }
-.b68-seg button[aria-pressed="true"] { box-shadow: 0 1px 3px rgb(15 40 90 / .25); }
-.b68-select, .b68-search { border-radius: 6px; padding: 7px 10px; }
-.b68-reset { border-radius: 999px; font-weight: 600; padding: 7px 16px; }
-.b68-intro { padding: 14px 18px; }
-.b68-intro h2 { font-size: 1.3rem; color: var(--b-ink); }
-.b68-intro p { font-size: 14px; line-height: 1.6; }
-.b68-card { padding: 16px 16px 14px; gap: 4px; }
-.b68-card h3 { font-size: 12.5px; font-weight: 600; letter-spacing: .2px; }
-.b68-card .v { font-size: 2.15rem; font-weight: 700; color: var(--b-ink); letter-spacing: -.3px; white-space: nowrap; overflow-wrap: normal; }
+/* menu */
+.b68-side { background: var(--b-navy); color: #fff; padding: 18px 10px; display: flex; flex-direction: column; gap: 14px; }
+.b68-brand { font-weight: 700; font-size: 1.15rem; padding: 2px 10px 14px; border-bottom: 1px solid rgb(255 255 255 / .14); }
+.b68-brand span { display: block; font-weight: 400; font-size: 12.5px; opacity: .65; margin-top: 1px; }
+.b68-nav { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 12px; max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: thin; }
+.b68-nav button { background: none; border: 0; text-align: left; font: inherit; cursor: pointer; color: #fff; width: 100%; border-radius: 8px; }
+.b68-nav button:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+.b68-grp { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; font-size: 12.5px; font-weight: 600; letter-spacing: .4px; color: rgb(255 255 255 / .6) !important; }
+.b68-grp:hover { color: #fff !important; }
+.b68-grp svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; transition: transform .15s; }
+.b68-grp[aria-expanded="false"] svg { transform: rotate(180deg); }
+.b68-menu { display: flex; flex-direction: column; gap: 2px; padding-bottom: 6px; }
+.b68-menu button { padding: 8px 12px; font-size: 14px; line-height: 1.4; color: rgb(255 255 255 / .82); }
+.b68-menu button:hover { background: rgb(255 255 255 / .08); color: #fff; }
+.b68-menu button[aria-current="true"] { background: #fff; color: var(--b-navy); font-weight: 600; }
+.b68-mtoggle { display: none; }
+/* top bar */
+.b68-main { min-width: 0; padding: 0 24px 28px; display: flex; flex-direction: column; gap: 16px; }
+.b68-top { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px 24px;
+margin: 0 -24px; padding: 14px 24px; background: color-mix(in srgb, var(--color-panel) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--b-line); }
+.b68-title { margin: 0; font-size: 1.3rem; line-height: 1.3; font-weight: 700; color: var(--b-ink); text-wrap: balance; }
+.b68-sub { margin: 4px 0 0; font-size: 13px; color: var(--b-muted); }
+.b68-sub b { color: var(--color-fg); font-weight: 600; }
+.b68-filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; }
+.b68-f { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; font-weight: 500; color: var(--b-muted); }
+.b68-select, .b68-search { font: inherit; font-size: 14px; padding: 7px 12px; min-height: 2.4rem; min-width: 10rem; border: 1px solid var(--b-line); border-radius: 8px; background: var(--color-panel); color: var(--color-fg); }
+.b68-search { width: min(100%, 16rem); }
+.b68-select:hover, .b68-search:hover { border-color: color-mix(in srgb, var(--b-blue) 45%, transparent); }
+.b68-reset { border: 0; background: none; color: var(--b-blue); padding: 8px 6px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 8px; }
+.b68-reset:hover { text-decoration: underline; }
+.b68-seg { display: inline-flex; flex-wrap: wrap; gap: 2px; padding: 3px; border-radius: 10px; background: color-mix(in srgb, var(--color-fg) 6%, var(--color-panel)); }
+.b68-seg button { border: 0; background: transparent; color: var(--b-muted); padding: 6px 14px; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; border-radius: 8px; }
+.b68-seg button:hover { color: var(--color-fg); }
+.b68-seg button[aria-pressed="true"] { background: var(--color-panel); color: var(--b-blue); box-shadow: 0 1px 3px rgb(16 32 64 / .14); }
+.b68-seg button:focus-visible, .b68-reset:focus-visible, .b68-select:focus-visible, .b68-search:focus-visible, .b68-card.go:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 2px; }
+/* page */
+.b68-page { display: flex; flex-direction: column; gap: 16px; }
+.b68-page:not([hidden]) ~ .b68-page:not([hidden]) { margin-top: 20px; padding-top: 28px; border-top: 1px solid var(--b-line); }
+.b68-intro { padding: 4px 2px 0; }
+.b68-intro h2 { margin: 0 0 4px; font-size: 1.25rem; line-height: 1.35; font-weight: 700; color: var(--b-ink); }
+.b68-intro p { margin: 0; font-size: 13.5px; line-height: 1.65; color: var(--b-muted); max-width: 72rem; }
+/* summary cards */
+.b68-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); gap: 12px; }
+.b68-card { position: relative; background: var(--color-panel); border: 1px solid var(--b-line); border-radius: 14px; box-shadow: var(--b-shadow); padding: 16px 18px; min-width: 0;
+display: flex; flex-direction: column; gap: 4px; text-align: left; }
+.b68-card h3 { margin: 0; font-size: 13.5px; line-height: 1.4; font-weight: 500; color: var(--b-muted); }
+.b68-card .v { font-size: 2.1rem; line-height: 1.2; font-weight: 700; letter-spacing: -.3px; color: var(--b-ink); white-space: nowrap; }
 .b68-card .v.up { color: var(--b-up); }
 .b68-card .v.down { color: var(--b-down); }
-.b68-card .v.txt { font-size: 1.1rem; font-weight: 600; }
-.b68-card .s { font-size: 13px; }
-.b68-band { text-align: left; padding: 9px 16px; font-size: 15px; letter-spacing: .2px; background: linear-gradient(90deg, #1f63d1, #2f7ce0); }
-.b68-t { font-size: 14px; }
-.b68-t th { background: var(--b-head); color: color-mix(in srgb, var(--color-fg) 75%, transparent); font-size: 12.5px; letter-spacing: .2px; padding: 9px 12px; border-bottom: 0; }
-.b68-t td { padding: 8px 12px; }
-.b68-t tbody tr:nth-child(even) td { background: var(--b-zebra); }
-.b68-t tbody tr:hover td { background: color-mix(in srgb, #1f63d1 10%, var(--color-panel)); }
-.b68-t tr.total td { background: var(--b-head); border-top: 1.5px solid color-mix(in srgb, #1f63d1 35%, transparent); }
-.b68-legend { font-size: 12.5px; padding: 10px 16px 0; }
-.b68-note { padding: 8px 16px 12px; font-size: 12.5px; }
-.b68-sum { border-radius: 6px; background: var(--b-head); }
-.b68-tools { padding: 10px 16px 2px; gap: 12px; }
-.b68 svg text { font-family: var(--b-font); }
-/* Readability: one clear Thai/English font, larger text, darker secondary text, more room in tables and between sections */
-.b68 {
-  --b-font: "IBM Plex Sans Thai", "Segoe UI", "Leelawadee UI", "Noto Sans Thai", Tahoma, sans-serif;
-  --b-muted: color-mix(in srgb, var(--color-fg) 68%, var(--color-bg));
-  font-size: 15px; line-height: 1.6; letter-spacing: 0;
-  overflow: clip; /* clips the rounded corners without breaking the sticky menu and filter bar */
-}
-.b68-nav { max-height: calc(100vh - 24px); overflow-y: auto; scrollbar-width: thin; }
-.b68-brand { font-size: 1.2rem; font-weight: 700; }
-.b68-brand span { font-size: 13px; }
-.b68-grp { font-size: 15px !important; letter-spacing: .2px; padding: 12px 16px; }
-.b68-grp + .b68-menu { padding-bottom: 6px; }
-.b68-group + .b68-group { border-top: 1px solid rgb(255 255 255 / .14); }
-.b68-menu button { font-size: 14.5px; line-height: 1.4; padding: 9px 14px 9px 28px; }
-.b68-title { font-size: 1.45rem; line-height: 1.3; }
-.b68-sub { font-size: 13.5px; color: var(--b-muted); }
-.b68-f { font-size: 12.5px; color: var(--b-muted); text-transform: none; letter-spacing: .2px; }
-.b68-select, .b68-search { font-size: 14.5px; padding: 8px 12px; min-height: 2.5rem; }
-.b68-seg button { font-size: 14px; padding: 7px 16px; }
-.b68-reset { font-size: 14px; padding: 8px 18px; }
-.b68-intro { border-left: 5px solid var(--b-blue); padding: 16px 20px; }
-.b68-intro h2 { font-size: 1.4rem; line-height: 1.35; margin-bottom: 4px; }
-.b68-intro p { font-size: 14.5px; line-height: 1.7; color: var(--b-muted); }
-/* merged menu items stack several sections: give each its own clear start */
-.b68-page[hidden] { display: none; }
-.b68-page:not([hidden]) ~ .b68-page:not([hidden]) { margin-top: 22px; padding-top: 22px; border-top: 2px dashed color-mix(in srgb, var(--b-blue) 30%, transparent); }
-.b68-cards { gap: 14px; }
-.b68-card { padding: 18px 18px 16px; gap: 6px; border-top: 4px solid color-mix(in srgb, var(--b-blue) 70%, transparent); }
-.b68-card h3 { font-size: 14px; line-height: 1.4; color: var(--b-muted); }
-.b68-card .v { font-size: 2.3rem; line-height: 1.15; }
-.b68-card .v.txt { font-size: 1.2rem; line-height: 1.4; white-space: normal; }
-.b68-card .s { font-size: 14px; line-height: 1.55; color: var(--b-muted); }
-.b68-card .s b { color: var(--color-fg); }
+.b68-card .v.txt { font-size: 1.1rem; line-height: 1.4; font-weight: 600; white-space: normal; }
+.b68-card .s { font-size: 13px; line-height: 1.5; color: var(--b-muted); }
+.b68-card .s b { font-weight: 600; color: var(--color-fg); }
 .b68-card .s b.up { color: var(--b-up); }
 .b68-card .s b.down { color: var(--b-down); }
-.b68-band { font-size: 16px; padding: 11px 18px; font-weight: 600; }
-.b68-tools { padding: 12px 18px 4px; gap: 14px; }
-.b68-t { font-size: 14.5px; }
-.b68-t th { font-size: 13.5px; font-weight: 600; color: color-mix(in srgb, var(--color-fg) 82%, transparent); padding: 11px 14px; }
-.b68-t td { padding: 9px 14px; line-height: 1.45; }
-.b68-t td.wrap { min-width: 15rem; }
+.b68-card.go { cursor: pointer; transition: border-color .15s, box-shadow .15s; }
+.b68-card.go:hover { border-color: color-mix(in srgb, var(--b-blue) 50%, transparent); box-shadow: 0 4px 14px rgb(16 32 64 / .08); }
+.b68-card .go-hint { margin-top: auto; padding-top: 4px; color: var(--b-blue); font-weight: 600; }
+/* panels */
+.b68-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 30rem), 1fr)); gap: 16px; align-items: start; }
+.b68-panel { background: var(--color-panel); border: 1px solid var(--b-line); border-radius: 14px; box-shadow: var(--b-shadow); min-width: 0; overflow: hidden; }
+.b68-band { display: flex; align-items: center; gap: 10px; padding: 13px 18px; font-size: 15px; font-weight: 600; color: var(--color-fg); border-bottom: 1px solid var(--b-line); }
+.b68-band::before { content: ""; width: 4px; height: 1.05em; border-radius: 2px; background: var(--b-blue); flex: none; }
+.b68-panel > * + .b68-band, .b68-band[style] { margin-top: 0 !important; border-top: 1px solid var(--b-line); }
+.b68-tools { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; padding: 12px 18px 4px; }
+.b68-wrap { overflow: auto; max-height: 34rem; }
+.b68-t { width: 100%; border-collapse: collapse; font-size: 14px; }
+.b68-t th { position: sticky; top: 0; z-index: 1; background: var(--b-soft); padding: 10px 12px; text-align: right; white-space: nowrap;
+font-size: 12.5px; font-weight: 600; color: var(--b-muted); border-bottom: 1px solid var(--b-line); }
+.b68-t td { padding: 9px 12px; text-align: right; white-space: nowrap; line-height: 1.45; border-bottom: 1px solid color-mix(in srgb, var(--color-fg) 6%, transparent); }
+.b68-t th.l, .b68-t td.l { text-align: left; }
+.b68-t td.wrap { white-space: normal; min-width: 15rem; }
 .b68-t td.up, .b68-t td.down { font-weight: 600; }
-.b68-note { font-size: 13.5px; color: var(--b-muted); padding: 10px 18px 14px; }
-.b68-legend { font-size: 13.5px; }
-.b68-tip { font-size: 13.5px; line-height: 1.5; }
+.b68-t tbody tr:nth-child(even) td { background: color-mix(in srgb, var(--color-fg) 2.2%, var(--color-panel)); }
+.b68-t tbody tr:hover td { background: color-mix(in srgb, var(--b-blue) 5%, var(--color-panel)); }
+.b68-t tbody tr:last-child td { border-bottom: 0; }
+.b68-t tr.total td { font-weight: 700; background: var(--b-soft); border-top: 1px solid var(--b-line); }
+.b68-note { margin: 0; padding: 10px 18px 14px; font-size: 12.5px; color: var(--b-muted); border-top: 1px solid color-mix(in srgb, var(--color-fg) 6%, transparent); }
+.b68-sum { margin: 10px 18px 6px; padding: 10px 14px; background: var(--b-soft); border-radius: 8px; font-size: 14px; }
+.b68-sum b { font-size: 1.05rem; }
+.b68-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; padding: 12px 18px 0; color: var(--b-muted); }
+.b68-legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }
+.b68-chart { position: relative; padding: 0 10px 8px; min-height: 330px; }
+.b68-chart.h { min-height: 160px; padding: 10px 14px; }
+.b68-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover, var(--color-panel)); border: 1px solid var(--cds-border, var(--b-line)); border-radius: 8px;
+box-shadow: 0 6px 20px rgb(16 32 64 / .14); padding: 8px 12px; font-size: 13px; line-height: 1.5; white-space: nowrap; z-index: 2; }
+.b68-tip .k { color: var(--b-muted); }
+.b68 [data-dash-source-state=empty] { color: transparent; }
+.b68 [data-dash-source-state=refreshing] { opacity: .5; transition: opacity .3s; }
+.b68-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--b-muted); font-size: 13px; }
+.b68-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--b-down); }
+/* header: store, page, report date vs upload time, Excel update link; menu can fold away on a computer */
+.b68-head { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1 1 26rem; }
+.b68-ht { min-width: 0; flex: 1; }
+.b68-eyebrow { margin: 0; font-size: 12.5px; font-weight: 700; letter-spacing: .6px; color: var(--b-blue); }
+.b68-sub .sep { margin: 0 8px; opacity: .5; }
+.b68-ntoggle, .b68-up { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; border-radius: 10px; text-decoration: none; }
+.b68-ntoggle { flex: none; width: 40px; height: 40px; justify-content: center; border: 1px solid var(--b-line); background: var(--color-panel); color: var(--b-navy); }
+.b68-ntoggle:hover { border-color: var(--b-blue); color: var(--b-blue); }
+.b68-up { flex: none; padding: 9px 16px; background: var(--b-blue); color: #fff; border: 0; }
+.b68-up:hover { background: color-mix(in srgb, var(--b-blue) 85%, #000); }
+.b68 svg.ic { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.b68-ntoggle:focus-visible, .b68-up:focus-visible { outline: 2px solid var(--b-blue); outline-offset: 2px; }
+.b68.nav-off { grid-template-columns: minmax(0, 1fr); }
+.b68.nav-off .b68-side { display: none; }
+.b68-grp > span { display: inline-flex; align-items: center; gap: 8px; }
+.b68-fsum { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--b-muted); }
+.b68-fsum b { color: var(--color-fg); font-weight: 600; }
+.b68-filters { flex: 1 1 100%; padding-top: 12px; border-top: 1px solid var(--b-line); }
+.b68-cards.six { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .b68-cards.six { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.b68-watch { list-style: none; margin: 0; padding: 12px 18px 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 8px 20px; font-size: 14px; }
+.b68-watch li { display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px dashed var(--b-line); }
+.b68-watch li::before { content: "!"; flex: none; width: 18px; height: 18px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; background: var(--b-down); transform: translateY(2px); }
+.b68-watch li.ok::before { content: "✓"; background: var(--b-up); }
+.b68-t td.b68-empty { text-align: center; padding: 22px 12px; color: var(--b-muted); background: none !important; }
+/* phone: the menu folds into one bar at the top; tapping it opens the full menu */
 @media (max-width: 760px) {
-  .b68 { grid-template-columns: minmax(0, 1fr); border-radius: 0; }
-  .b68-side { padding: 8px 0; gap: 6px; }
-  .b68-brand, .b68-grp { display: none !important; }
-  .b68-menu, .b68-menu[hidden] { display: flex; flex-direction: row; overflow-x: auto; }
-  .b68-menu button { white-space: nowrap; padding: 8px 10px; width: auto; }
-  .b68-main { padding: 10px; }
-  .b68-top { position: static; }
+.b68 { grid-template-columns: minmax(0, 1fr); border-radius: 0; }
+.b68-side { position: sticky; top: 0; z-index: 20; padding: 0; gap: 0; box-shadow: 0 2px 8px rgb(0 0 0 / .25); }
+.b68-brand { display: none; }
+.b68-mtoggle { display: flex; align-items: center; gap: 10px; width: 100%; padding: 12px 14px; background: none; border: 0; color: #fff; font: inherit; font-size: 15px; font-weight: 600; text-align: left; cursor: pointer; }
+.b68-mtoggle svg { width: 22px; height: 22px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+.b68-mtoggle span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.b68-nav { display: none; position: static; max-height: calc(100dvh - 48px); padding: 0 8px 10px; }
+.b68-side.open .b68-nav { display: flex; }
+.b68-menu button { padding: 10px 12px; }
+.b68-main { padding: 0 10px 16px; gap: 12px; }
+.b68-top { position: static; margin: 0 -10px; padding: 10px 12px; }
+.b68.nav-off .b68-side { display: flex; }
+.b68-ntoggle, .b68-eyebrow { display: none; }
+.b68-up { padding: 8px 12px; font-size: 13px; }
+.b68-filters { padding-top: 10px; }
+.b68-title { font-size: 1.1rem; }
+.b68-filters { gap: 8px 10px; }
+.b68-intro h2 { font-size: 1.1rem; }
+.b68-intro p { font-size: 13px; }
+.b68-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.b68-card { padding: 12px; border-radius: 10px; }
+.b68-card:has(.v.txt) { grid-column: 1 / -1; }
+.b68-card h3 { font-size: 12.5px; }
+.b68-card .v { font-size: 1.5rem; }
+.b68-card .s { font-size: 12.5px; line-height: 1.45; }
+.b68-band { font-size: 14.5px; padding: 11px 12px; }
+.b68-tools { padding: 10px 12px 4px; gap: 8px 10px; }
+.b68-tools label.b68-f { flex: 1 1 9rem; }
+.b68-tools .b68-select, .b68-tools .b68-search { width: 100%; }
+.b68-seg { max-width: 100%; overflow-x: auto; flex-wrap: nowrap; }
+.b68-seg button { padding: 6px 12px; font-size: 13px; white-space: nowrap; }
+.b68-wrap { max-height: 70vh; }
+.b68-t { font-size: 13px; }
+.b68-t th { font-size: 12px; padding: 8px 9px; }
+.b68-t td { padding: 7px 9px; }
+.b68-t td.wrap { min-width: 10rem; }
+.b68-note { padding: 8px 12px 10px; font-size: 12.5px; }
+}
+
+/* Keep dense tables readable and narrow screens within the viewport. */
+.b68, .b68 * { box-sizing: border-box; }
+.b68-t th { background: var(--color-panel); }
+.b68-grp[aria-expanded="false"] svg.ic { transform: none; }
+@media (max-width: 600px) {
+  .b68-head { flex-wrap: wrap; }
+  .b68-ht { flex-basis: 100%; }
+  .b68-cards.six { grid-template-columns: minmax(0, 1fr); }
+  .b68-sub .sep { display: block; height: 2px; visibility: hidden; }
 }
 </style>
 
 <div class="b68">
   <aside class="b68-side">
-    <div class="b68-brand">Store 68 Salaya<span>District 5</span></div>
-    <nav class="b68-nav" aria-label="Menu">
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-sales">
-          <span>ยอดขาย · Sales</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-sales">
-          <button type="button" id="tab-sales" data-page="sales">ยอดขาย &amp; ลูกค้า</button>
-          <button type="button" id="tab-category" data-page="category t5cat">Category &amp; Class</button>
-          <button type="button" id="tab-items" data-page="items t5item">สินค้า &amp; Top Drop Customer</button>
-          <button type="button" id="tab-t3ff" data-page="t3ff t5top50">Fresh Food Sale &amp; Top 50</button>
-          <button type="button" id="tab-t5soft" data-page="t5soft">Soft-serve &amp; Rotisserie</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-stock">
-          <span>Stock &amp; Order</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-stock">
-          <button type="button" id="tab-stock" data-page="stock t5stock">Stock &amp; Stock Days</button>
-          <button type="button" id="tab-t5mu" data-page="t5mu t5watch">Stock ใกล้หมด &amp; ติดลบ</button>
-          <button type="button" id="tab-t4over" data-page="t4over t4floor">Over Stock &amp; On Order</button>
-          <button type="button" id="tab-t5aging" data-page="t5aging t5gone">Aging, NBS &amp; Clearance</button>
-          <button type="button" id="tab-t5top" data-page="t5top t3il">Top Items &amp; Item List</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-svc">
-          <span>Service Level · KVI</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-svc">
-          <button type="button" id="tab-service" data-page="service t2sum">Service level</button>
-          <button type="button" id="tab-t2kvi" data-page="t2items">KVI · OB · Makro Mail Monitoring</button>
-          <button type="button" id="tab-t2survey" data-page="t2survey">KVI Price Survey List</button>
-          <button type="button" id="tab-t2pack" data-page="t2pack">Pack &amp; Component</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-shk">
-          <span>Shrinkage</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-shk">
-          <button type="button" id="tab-shrink" data-page="shrink t3shk">Shrinkage ภาพรวม &amp; แผนก</button>
-          <button type="button" id="tab-t3c20" data-page="t3c20 t5shk">Shrinkage by Code</button>
-        </div>
-      </div>
-      <div class="b68-group">
-        <button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-o2o">
-          <span>O2O</span>
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"/></svg>
-        </button>
-        <div class="b68-menu" id="grp-o2o">
-          <button type="button" id="tab-o2o" data-page="o2o t2ao">O2O ภาพรวม &amp; Orders</button>
-          <button type="button" id="tab-t3top" data-page="t3top">Focus Top 1000 O2O</button>
-          <button type="button" id="tab-t2short" data-page="t2short t2pick">Item Shortage &amp; OOS</button>
-        </div>
-      </div>
-    </nav>
-  </aside>
+<div class="b68-brand">Store 68 Salaya<span>Makro · District 5 · Daily Dashboard</span></div>
+<button type="button" class="b68-mtoggle" aria-expanded="false" aria-controls="b68-nav"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg><span id="m-page">ยอดขาย &amp; ภาพรวม · ยอดขาย &amp; ลูกค้า</span></button>
+<nav class="b68-nav" id="b68-nav" aria-label="Menu">
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-sales">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5M4 19h16M8 15l4-4 3 3 5-6"></path></svg>ยอดขาย &amp; ภาพรวม</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-sales">
+<button type="button" id="tab-sales" data-page="sales" aria-current="true">ยอดขาย &amp; ลูกค้า</button>
+<button type="button" id="tab-category" data-page="category t5cat items" aria-current="false">Category, Class &amp; สินค้า</button>
+<button type="button" id="tab-t5item" data-page="t5item" aria-current="false">Sale by Item &amp; Top Drop Customer</button>
+<button type="button" id="tab-t3ff" data-page="t3ff t5top50 t3c52" aria-current="false">Fresh Food Sale &amp; Top 50</button>
+<button type="button" id="tab-t5soft" data-page="t5soft" aria-current="false">Soft-serve &amp; Rotisserie</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-stock">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8l8-4 8 4v8l-8 4-8-4zM4 8l8 4 8-4M12 12v8"></path></svg>Stock &amp; การสั่งซื้อ</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-stock">
+<button type="button" id="tab-stock" data-page="stock t5stock" aria-current="false">Stock &amp; Stock Days</button>
+<button type="button" id="tab-t5mu" data-page="t5mu t5watch" aria-current="false">Stock ใกล้หมด &amp; ติดลบ</button>
+<button type="button" id="tab-t4over" data-page="t4over t4floor" aria-current="false">Over Stock &amp; On Order</button>
+<button type="button" id="tab-t5aging" data-page="t5aging t5gone" aria-current="false">Aging, NBS &amp; Clearance</button>
+<button type="button" id="tab-t5top" data-page="t5top t3il" aria-current="false">Top Items &amp; Item List</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-repl">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3M4 4v4h4M4 13a8 8 0 0 0 14.9 3M20 20v-4h-4"></path></svg>เติมสินค้า (Central Repl.)</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-repl">
+<button type="button" id="tab-t5repl" data-page="t5repl" aria-current="false">Stock vs Min-Max</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-svc">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4M12 21a9 9 0 1 1 0-18 9 9 0 0 1 0 18z"></path></svg>Service Level &amp; KVI</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-svc">
+<button type="button" id="tab-service" data-page="service t2sum" aria-current="false">Service level</button>
+<button type="button" id="tab-t2kvi" data-page="t2items" aria-current="false">KVI · OB · Makro Mail Monitoring</button>
+<button type="button" id="tab-t2survey" data-page="t2survey" aria-current="false">KVI Price Survey List</button>
+<button type="button" id="tab-t2pack" data-page="t2pack" aria-current="false">Pack &amp; Component</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-shk">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4l9 16H3zM12 10v4M12 17v.5"></path></svg>Shrinkage (ของเสีย)</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-shk">
+<button type="button" id="tab-shrink" data-page="shrink t3shk" aria-current="false">Shrinkage ภาพรวม &amp; แผนก</button>
+<button type="button" id="tab-t3c20" data-page="t3c20 t5shk" aria-current="false">Shrinkage by Code</button>
+</div>
+</div>
+<div class="b68-group">
+<button type="button" class="b68-grp" aria-expanded="true" aria-controls="grp-o2o">
+<span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.4 11h11l2-8H6.2M9 20h.01M18 20h.01"></path></svg>O2O &amp; ออนไลน์</span>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 15l6-6 6 6"></path></svg>
+</button>
+<div class="b68-menu" id="grp-o2o">
+<button type="button" id="tab-o2o" data-page="o2o t2ao" aria-current="false">O2O ภาพรวม &amp; Orders</button>
+<button type="button" id="tab-t3top" data-page="t3top" aria-current="false">Focus Top 1000 O2O</button>
+<button type="button" id="tab-t2short" data-page="t2short t2pick" aria-current="false">Item Shortage &amp; OOS</button>
+</div>
+</div>
+</nav>
+</aside>
 
   <main class="b68-main">
     <header class="b68-top">
-      <div>
-        <h1 class="b68-title"><span id="topic-name">All Dashboard Store68</span> · <span id="page-name">ยอดขาย &amp; ลูกค้า</span></h1>
-        <p class="b68-sub">ข้อมูล ณ วันที่ <b data-source="kpi" data-field="value" data-where="metric=Data date">—</b></p>
-      </div>
-      <div class="b68-filters">
-        <div class="b68-f" id="f-period-wrap">Date Period
-          <div class="b68-seg" role="group" aria-label="ช่วงเวลา" id="period">
-            <button type="button" data-p="Daily">วันนี้</button><button type="button" data-p="WTD">WTD</button><button type="button" data-p="MTD">MTD</button><button type="button" data-p="YTD">YTD</button>
-          </div>
-        </div>
-        <label class="b68-f" for="f-div">Division
-          <select class="b68-select" id="f-div">
-            <option value="ALL">ทั้งหมด</option><option value="DRY FOOD">DRY FOOD</option><option value="FRESH FOOD">FRESH FOOD</option><option value="NON FOOD">NON FOOD</option>
-          </select>
-        </label>
-        <button type="button" class="b68-reset" id="f-reset">ล้างตัวกรอง</button>
-      </div>
-    </header>
+<div class="b68-head">
+<button type="button" class="b68-ntoggle" aria-expanded="true" aria-controls="b68-nav" aria-label="ซ่อนหรือแสดงเมนู" title="ซ่อน / แสดงเมนู">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
+<div class="b68-ht">
+<p class="b68-eyebrow">Store 68 Salaya</p>
+<h1 class="b68-title"><span id="topic-name">ยอดขาย &amp; ภาพรวม</span> · <span id="page-name">ยอดขาย &amp; ลูกค้า</span></h1>
+<p class="b68-sub">ข้อมูลรายงาน ณ <b data-source="kpi" data-field="value" data-where="metric=Data date">—</b><span class="sep">|</span>อัปโหลดล่าสุด <b id="up-at">—</b></p>
+</div>
+<a class="b68-up" href="https://nextgensalaya.github.io/Store-68-Daily-Dashboard/upload/" target="_blank" rel="noopener">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"></path></svg>
+อัปเดตข้อมูล Excel</a>
+</div>
+<div class="b68-filters">
+<div class="b68-f" id="f-period-wrap">ช่วงเวลา
+<div class="b68-seg" aria-label="ช่วงเวลา" id="period">
+<button type="button" data-p="Daily" aria-pressed="false">วันนี้</button><button type="button" data-p="WTD" aria-pressed="false">WTD</button><button type="button" data-p="MTD" aria-pressed="true">MTD</button><button type="button" data-p="YTD" aria-pressed="false">YTD</button>
+</div>
+</div>
+<label class="b68-f" for="f-div">Division
+<select class="b68-select" id="f-div">
+<option value="ALL">ทั้งหมด</option><option value="DRY FOOD">DRY FOOD</option><option value="FRESH FOOD">FRESH FOOD</option><option value="NON FOOD">NON FOOD</option>
+</select>
+</label>
+<button type="button" class="b68-reset" id="f-reset">ล้างตัวกรอง</button>
+<p class="b68-fsum" id="f-sum" aria-live="polite">กำลังแสดง: ช่วงเวลา <b>MTD</b> · Division <b>ทั้งร้าน</b></p>
+</div>
+</header>
 
     <!-- 1. ยอดขาย & ลูกค้า -->
     <section class="b68-page" id="sales" data-page="sales">
       <div class="b68-intro"><h2>ยอดขาย &amp; ลูกค้า</h2>
-        <p>ยอดขายและ Margin เทียบงบและปีก่อน ตามช่วงเวลาที่เลือก ยอดที่ต้องขายต่อวันเพื่อให้ถึงงบ และพฤติกรรมลูกค้าแต่ละกลุ่ม · Sheet Dashboard · ตาราง Customer ไม่แยก Division</p></div>
-      <div class="b68-cards" id="cards-sales"></div>
+        <p>ยอดขายและ Margin เทียบ BG และ LY ตามช่วงเวลาที่เลือก ยอดที่ต้องขายต่อวันเพื่อให้ถึง BG และพฤติกรรมลูกค้าแต่ละกลุ่ม · Sheet Dashboard · ตาราง Customer ไม่แยก Division</p></div>
+      <div class="b68-cards six" id="cards-sales"></div>
+<div class="b68-panel"><div class="b68-band">รายการที่ต้องติดตาม</div><ul class="b68-watch" id="sales-watch" aria-live="polite"></ul></div>
       <div class="b68-cols">
         <div class="b68-panel">
-          <div class="b68-band">Sales Table · <span class="pl">MTD</span> (พันบาท)</div>
-          <div class="b68-wrap"><table class="b68-t" id="tb-sales" data-source="sales" data-row-key="key">
+          <div class="b68-band">Sales Table · <span class="pl">MTD</span> (บาท)</div>
+          <div class="b68-wrap"><table class="b68-t" id="tb-sales" data-source="sales_baht" data-row-key="key">
             <thead><tr><th class="l" data-field="division">Division</th><th data-field="actual">Actual</th><th data-field="budget">Budget</th><th data-field="pct_budget">% to Budget</th><th data-field="ly">LY</th><th data-field="pct_ly">% to LY</th><th data-field="share">% Shared</th></tr></thead><tbody></tbody>
           </table></div>
           <div class="b68-band" style="margin-top:8px">Margin Table · <span class="pl">MTD</span> (%)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-margin" data-source="margin" data-row-key="key">
             <thead><tr><th class="l" data-field="division">Division</th><th data-field="actual">Actual</th><th data-field="budget">Budget</th><th data-field="var_budget">Vs. Budget (pt)</th><th data-field="ly">LY</th><th data-field="var_ly">Vs. LY (pt)</th><th data-field="share">% Shared</th></tr></thead><tbody></tbody>
           </table></div>
-          <div class="b68-band" style="margin-top:8px">Daily Need for Budget (พันบาท/วัน)</div>
-          <div class="b68-wrap"><table class="b68-t" id="tb-need" data-source="daily_need" data-row-key="division">
-            <thead><tr><th class="l" data-field="division">Division</th><th data-field="avg_day">ขายได้เฉลี่ย/วัน</th><th data-field="budget_day">งบต่อวัน</th><th data-field="pct_var">% Var</th><th data-field="need_day">ต้องขายต่อวัน</th></tr></thead><tbody></tbody>
+          <div class="b68-band" style="margin-top:8px">Daily Need for Budget (บาท/วัน)</div>
+          <div class="b68-wrap"><table class="b68-t" id="tb-need" data-source="need_baht" data-row-key="division">
+            <thead><tr><th class="l" data-field="division">Division</th><th data-field="avg_day">ขายได้เฉลี่ย/วัน</th><th data-field="budget_day">BG ต่อวัน</th><th data-field="pct_var">% Var</th><th data-field="need_day">ต้องขายต่อวัน</th></tr></thead><tbody></tbody>
           </table></div>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Sales by Division (VS. LY) · <span class="pl">MTD</span></div>
-          <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>Sales LY</span><span><i style="background:var(--b-cy)"></i>Sales CY</span><span><i style="background:var(--b-bud)"></i>Budget</span></div>
-          <div class="b68-chart" id="ch-sales" data-source="sales"></div>
-          <p class="b68-note">พันบาท · แท่งเขียว/แดงด้านล่างคือ % เทียบปีก่อน</p>
+          <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY (Last Year)</span><span><i style="background:var(--b-cy)"></i>CY (Current Year)</span><span><i style="background:var(--b-bud)"></i>BG (Budget)</span></div>
+          <div class="b68-chart" id="ch-sales" data-source="sales_baht"></div>
+          <p class="b68-note">บาท · แท่งเขียว/แดงด้านล่างคือ % เทียบ LY</p>
           <div class="b68-band">Bottom Stores (MTD vs LY)</div>
-          <div class="b68-wrap"><table class="b68-t" id="tb-bottom" data-source="bottom_stores" data-row-key="store">
-            <thead><tr><th class="l" data-field="store">Store</th><th data-field="variance">Variance (พันบาท)</th><th data-field="pct_variance">% Variance</th></tr></thead><tbody></tbody>
+          <div class="b68-wrap"><table class="b68-t" id="tb-bottom" data-source="bottom_baht" data-row-key="store">
+            <thead><tr><th class="l" data-field="store">Store</th><th data-field="variance">Variance (บาท)</th><th data-field="pct_variance">% Variance</th></tr></thead><tbody></tbody>
           </table></div>
         </div>
       </div>
       <div class="b68-panel">
         <div class="b68-band">Customer Table · <span class="plc">MTD</span></div>
-        <div class="b68-wrap"><table class="b68-t" id="tb-cust" data-source="customers" data-row-key="key">
+        <div class="b68-wrap"><table class="b68-t" id="tb-cust" data-source="cust_baht" data-row-key="key">
           <thead><tr><th class="l" data-field="group">Main Group</th><th data-field="invoices">#Invoices</th><th data-field="invoices_sply">%SPLY</th><th data-field="sales">Sales Amount</th><th data-field="sales_sply">%SPLY</th><th data-field="active">Active Customers</th><th data-field="active_sply">%SPLY</th><th data-field="visits">Visit Frequency</th><th data-field="visits_sply">%SPLY</th><th data-field="participation">%Participation</th></tr></thead><tbody></tbody>
         </table></div>
-        <p class="b68-note">มีเฉพาะ WTD และ MTD · ยอดขายเป็นพันบาท</p>
+        <p class="b68-note">มีเฉพาะ WTD และ MTD · ยอดขายเป็นบาท</p>
       </div>
     </section>
 
     <!-- 2. Category & แผนก -->
     <section class="b68-page" id="category" data-page="category" hidden>
       <div class="b68-intro"><h2>Category &amp; แผนก</h2>
-        <p>ยอดขายแต่ละ Category เทียบงบและปีก่อน (Sheet Category) และยอดขายตามแผนกตั้งแต่ 1 มิ.ย. และ YTD (Sheet Analysis) · Category ใช้การแบ่งกลุ่มของตัวเอง เลือกกลุ่มได้ที่ตัวกรองด้านล่าง</p></div>
+        <p>ยอดขายแต่ละ Category เทียบ BG และ LY (Sheet Category) และยอดขายตามแผนกตั้งแต่ 1 ม.ค. และ YTD (Sheet Analysis) · Category ใช้การแบ่งกลุ่มของตัวเอง เลือกกลุ่มได้ที่ตัวกรองด้านล่าง</p></div>
       <div class="b68-cards" id="cards-category"></div>
       <div class="b68-panel">
         <div class="b68-band">Sales by Category (VS. LY) · <span class="plcat">MTD</span></div>
@@ -326,36 +349,36 @@
         </div>
         <div class="b68-tools">
           <label class="b68-f" for="f-catgrp">กลุ่ม Category <select class="b68-select" id="f-catgrp"></select></label>
-          <label class="b68-f" for="f-catb">เทียบงบ <select class="b68-select" id="f-catb"></select></label>
-          <label class="b68-f" for="f-catly">เทียบปีก่อน <select class="b68-select" id="f-catly"></select></label>
+          <label class="b68-f" for="f-catb">เทียบ BG <select class="b68-select" id="f-catb"></select></label>
+          <label class="b68-f" for="f-catly">เทียบ LY <select class="b68-select" id="f-catly"></select></label>
           <label class="b68-f" for="q-cat">ค้นหา <input class="b68-search" id="q-cat" type="search" placeholder="ชื่อ Category"></label>
-          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="cat-sort"><button type="button" data-v="grp">ตามกลุ่ม</button><button type="button" data-v="worst">ต่ำกว่างบมากสุด</button><button type="button" data-v="best">ดีกว่างบมากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
+          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="cat-sort"><button type="button" data-v="grp">ตามกลุ่ม</button><button type="button" data-v="worst">ต่ำกว่า BG มากสุด</button><button type="button" data-v="best">ดีกว่า BG มากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
         </div>
-        <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY</span><span><i style="background:var(--b-cy)"></i>CY</span><span><i style="background:var(--b-bud)"></i>Budget</span></div>
-        <div class="b68-chart" id="ch-cat" data-source="category"></div>
-        <div class="b68-wrap"><table class="b68-t" id="tb-category" data-source="category" data-row-key="key">
+        <div class="b68-legend"><span><i style="background:var(--b-ly)"></i>LY (Last Year)</span><span><i style="background:var(--b-cy)"></i>CY (Current Year)</span><span><i style="background:var(--b-bud)"></i>BG (Budget)</span></div>
+        <div class="b68-chart" id="ch-cat" data-source="category_baht"></div>
+        <div class="b68-wrap"><table class="b68-t" id="tb-category" data-source="category_baht" data-row-key="key">
           <thead><tr><th class="l" data-field="division">Group</th><th class="l" data-field="category">Category</th><th data-field="mtd_actual">Actual</th><th data-field="mtd_budget">Budget</th><th data-source="cat_var" data-field="mtd_pct_budget">%Var B</th><th data-field="mtd_ly">LY</th><th data-source="cat_var" data-field="mtd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
         </table></div>
-        <p class="b68-note catnote">พันบาท · Sheet Category มี วันนี้ / MTD / YTD ถ้าเลือก WTD จะแสดง MTD</p>
+        <p class="b68-note catnote">บาท · Sheet Category มี วันนี้ / MTD / YTD ถ้าเลือก WTD จะแสดง MTD</p>
       </div>
       <div class="b68-panel">
-        <div class="b68-band">Sales by Department (Sheet Analysis · พันบาท)</div>
+        <div class="b68-band">Sales by Department (Sheet Analysis · บาท)</div>
         <div class="b68-tools">
           <div class="b68-seg" role="group" aria-label="Division" id="dpt-div"><button type="button" data-v="ALL">ทั้งหมด</button><button type="button" data-v="FRESH FOOD">Fresh Food</button><button type="button" data-v="DRY FOOD">Dry Food</button><button type="button" data-v="NON FOOD">Non Food</button></div>
           <span class="b68-f">กรองและเรียงตาม</span>
-          <div class="b68-seg" role="group" aria-label="ช่วงที่ใช้กรอง" id="dpt-per"><button type="button" data-v="p">1 มิ.ย.–ปัจจุบัน</button><button type="button" data-v="ytd">YTD</button></div>
+          <div class="b68-seg" role="group" aria-label="ช่วงที่ใช้กรอง" id="dpt-per"><button type="button" data-v="p">1 ม.ค.–ปัจจุบัน</button><button type="button" data-v="ytd">YTD</button></div>
         </div>
         <div class="b68-tools">
           <label class="b68-f" for="f-dptdept">Department <select class="b68-select" id="f-dptdept"></select></label>
-          <label class="b68-f" for="f-dptb">เทียบงบ <select class="b68-select" id="f-dptb"></select></label>
-          <label class="b68-f" for="f-dptly">เทียบปีก่อน <select class="b68-select" id="f-dptly"></select></label>
+          <label class="b68-f" for="f-dptb">เทียบ BG <select class="b68-select" id="f-dptb"></select></label>
+          <label class="b68-f" for="f-dptly">เทียบ LY <select class="b68-select" id="f-dptly"></select></label>
           <label class="b68-f" for="q-dpt">ค้นหา <input class="b68-search" id="q-dpt" type="search" placeholder="ชื่อแผนก หรือเลข"></label>
-          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="dpt-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="worst">ต่ำกว่างบมากสุด</button><button type="button" data-v="best">ดีกว่างบมากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
+          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="dpt-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="worst">ต่ำกว่า BG มากสุด</button><button type="button" data-v="best">ดีกว่า BG มากสุด</button><button type="button" data-v="sales">ยอดขายสูงสุด</button></div>
         </div>
-        <div class="b68-wrap"><table class="b68-t" id="tb-dept" data-source="dept_sales" data-row-key="key">
-          <thead><tr><th class="l" data-field="dept">Department</th><th data-field="p_actual">1 มิ.ย.–ปัจจุบัน</th><th data-field="p_budget">Budget</th><th data-source="dept_var" data-field="p_pct_budget">%Var B</th><th data-field="p_ly">LY</th><th data-source="dept_var" data-field="p_pct_ly">%Var LY</th><th data-field="ytd_actual">YTD Actual</th><th data-field="ytd_budget">YTD Budget</th><th data-source="dept_var" data-field="ytd_pct_budget">%Var B</th><th data-field="ytd_ly">YTD LY</th><th data-source="dept_var" data-field="ytd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
+        <div class="b68-wrap"><table class="b68-t" id="tb-dept" data-source="dept_baht" data-row-key="key">
+          <thead><tr><th class="l" data-field="dept">Department</th><th data-field="p_actual">1 ม.ค.–ปัจจุบัน</th><th data-field="p_budget">Budget</th><th data-source="dept_var" data-field="p_pct_budget">%Var B</th><th data-field="p_ly">LY</th><th data-source="dept_var" data-field="p_pct_ly">%Var LY</th><th data-field="ytd_actual">YTD Actual</th><th data-field="ytd_budget">YTD Budget</th><th data-source="dept_var" data-field="ytd_pct_budget">%Var B</th><th data-field="ytd_ly">YTD LY</th><th data-source="dept_var" data-field="ytd_pct_ly">%Var LY</th></tr></thead><tbody></tbody>
         </table></div>
-        <p class="b68-note">Sheet Analysis นับยอดตั้งแต่ 1 มิ.ย. จึงไม่เท่ากับยอด MTD</p>
+        <p class="b68-note">Sheet Analysis นับยอดตั้งแต่ 1 ม.ค. จึงไม่เท่ากับยอด MTD</p>
       </div>
     </section>
 
@@ -365,17 +388,17 @@
         <p>Class ที่ขายดีและแย่ที่สุด ตามยอดขายและ Margin · สินค้าขายดี Top 10 ของแต่ละ Division · สินค้ากำไรสูงสุดและขาดทุนมากสุด · Sheet Dashboard, RA_DATA (Top10Sale, Top10Profit, TopClass) · ตาราง Top/Bottom 10 Class ไม่แยก Division</p></div>
       <div class="b68-cards" id="cards-items"></div>
       <div class="b68-cols">
-        <div class="b68-panel"><div class="b68-band">Top 10 Class By Sales · MTD (พันบาท)</div>
-          <div class="b68-wrap"><table class="b68-t cr-top" id="tb-cr1" data-source="class_rank" data-row-key="key" data-list="Top 10 by sales">
+        <div class="b68-panel"><div class="b68-band">Top 10 Class By Sales · MTD (บาท)</div>
+          <div class="b68-wrap"><table class="b68-t cr-top" id="tb-cr1" data-source="class_rank_baht" data-row-key="key" data-list="Top 10 by sales">
             <thead><tr><th class="l" data-field="class">Class</th><th data-field="mtd">MTD</th><th data-field="budget">Budget</th><th data-field="pct_budget">%Var Budget</th><th data-field="ly">LY</th><th data-field="pct_ly">%Var LY</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="b68-panel"><div class="b68-band">Bottom 10 Class By Sales · MTD (พันบาท)</div>
-          <div class="b68-wrap"><table class="b68-t cr-bottom" id="tb-cr2" data-source="class_rank" data-row-key="key" data-list="Bottom 10 by sales">
+        <div class="b68-panel"><div class="b68-band">Bottom 10 Class By Sales · MTD (บาท)</div>
+          <div class="b68-wrap"><table class="b68-t cr-bottom" id="tb-cr2" data-source="class_rank_baht" data-row-key="key" data-list="Bottom 10 by sales">
             <thead><tr><th class="l" data-field="class">Class</th><th data-field="mtd">MTD</th><th data-field="var_ly">Var LY</th><th data-field="pct_ly">%Var LY</th><th data-field="pct_budget">%Var Budget</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="b68-panel"><div class="b68-band">Top 10 Class By Margin · MTD (พันบาท)</div>
-          <div class="b68-wrap"><table class="b68-t cr-top" id="tb-cr3" data-source="class_rank" data-row-key="key" data-list="Top 10 by margin">
+        <div class="b68-panel"><div class="b68-band">Top 10 Class By Margin · MTD (บาท)</div>
+          <div class="b68-wrap"><table class="b68-t cr-top" id="tb-cr3" data-source="class_rank_baht" data-row-key="key" data-list="Top 10 by margin">
             <thead><tr><th class="l" data-field="class">Class</th><th data-field="mtd">MTD</th><th data-field="budget">Budget</th><th data-field="pct_budget">%Var Budget</th><th data-field="ly">LY</th><th data-field="pct_ly">%Var LY</th></tr></thead><tbody></tbody></table></div></div>
-        <div class="b68-panel"><div class="b68-band">Bottom 10 Class By Margin · MTD (พันบาท)</div>
-          <div class="b68-wrap"><table class="b68-t cr-bottom" id="tb-cr4" data-source="class_rank" data-row-key="key" data-list="Bottom 10 by margin">
+        <div class="b68-panel"><div class="b68-band">Bottom 10 Class By Margin · MTD (บาท)</div>
+          <div class="b68-wrap"><table class="b68-t cr-bottom" id="tb-cr4" data-source="class_rank_baht" data-row-key="key" data-list="Bottom 10 by margin">
             <thead><tr><th class="l" data-field="class">Class</th><th data-field="mtd">MTD</th><th data-field="var_ly">Var LY</th><th data-field="pct_ly">%Var LY</th><th data-field="pct_budget">%Var Budget</th></tr></thead><tbody></tbody></table></div></div>
       </div>
       <div class="b68-cols">
@@ -402,16 +425,16 @@
     <!-- 4. Shrinkage -->
     <section class="b68-page" id="shrink" data-page="shrink" hidden>
       <div class="b68-intro"><h2>Shrinkage</h2>
-        <p>ความสูญเสียสินค้าเทียบยอดขายและงบ แยกแผนกและเหตุผล (Adjust, Joblot, Expired, Stock count) และสินค้าที่สูญเสียมากที่สุด · Sheet Shk, CodeID, RA_DATA (Top Shrink) · ใช้ปุ่ม MTD / YTD ของหน้านี้</p></div>
+        <p>ความสูญเสียสินค้าเทียบยอดขายและ BG (Budget) แยกแผนกและเหตุผล (Adjust, Joblot, Expired, Stock count) และสินค้าที่สูญเสียมากที่สุด · Sheet Shk, CodeID, RA_DATA (Top Shrink) · ใช้ปุ่ม MTD / YTD ของหน้านี้</p></div>
       <div class="b68-tools" style="padding:0"><div class="b68-f">ช่วงของ Shrinkage
         <div class="b68-seg" role="group" aria-label="ช่วง Shrinkage" id="shk-period"><button type="button" data-v="MTD">MTD</button><button type="button" data-v="YTD">YTD</button></div></div></div>
       <div class="b68-cards" id="cards-shrink"></div>
       <div class="b68-cols">
         <div class="b68-panel">
           <div class="b68-band">% Shrinkage to Sales by Department · <span class="psh">MTD</span></div>
-          <div class="b68-legend"><span><i style="background:color-mix(in srgb, var(--color-fg) 14%, transparent);border-radius:2px;width:16px"></i>งบ</span><span><i style="background:var(--b-down);border-radius:2px;width:16px;height:6px"></i>จริง แย่กว่างบ</span><span><i style="background:var(--b-up);border-radius:2px;width:16px;height:6px"></i>จริง อยู่ในงบ</span></div>
+          <div class="b68-legend"><span><i style="background:color-mix(in srgb, var(--color-fg) 14%, transparent);border-radius:2px;width:16px"></i>BG</span><span><i style="background:var(--b-down);border-radius:2px;width:16px;height:6px"></i>Actual (เกิน BG)</span><span><i style="background:var(--b-up);border-radius:2px;width:16px;height:6px"></i>Actual (ยังไม่เกิน BG)</span></div>
           <div class="b68-chart h" id="ch-shk" data-source="shrink_budget"></div>
-          <p class="b68-note">% Shrinkage ต่อยอดขาย (ยิ่งแท่งยาว ยิ่งเสียมาก) · เรียงแผนกที่แย่กว่างบมากสุดไว้บน · แท่งที่ยาวเกินกราฟจะมีลูกศร ▸ ที่ปลาย</p>
+          <p class="b68-note">% Shrinkage ต่อยอดขาย (ยิ่งแท่งยาว ยิ่งเสียมาก) · เรียงแผนกที่เกิน BG มากที่สุดไว้บน · แท่งที่ยาวเกินกราฟจะมีลูกศร ▸ ที่ปลาย</p>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Shrinkage by Department · <span class="psh">MTD</span> (บาท)</div>
@@ -420,9 +443,9 @@
           </div>
           <div class="b68-tools">
             <label class="b68-f" for="f-shkbdept">Department <select class="b68-select" id="f-shkbdept"></select></label>
-            <label class="b68-f" for="f-shkbst">เทียบงบ <select class="b68-select" id="f-shkbst"></select></label>
+            <label class="b68-f" for="f-shkbst">เทียบ BG <select class="b68-select" id="f-shkbst"></select></label>
             <label class="b68-f" for="q-shkb">ค้นหา <input class="b68-search" id="q-shkb" type="search" placeholder="ชื่อแผนก หรือเลข"></label>
-            <div class="b68-seg" role="group" aria-label="เรียงตาม" id="shkb-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="gap">เกินงบมากสุด</button><button type="button" data-v="shrink">Shrinkage มากสุด</button></div>
+            <div class="b68-seg" role="group" aria-label="เรียงตาม" id="shkb-sort"><button type="button" data-v="dept">ตามแผนก</button><button type="button" data-v="gap">เกิน BG มากที่สุด</button><button type="button" data-v="shrink">Shrinkage มากสุด</button></div>
           </div>
           <div class="b68-wrap"><table class="b68-t" id="tb-shkbud" data-source="shrink_budget" data-row-key="key">
             <thead><tr><th class="l" data-field="dept">Dept.</th><th data-field="sales">Sales</th><th data-field="shrink">Shrinkage</th><th data-field="pct_sales">% to Sales</th><th data-field="pct_budget">% Budget</th></tr></thead><tbody></tbody>
@@ -459,7 +482,7 @@
         <div class="b68-panel">
           <div class="b68-band">Stock Amount FF-DF-NF (บาท)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-stockdiv" data-source="stock_div" data-row-key="division">
-            <thead><tr><th class="l" data-field="division">Division</th><th data-field="sales">Net Sales วันนี้</th><th data-field="avg_sales">Avg Sales/วัน</th><th data-field="stock">Stock Amount</th><th data-field="stock_day">Stock Day</th></tr></thead><tbody></tbody>
+            <thead><tr><th class="l" data-field="division">Division</th><th data-field="sales">Daily Sale</th><th data-field="avg_sales">Avg Sale per Day</th><th data-field="stock">Stock Amount</th><th data-field="stock_day">Stock Day</th></tr></thead><tbody></tbody>
           </table></div>
           <div class="b68-band" style="margin-top:8px">KPI Table 2</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-kpi" data-source="kpi" data-row-key="metric">
@@ -476,6 +499,7 @@
       </div>
       <div class="b68-panel">
         <div class="b68-band">Top 10 Aging Provision by Division (บาท)</div>
+        <div class="b68-tools"><label class="b68-f" for="f-agst">Status <select class="b68-select" id="f-agst"></select></label></div>
         <div class="b68-wrap"><table class="b68-t" id="tb-agingitems" data-source="aging_items" data-row-key="key">
           <thead><tr><th class="l" data-field="division">Division</th><th data-field="rank">#</th><th class="l" data-field="status">Status</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th data-field="price">Price</th><th data-field="qty">EOH Qty</th><th data-field="cost">EOH Cost</th><th class="l" data-field="last_sold">Last Sold</th><th class="l" data-field="last_received">Last Received</th></tr></thead><tbody></tbody>
         </table></div>
@@ -492,7 +516,7 @@
     <!-- 6. Service level -->
     <section class="b68-page" id="service" data-page="service" hidden>
       <div class="b68-intro"><h2>Service level</h2>
-        <p>สัดส่วนสินค้าที่มีของบนชั้นของรายการ KVI, Makro Mail และ Top 100 แยกสินค้าที่ขาดว่ามี order แล้วหรือยัง · Sheet KVI-mm, tOP100 · เป้าหมาย 95% ขึ้นไป</p></div>
+        <p>สัดส่วนสินค้าที่มีของบนชั้นของรายการ KVI, Makro Mail และ Top 100 แยกสินค้าที่ขาดว่ามี On Order แล้วหรือยัง · Sheet KVI-mm, tOP100 · Target 95% ขึ้นไป</p></div>
       <div class="b68-cards" id="cards-service"></div>
       <div class="b68-cols">
         <div class="b68-panel">
@@ -514,7 +538,7 @@
         </table></div>
       </div>
       <div class="b68-panel">
-        <div class="b68-band">Summary GAP Loss</div>
+        <div class="b68-band">Summary Gap Loss</div>
         <div class="b68-wrap"><table class="b68-t" id="tb-gap" data-source="gap_loss" data-row-key="week">
           <thead><tr><th class="l" data-field="week">Week</th><th data-field="gap_round1">No of Gap Round 1</th><th data-field="gap_round2">Round 2</th><th data-field="gap_total">Total</th><th data-field="loss_sale">Loss Sale (บาท)</th></tr></thead><tbody></tbody>
         </table></div>
@@ -550,7 +574,7 @@
       <div class="b68-cols">
         <div class="b68-panel">
           <div class="b68-band">Service level by List &amp; Division</div>
-          <div class="b68-legend"><span><i style="background:var(--b-up)"></i>≥ 95%</span><span><i style="background:var(--b-down)"></i>ต่ำกว่า 95%</span><span><i style="background:var(--color-fg);border-radius:0;width:2px"></i>เป้า 95%</span></div>
+          <div class="b68-legend"><span><i style="background:var(--b-up)"></i>≥ 95%</span><span><i style="background:var(--b-down)"></i>ต่ำกว่า 95%</span><span><i style="background:var(--color-fg);border-radius:0;width:2px"></i>Target 95%</span></div>
           <div class="b68-chart h" id="ch-t2sum" data-source="t2_summary"></div>
         </div>
         <div class="b68-panel">
@@ -578,7 +602,7 @@
         <div class="b68-band"><span class="t2-list">KVI</span> · รายการสินค้า</div>
         <div class="b68-tools">
           <label class="b68-f" for="f-t2status">สถานะ <select class="b68-select" id="f-t2status">
-            <option value="ทั้งหมด">ทั้งหมด</option><option value="ขาด ไม่มี order">ขาด ไม่มี order</option><option value="ขาด มี order">ขาด มี order</option><option value="มีของ">มีของ</option></select></label>
+            <option value="ทั้งหมด">ทั้งหมด</option><option value="ขาด ไม่มี order">สินค้าขาดไม่มี On Order</option><option value="ขาด มี order">สินค้าขาดที่ On Order แล้ว</option><option value="มีของ">มีสินค้า</option></select></label>
           <label class="b68-f" for="f-t2item">Item Status <select class="b68-select" id="f-t2item"></select></label>
           <label class="b68-f" for="q-t2">ค้นหา <input class="b68-search" id="q-t2" type="search" placeholder="สินค้า รหัส หรือแผนก"></label>
         </div>
@@ -613,13 +637,13 @@
       <div class="b68-panel">
         <div class="b68-band">Pack and Component</div>
         <div class="b68-tools">
-          <label class="b68-f" for="f-t2pgrp">กลุ่ม <select class="b68-select" id="f-t2pgrp"></select></label>
+          <label class="b68-f" for="f-t2pgrp">Division <select class="b68-select" id="f-t2pgrp"></select></label>
           <label class="b68-f" for="f-t2pflag">สถานะ <select class="b68-select" id="f-t2pflag"></select></label>
           <label class="b68-f" for="q-t2p">ค้นหา <input class="b68-search" id="q-t2p" type="search" placeholder="Pack / Component / รหัส"></label>
         </div>
         <p class="b68-note t2p-count"></p>
         <div class="b68-wrap"><table class="b68-t" id="tb-t2pack" data-source="t2_pack" data-row-key="key">
-          <thead><tr><th class="l" data-field="flag">สถานะ</th><th class="l" data-field="group">กลุ่ม</th><th class="l" data-field="pack_item">Pack Item</th><th class="l" data-field="pack_desc">Pack</th><th data-field="pack_stock">Pack Stock</th><th data-field="pack_price">Sell Pr</th><th class="l" data-field="comp_item">Comp Item</th><th class="l" data-field="comp_desc">Component</th><th data-field="comp_stock">Comp Stock</th><th data-field="comp_price">Sell Pr</th><th data-field="dms">Dms</th></tr></thead><tbody></tbody>
+          <thead><tr><th class="l" data-field="flag">สถานะ</th><th class="l" data-field="group">Division</th><th class="l" data-field="pack_item">Pack Item</th><th class="l" data-field="pack_desc">Pack</th><th data-field="pack_stock">Pack Stock</th><th data-field="pack_price">Sell Pr</th><th class="l" data-field="comp_item">Comp Item</th><th class="l" data-field="comp_desc">Component</th><th data-field="comp_stock">Comp Stock</th><th data-field="comp_price">Sell Pr</th><th data-field="dms">Dms</th></tr></thead><tbody></tbody>
         </table></div>
       </div>
     </section>
@@ -661,6 +685,11 @@
       </div>
       <div class="b68-panel">
         <div class="b68-band">รายการที่ส่งไม่ครบ · วันล่าสุด</div>
+        <div class="b68-tools">
+          <label class="b68-f" for="f-t2sr">สาเหตุ <select class="b68-select" id="f-t2sr"></select></label>
+          <label class="b68-f" for="q-t2l">ค้นหา <input class="b68-search" id="q-t2l" type="search" placeholder="สินค้า หรือรหัส"></label>
+          <span class="b68-note" id="t2l-n"></span>
+        </div>
         <div class="b68-wrap"><table class="b68-t" id="tb-t2lines" data-source="t2_short_lines" data-row-key="key">
           <thead><tr><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th class="l" data-field="division">Division</th><th data-field="ordered">สั่ง</th><th data-field="shipped">ส่ง</th><th data-field="short">ขาด</th><th data-field="pct">% ขาด</th><th class="l" data-field="reason">สาเหตุ</th></tr></thead><tbody></tbody>
         </table></div>
@@ -669,7 +698,7 @@
 
     <section class="b68-page" id="t2pick" data-page="t2pick" hidden>
       <div class="b68-intro"><h2>OOS ตอนหยิบสินค้า (Picking)</h2>
-        <p>สินค้าที่พนักงานหยิบให้ลูกค้า O2O ไม่ได้ (Out of shelf, Zero stock ฯลฯ) ของรอบล่าสุด แยกสาเหตุ แผนก และชั่วโมง พร้อมประวัติเดือนก่อน · File 3.%Item Shortage (Sheet Data oos, Data OOS overview) · ไม่แสดงชื่อลูกค้าหรือพนักงาน</p></div>
+        <p>สินค้าที่พนักงานหยิบให้ลูกค้า O2O ไม่ได้ (ไม่มีของบนชั้นวาง, Stock เป็น 0 ฯลฯ) ของรอบล่าสุด แยกสาเหตุ แผนก และชั่วโมง พร้อมประวัติเดือนก่อน · File 3.%Item Shortage (Sheet Data oos, Data OOS overview) · ไม่แสดงชื่อลูกค้าหรือพนักงาน</p></div>
       <div class="b68-cards" id="cards-t2pick"></div>
       <div class="b68-cols">
         <div class="b68-panel">
@@ -688,7 +717,7 @@
           <label class="b68-f" for="q-t2o">ค้นหา <input class="b68-search" id="q-t2o" type="search" placeholder="สินค้า รหัส หรือแผนก"></label>
         </div>
         <div class="b68-wrap"><table class="b68-t" id="tb-t2oos" data-source="t2_oos_today" data-row-key="key">
-          <thead><tr><th data-field="hour">ชั่วโมง</th><th class="l" data-field="section">Section</th><th class="l" data-field="dept">Dept</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th class="l" data-field="reason">OOS Reason</th><th data-field="short">ขาด</th><th data-field="plan">สั่ง</th><th class="l" data-field="shelf">Shelf</th><th class="l" data-field="status">Status</th><th class="l" data-field="wait">รอ</th><th class="l" data-field="channel">Channel</th></tr></thead><tbody></tbody>
+          <thead><tr><th data-field="hour">ชั่วโมง</th><th class="l" data-field="section">Section</th><th class="l" data-field="dept">Dept</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th class="l" data-field="reason">สาเหตุ OOS</th><th data-field="short">ขาด</th><th data-field="plan">สั่ง</th><th class="l" data-field="shelf">Shelf</th><th class="l" data-field="status">Status</th><th class="l" data-field="wait">รอ</th><th class="l" data-field="channel">Channel</th></tr></thead><tbody></tbody>
         </table></div>
       </div>
       <div class="b68-cols">
@@ -739,12 +768,12 @@
         <div class="b68-panel">
           <div class="b68-band">สถานะ Stock / Order ของ Top 1000 (จำนวนรายการ)</div>
           <div class="b68-chart h" id="ch-t3flag" data-source="t3_top_items"></div>
-          <p class="b68-note">แต่ละรายการถูกนับในสถานะเดียว: Stock ติดลบ → หมด มี Order → หมด ไม่มี Order → มีของ มี Order → มีของ In Transit → มีของ ไม่มี Order</p>
+          <p class="b68-note">แต่ละรายการถูกนับในสถานะเดียว: Stock ติดลบ → สินค้าหมด มี On Order → สินค้าหมด ยังไม่มี On Order → มีสินค้า มี On Order → มีสินค้า กำลัง In Transit → มีสินค้า ยังไม่มี On Order</p>
         </div>
         <div class="b68-panel">
           <div class="b68-band">Summary ตาม Division (จาก Sheet Summary)</div>
           <div class="b68-wrap"><table class="b68-t" id="tb-t3sum" data-source="t3_top_sum" data-row-key="division">
-            <thead><tr><th class="l" data-field="division">Division</th><th data-field="on_order">On Order</th><th data-field="in_transit">In Transit</th><th data-field="zero_stock">Zero Stock</th><th data-field="zero_on_order">Zero Stock On Order</th><th data-field="no_order">NO ORDER</th><th data-field="negative">Negative stock</th></tr></thead><tbody></tbody></table></div>
+            <thead><tr><th class="l" data-field="division">Division</th><th data-field="on_order">On Order</th><th data-field="in_transit">In Transit</th><th data-field="zero_stock">Zero Stock</th><th data-field="zero_on_order">Zero Stock On Order</th><th data-field="no_order">No Order</th><th data-field="negative">Negative stock</th></tr></thead><tbody></tbody></table></div>
         </div>
       </div>
       <div class="b68-panel">
@@ -812,27 +841,41 @@
           <thead><tr><th class="l" data-field="dept">Dept</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th data-field="dms">Dms</th><th data-field="stock">Stock</th><th data-field="sale">Sale</th><th data-field="profit_pct">%Profit</th><th data-field="em_sale">EM Sale</th><th data-field="em_profit">EM Profit</th><th data-field="c52">C52</th><th data-field="tt_sale">TT Sale</th><th data-field="tt_profit">TT Profit</th><th data-field="tt_pct">%TT</th></tr></thead><tbody></tbody>
         </table></div>
       </div>
+    </section>
+
+    <section class="b68-page" id="t3c52" data-page="t3c52" hidden>
+      <div class="b68-intro"><h2>Code 52 (ทำทิ้ง) เทียบยอดขาย</h2>
+        <p>สินค้า Fresh Food ที่ทำทิ้ง Code 52 เทียบกับยอดขายของสินค้าตัวเดียวกัน · % to Sale = มูลค่าทำทิ้ง ÷ TT Sale × 100 · ไม่มียอดขาย = ทำทิ้งแต่ขายไม่ได้เลยในช่วงนั้น · File Focus_All_FF (Sheet Code_52, Sum_D, Sum_M)</p></div>
+      <div class="b68-tools"><span class="b68-f">ช่วงเวลา</span><div class="b68-seg" role="group" aria-label="ช่วงเวลา" id="t3-c52per"><button type="button" data-v="Daily">วันนี้</button><button type="button" data-v="MTD">MTD</button></div></div>
+      <div class="b68-cards" id="cards-t3c52"></div>
       <div class="b68-panel">
         <div class="b68-band">Code 52 รายสินค้า</div>
+        <div class="b68-tools">
+          <label class="b68-f" for="f-c52dept">Department <select class="b68-select" id="f-c52dept"></select></label>
+          <label class="b68-f" for="f-c52band">% to Sale <select class="b68-select" id="f-c52band"></select></label>
+          <div class="b68-seg" role="group" aria-label="เรียงตาม" id="c52-sort"><button type="button" data-v="cost">ทำทิ้งมากสุด</button><button type="button" data-v="pct">% to Sale สูงสุด</button></div>
+          <label class="b68-f" for="q-c52">ค้นหา <input class="b68-search" id="q-c52" type="search" placeholder="สินค้า หรือรหัส"></label>
+          <span class="b68-note" id="c52-n"></span>
+        </div>
         <div class="b68-wrap"><table class="b68-t" id="tb-t3c52" data-source="t3_ff_c52" data-row-key="key">
-          <thead><tr><th class="l" data-field="dept">Dept</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th data-field="qty">Qty</th><th data-field="cost">Cost (บาท)</th></tr></thead><tbody></tbody></table></div>
+          <thead><tr><th class="l" data-field="dept">Dept</th><th class="l" data-field="item">Item</th><th class="l" data-field="desc">Description</th><th data-field="qty">Qty ทิ้ง</th><th data-field="cost">ทำทิ้ง (บาท)</th><th>TT Sale (บาท)</th><th>% to Sale</th></tr></thead><tbody></tbody></table></div>
       </div>
     </section>
 
     <section class="b68-page" id="t3shk" data-page="t3shk" hidden>
       <div class="b68-intro"><h2>Focus Shrinkage</h2>
-        <p>Shrinkage ต่อยอดขายเทียบงบ ตามแผนก Class และรายสินค้าตาม Reason Code · ข้อมูล ณ <b data-source="t3_meta" data-field="value" data-where="key=Shrinkage date" id="t3-shkdate">—</b> · File Focus Shrinkage (Sheet Sum, data, shk by item)</p></div>
+        <p>Shrinkage ต่อยอดขายเทียบ BG ตามแผนก Class และรายสินค้าตาม Reason Code · ข้อมูล ณ <b data-source="t3_meta" data-field="value" data-where="key=Shrinkage date" id="t3-shkdate">—</b> · File Focus Shrinkage (Sheet Sum, data, shk by item)</p></div>
       <div class="b68-tools"><span class="b68-f">ช่วงเวลา</span><div class="b68-seg" role="group" aria-label="ช่วงเวลา" id="t3-shkper"><button type="button" data-v="d">วันนี้</button><button type="button" data-v="m">MTD</button><button type="button" data-v="y">YTD</button></div></div>
       <div class="b68-cards" id="cards-t3shk"></div>
       <div class="b68-panel">
-        <div class="b68-band">% Shrinkage ต่อยอดขาย เทียบงบ ตามแผนก (แผนกที่มี Shrinkage)</div>
+        <div class="b68-band">% Shrinkage เทียบ Budget ตามแผนก (แผนกที่มี Shrinkage)</div>
         <div class="b68-chart h" id="ch-t3shk" data-source="t3_shk_dept"></div>
-        <p class="b68-note">แถบสีเทา = งบ · แถบสี = จริง (แดง = เกินงบ, เขียว = อยู่ในงบ) · วันนี้ไม่มีงบใน File</p>
+        <p class="b68-note">แถบสีเทา = BG · แถบสี = Actual (แดง = เกิน BG, เขียว = ยังไม่เกิน BG) · วันนี้ไม่มี BG ใน File</p>
       </div>
       <div class="b68-panel">
         <div class="b68-band">ตามแผนก</div>
         <div class="b68-wrap"><table class="b68-t" id="tb-t3shkd" data-source="t3_shk_dept" data-row-key="key">
-          <thead><tr><th class="l" data-field="division">Division</th><th class="l" data-field="desc">Dept</th><th data-field="d_sales">Sales วันนี้</th><th data-field="d_shrink">Shrink วันนี้</th><th data-field="d_pct">%</th><th data-field="m_sales">Sales MTD</th><th data-field="m_shrink">Shrink MTD</th><th data-field="m_pct">%</th><th data-field="m_budget">งบ %</th><th data-field="y_sales">Sales YTD</th><th data-field="y_shrink">Shrink YTD</th><th data-field="y_pct">%</th><th data-field="y_budget">งบ %</th></tr></thead><tbody></tbody></table></div>
+          <thead><tr><th class="l" data-field="division">Division</th><th class="l" data-field="desc">Dept</th><th data-field="d_sales">Sales วันนี้</th><th data-field="d_shrink">Shrink วันนี้</th><th data-field="d_pct">%</th><th data-field="m_sales">Sales MTD</th><th data-field="m_shrink">Shrink MTD</th><th data-field="m_pct">%</th><th data-field="m_budget">BG %</th><th data-field="y_sales">Sales YTD</th><th data-field="y_shrink">Shrink YTD</th><th data-field="y_pct">%</th><th data-field="y_budget">BG %</th></tr></thead><tbody></tbody></table></div>
       </div>
       <div class="b68-panel">
         <div class="b68-band">ตาม Class · แยกประเภท Shrinkage (บาท)</div>
@@ -965,9 +1008,6 @@
   const n2 = (v) => (v == null ? '—' : F[2].format(v));
   const sg = (v, d = 2) => (v == null ? '—' : (v > 0 ? '+' : '') + F[d].format(v));
   const pc = (v, d = 2) => (v == null ? '—' : sg(v, d) + '%');
-  // millions of baht; the unit is written in the card title
-  const M = (v) => n2(v);
-  const sM = (v) => sg(v);
   const tone = (v) => (v == null || v === 0 ? '' : v > 0 ? 'up' : 'down');
   const PL = { Daily: 'วันนี้', WTD: 'WTD', MTD: 'MTD', YTD: 'YTD' };
   const SHORT = { 'DRY FOOD': 'DF', 'FRESH FOOD': 'FF', 'NON FOOD': 'NF' };
@@ -976,12 +1016,12 @@
   const division = () => dash.params().div || 'ALL';
   // Rows of the chosen division; with "ทั้งหมด" every row stays
   const inDiv = (d) => division() === 'ALL' || d === division();
-  const PICK0 = { profitList: 'กำไรสูงสุด', shk: 'MTD', catgrp: 'ทั้งหมด', o2o: 'ทั้งหมด', shkdept: 'ทั้งหมด',
+  const PICK0 = { profitList: 'กำไรสูงสุด', shk: 'MTD', catgrp: 'ทั้งหมด', o2o: 'ทั้งหมด', shkdept: 'ทั้งหมด', agst: 'ทั้งหมด',
     t2view: 'ทุกรายการ', t2status: 'ทั้งหมด', t2item: 'ทั้งหมด', t2kdiv: 'ทั้งหมด', t2ktype: 'ทั้งหมด', t2pgrp: 'ทั้งหมด',
     catdiv: 'ALL', catb: 'ทั้งหมด', catly: 'ทั้งหมด', catsort: 'grp',
     dptdiv: 'ALL', dptper: 'p', dptdept: 'ทั้งหมด', dptb: 'ทั้งหมด', dptly: 'ทั้งหมด', dptsort: 'dept',
     shkbdiv: 'ALL', shkbdept: 'ทั้งหมด', shkbst: 'ทั้งหมด', shkbsort: 'dept',
-    t2pflag: 'ทั้งหมด', t2dim: 'Buyer', t2aodim: 'Channel', t2pr: 'ทั้งหมด',
+    t2pflag: 'ทั้งหมด', t2dim: 'Buyer', t2aodim: 'Channel', t2pr: 'ทั้งหมด', t2sr: 'ทั้งหมด', c52dept: 'ทั้งหมด', c52band: 'ทั้งหมด', c52sort: 'cost',
     t3flag: 'ทั้งหมด', t3tdept: 'ทั้งหมด', t3ildim: 'Item Status', t3ffper: 'MTD', t3ffdept: 'ทั้งหมด', t3ffsort: 'tt_sale',
     t3shkper: 'm', t3shkdept: 'ทั้งหมด', t3rsn: 'ทั้งหมด', t3idept: 'ทั้งหมด', t3c20yr: '2026', t3c20m: '', t3c20d: 'ทั้งหมด',
     t4odept: 'ทั้งหมด', t4oway: 'ทั้งหมด', t4odays: 'ทั้งหมด', t4oord: 'ทั้งหมด', t4fplan: 'ทั้งหมด', t4fdate: 'ทั้งหมด', t4ftype: 'ทั้งหมด', t4fdept: 'ทั้งหมด' };
@@ -991,18 +1031,48 @@
   let page = 'sales';
   let pages = ['sales'];
 
-  dash.calc('sales_m', {
+  // ----- ยอดขาย & ลูกค้า in baht: the Dashboard sheet gives money in thousand baht, the page shows baht
+  const baht = (v) => (v == null ? null : Math.round(v * 1000));
+  dash.calc('sales_baht', {
     inputs: ['sales'],
-    title: 'ยอดขายหน่วยล้านบาท และส่วนต่าง',
-    description: 'ยอดขายจริง ปีก่อน งบ จากพันบาทเป็นล้านบาท และส่วนต่างจากปีก่อนและงบ ปัดสองตำแหน่ง',
+    title: 'ยอดขายตาม Division (บาท)',
+    description: 'ยอดขายจริง (actual) งบ (budget) ปีก่อน (ly) คูณ 1,000 จากพันบาทเป็นบาท, ส่วนต่างจาก LY และ BG เป็นบาท; % และสัดส่วนเหมือนไฟล์',
     fn: (sales) => sales.map((r) => ({
-      key: r.key,
-      actual_m: Math.round(r.actual / 10) / 100,
-      ly_m: Math.round(r.ly / 10) / 100,
-      budget_m: Math.round(r.budget / 10) / 100,
-      diff_ly_m: Math.round((r.actual - r.ly) / 10) / 100,
-      diff_budget_m: Math.round((r.actual - r.budget) / 10) / 100,
+      key: r.key, period: r.period, division: r.division,
+      actual: baht(r.actual), budget: baht(r.budget), ly: baht(r.ly),
+      diff_ly: baht(r.actual - r.ly), diff_budget: baht(r.actual - r.budget),
+      pct_budget: r.pct_budget, pct_ly: r.pct_ly, share: r.share,
     })),
+  });
+  // thousand-baht lists shown in baht: money fields (actual, budget, LY, CY, variance) x 1,000, % fields unchanged
+  const MONEY = /(^|_)(actual|budget|ly|a|b|mtd|var_b|var_ly)$/;
+  const bahtOf = (id, src) => dash.calc(id, {
+    inputs: [src],
+    title: `${src} (บาท)`,
+    description: `${src} ที่ช่องเงิน (actual, budget, ly, a, b, mtd, var_b, var_ly) คูณ 1,000 จากพันบาทเป็นบาท; ช่อง % และช่องอื่นเหมือนเดิม`,
+    fn: (rows) => rows.map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, typeof v === 'number' && !k.includes('pct') && MONEY.test(k) ? baht(v) : v]))),
+  });
+  [['category_baht', 'category'], ['dept_baht', 'dept_sales'], ['class_rank_baht', 'class_rank'],
+    ['t5_cat_div_baht', 't5_cat_div'], ['t5_cat_cat_baht', 't5_cat_cat'], ['t5_cat_cls_baht', 't5_cat_cls']].forEach(([id, src]) => bahtOf(id, src));
+  dash.calc('need_baht', {
+    inputs: ['daily_need'],
+    title: 'ยอดที่ต้องขายต่อวันให้ถึง BG (บาท)',
+    description: 'ขายได้เฉลี่ยต่อวัน BG ต่อวัน และต้องขายต่อวัน คูณ 1,000 จากพันบาทเป็นบาท; % Var เหมือนไฟล์',
+    fn: (daily_need) => daily_need.map((r) => ({
+      key: r.division, division: r.division, avg_day: baht(r.avg_day), budget_day: baht(r.budget_day), need_day: baht(r.need_day), pct_var: r.pct_var,
+    })),
+  });
+  dash.calc('cust_baht', {
+    inputs: ['customers'],
+    title: 'Customer Table (ยอดขายเป็นบาท)',
+    description: 'ตาราง Customer ตามกลุ่ม ยอดขาย (sales) คูณ 1,000 จากพันบาทเป็นบาท ค่าอื่นเหมือนไฟล์',
+    fn: (customers) => customers.map((r) => ({ ...r, sales: baht(r.sales) })),
+  });
+  dash.calc('bottom_baht', {
+    inputs: ['bottom_stores'],
+    title: 'Bottom Stores (บาท)',
+    description: 'ส่วนต่าง MTD เทียบ LY ของสาขา (variance) คูณ 1,000 จากพันบาทเป็นบาท; % Variance เหมือนไฟล์',
+    fn: (bottom_stores) => bottom_stores.map((r) => ({ ...r, key: r.store, variance: baht(r.variance) })),
   });
   dash.calc('cat_var', {
     inputs: ['category'],
@@ -1020,7 +1090,7 @@
   dash.calc('dept_var', {
     inputs: ['dept_sales'],
     title: '% เทียบงบและปีก่อน ตามแผนก',
-    description: 'ยอดขายจริงหารงบหรือปีก่อน ลบ 1 คิดเป็น % สำหรับช่วงตั้งแต่ 1 มิ.ย. และ YTD',
+    description: 'ยอดขายจริงหารงบหรือปีก่อน ลบ 1 คิดเป็น % สำหรับช่วงตั้งแต่ 1 ม.ค. และ YTD',
     fn: (dept_sales) => dept_sales.map((r) => ({
       key: r.key,
       p_pct_budget: r.p_budget ? Math.round((r.p_actual / r.p_budget - 1) * 10000) / 100 : null,
@@ -1078,12 +1148,12 @@
   dash.calc('t2_oos_sum', {
     inputs: ['t2_oos_today'],
     title: 'สรุป OOS ตอนหยิบสินค้า รอบล่าสุด',
-    description: 'นับรายการ OOS ทั้งหมดและแยก Out of shelf / Zero Stock / อื่น ๆ ตาม Division และทั้งหมด (ALL)',
+    description: 'นับรายการ OOS ทั้งหมดและแยก ไม่มีของบนชั้นวาง (Out of shelf) / Stock เป็น 0 (Zero Stock) / อื่น ๆ ตาม Division และทั้งหมด (ALL)',
     fn: (t2_oos_today) => ['ALL', ...new Set(t2_oos_today.map((r) => r.division))].map((d) => {
       const ls = t2_oos_today.filter((r) => d === 'ALL' || r.division === d);
       const n = (re) => ls.filter((r) => r.reason === re).length;
-      return { key: d, items: ls.length, out_of_shelf: n('Out of shelf'), zero_stock: n('Zero Stock'),
-        other: ls.length - n('Out of shelf') - n('Zero Stock') };
+      const shelf = n('ไม่มีของบนชั้นวาง') + n('Out of shelf'), zero = n('Stock เป็น 0') + n('Zero Stock');
+      return { key: d, items: ls.length, out_of_shelf: shelf, zero_stock: zero, other: ls.length - shelf - zero };
     }),
   });
   dash.calc('t2_ao_tot', {
@@ -1104,7 +1174,7 @@
   dash.calc('t3_ff_tot', {
     inputs: ['t3_ff_sum'],
     title: 'Fresh Food รวมทุกแผนก',
-    description: 'ผลรวม Sale, Profit, EM Sale, EM Profit, C52, TT Sale, TT Profit, Loss Margin ของทุกแผนก Fresh Food แยก Daily / MTD และ % Profit = Profit / Sale × 100',
+    description: 'ผลรวม Sale, Profit, EM Sale, EM Profit, C52, TT Sale, TT Profit, Loss Margin ของทุกแผนก Fresh Food แยก Daily / MTD เป็นพันบาท และ % Profit = Profit / Sale × 100',
     fn: (t3_ff_sum) => ['Daily', 'MTD'].map((p) => {
       const rs = t3_ff_sum.filter((r) => r.period === p);
       const s = (f) => Math.round(rs.reduce((a, r) => a + (r[f] || 0), 0) * 100) / 100;
@@ -1114,6 +1184,7 @@
       o.em_pct = o.em_sale ? Math.round(o.em_profit / o.em_sale * 10000) / 100 : null;
       o.c52_pct = o.tt_sale ? Math.round(o.c52 / o.tt_sale * 10000) / 100 : null;
       o.tt_pct = o.tt_sale ? Math.round(o.tt_profit / o.tt_sale * 10000) / 100 : null;
+      ['sale', 'profit', 'em_sale', 'em_profit', 'c52', 'tt_sale', 'tt_profit', 'loss_margin'].forEach((f) => { o[f] = Math.round(o[f] / 10) / 100; });
       return o;
     }),
   });
@@ -1332,12 +1403,21 @@
       if (c.cls) v.classList.add(c.cls);
       mark(v, c);
       box.append(h, v);
+      if (c.after) { const u = document.createElement('span'); u.style.cssText = 'font-size:.45em;font-weight:500;margin-left:6px'; u.textContent = c.after; v.append(u); }
       (c.subs || []).forEach((s) => {
         const p = document.createElement('div'); p.className = 's';
-        p.append(document.createTextNode(s.label + ' '));
+        if (s.label) p.append(document.createTextNode(s.label + ' '));
         const b = document.createElement('b'); b.textContent = s.v; if (s.cls) b.classList.add(s.cls);
-        mark(b, s); p.append(b); box.append(p);
+        mark(b, s); p.append(b);
+        if (s.after) p.append(document.createTextNode(' ' + s.after)); box.append(p);
       });
+      // a card with go opens its item list
+      if (c.go) {
+        box.classList.add('go'); box.tabIndex = 0; box.setAttribute('role', 'button');
+        box.addEventListener('click', c.go);
+        box.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.go(); } });
+        const p = document.createElement('div'); p.className = 's go-hint'; p.textContent = 'กดเพื่อดูรายการ ▸'; box.append(p);
+      }
       return box;
     }));
     // numbers stay on one line: shrink the font until the value fits its card
@@ -1442,7 +1522,7 @@
       svg.append('text').attr('x', cx(r)).attr('y', H - 8).attr('text-anchor', 'middle').attr('font-size', 11).style('fill', 'var(--color-fg-muted)').text(r.short);
       svg.append('rect').attr('x', x(r.x) - (x.step() - x.bandwidth()) / 2).attr('y', 0).attr('width', x.step()).attr('height', H - m.b)
         .style('fill', 'transparent')
-        .on('mousemove', (ev) => t.show(ev, [[r.label], ['ปีนี้ (CY)', o.fmt(r.cy)], ['ปีก่อน (LY)', o.fmt(r.ly)], ...(r.bud != null ? [['งบ (Budget)', o.fmt(r.bud)]] : []), ['เทียบปีก่อน', o.fmtV(r.v)]]))
+        .on('mousemove', (ev) => t.show(ev, [[r.label], ['CY (Current Year)', o.fmt(r.cy)], ['LY (Last Year)', o.fmt(r.ly)], ...(r.bud != null ? [['BG (Budget)', o.fmt(r.bud)]] : []), ['เทียบ LY', o.fmtV(r.v)]]))
         .on('mouseleave', () => t.hide());
     });
     box.querySelector('svg')?.remove();
@@ -1487,7 +1567,7 @@
     const tmp = d3.select(box).append('svg').attr('width', 0).attr('height', 0);
     const tw = (s, size = 13) => { const n = tmp.append('text').attr('font-size', size).text(s); const w = n.node().getComputedTextLength(); n.remove(); return w; };
     const valText = (r) => `${n2(r.pct_sales)}%`;
-    const budText = (r) => `งบ ${n2(r.pct_budget)}%`;
+    const budText = (r) => `BG ${n2(r.pct_budget)}%`;
     const lw = Math.min(W * 0.38, (d3.max(rows, (r) => tw(r.dept)) || 0) + 12);
     // values are bold, so leave extra room on the right
     const rw = (d3.max(rows, (r) => tw(valText(r), 13) * 1.12 + tw(budText(r), 12)) || 0) + 40;
@@ -1520,7 +1600,7 @@
       v.append('tspan').attr('font-weight', 700).style('fill', worse ? col('--b-down') : col('--b-up')).text(valText(r));
       v.append('tspan').attr('dx', 8).attr('font-size', 12).style('fill', 'var(--color-fg-muted)').text(budText(r));
       g.append('rect').attr('x', 0).attr('y', y0).attr('width', W).attr('height', rowH).style('fill', 'transparent')
-        .on('mousemove', (ev) => t.show(ev, [[r.dept], ['% Shrinkage ต่อยอดขาย', n2(r.pct_sales) + '%'], ['งบ', n2(r.pct_budget) + '%'],
+        .on('mousemove', (ev) => t.show(ev, [[r.dept], ['% Shrinkage ต่อยอดขาย', n2(r.pct_sales) + '%'], ['BG', n2(r.pct_budget) + '%'],
           ['Shrinkage', n0(r.shrink) + ' บาท'], ['ยอดขาย', n0(r.sales) + ' บาท']]))
         .on('mouseleave', () => t.hide());
     });
@@ -1545,11 +1625,34 @@
     pages.forEach((pg) => { const s = document.getElementById(pg); if (s) s.parentNode.append(s); });
     $('#page-name').textContent = btn.textContent.trim();
     $('#topic-name').textContent = btn.closest('.b68-group').querySelector('.b68-grp span').textContent;
-    $('#f-period-wrap').hidden = pages.every((pg) => /^t\d/.test(pg));
+    // Date Period only matters on pages that read it (Shrinkage and O2O files are MTD only)
+    $('#f-period-wrap').hidden = pages.every((pg) => /^t\d/.test(pg) || pg === 'shrink' || pg === 'o2o');
+    $('#m-page').textContent = `${$('#topic-name').textContent} · ${btn.textContent.trim()}`;
+    showMenu(false);
     if (push) dash.setLink(btn.id.slice(4));
     draw();
     if (scroll) root.scrollIntoView({ block: 'start' });
   }
+  // phone menu: one bar that opens the full menu
+  const showMenu = (open) => { $('.b68-side').classList.toggle('open', open); $('.b68-mtoggle').setAttribute('aria-expanded', String(open)); };
+  $('.b68-mtoggle').addEventListener('click', () => showMenu(!$('.b68-side').classList.contains('open')));
+  $('.b68-ntoggle').addEventListener('click', () => {
+    const collapsed = root.classList.toggle('nav-off');
+    $('.b68-ntoggle').setAttribute('aria-expanded', String(!collapsed));
+    requestAnimationFrame(draw);
+  });
+  // Publication time comes from the upload release, independently of the report date.
+  fetch("data-release.json", { cache: 'no-cache' }).then(r => {
+    if (!r.ok) throw new Error('release unavailable');
+    return r.json();
+  }).then(release => {
+    const date = new Date(release.publishedAt);
+    if (!Number.isFinite(date.getTime())) throw new Error('invalid release date');
+    $('#up-at').textContent = new Intl.DateTimeFormat('th-TH-u-ca-gregory', {
+      dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Bangkok'
+    }).format(date) + ' น.';
+  }).catch(() => { $('#up-at').textContent = 'ไม่ทราบวันที่'; });
+
   $$('.b68-menu button').forEach((b) => b.addEventListener('click', () => goTo(b.id.slice(4), true)));
   $$('.b68-grp').forEach((g) => g.addEventListener('click', () => {
     const open = g.getAttribute('aria-expanded') !== 'true';
@@ -1569,6 +1672,7 @@
   $('#f-catgrp').addEventListener('change', (e) => { pick.catgrp = e.target.value; draw(); });
   $('#f-o2o').addEventListener('change', (e) => { pick.o2o = e.target.value; draw(); });
   $('#f-shkdept').addEventListener('change', (e) => { pick.shkdept = e.target.value; draw(); });
+  $('#f-agst').addEventListener('change', (e) => { pick.agst = e.target.value; draw(); });
   wire('#cat-sort', 'catsort'); wire('#dpt-sort', 'dptsort'); wire('#dpt-per', 'dptper');
   [['#f-dptdept', 'dptdept'], ['#f-dptb', 'dptb'], ['#f-dptly', 'dptly']].forEach(([sel, k]) => $(sel).addEventListener('change', (e) => { pick[k] = e.target.value; draw(); }));
   $$('#dpt-div button').forEach((b) => b.addEventListener('click', () => {
@@ -1588,10 +1692,10 @@
   }));
   [['#f-shkbdept', 'shkbdept'], ['#f-shkbst', 'shkbst']].forEach(([sel, k]) => $(sel).addEventListener('change', (e) => { pick[k] = e.target.value; draw(); }));
   wire('#t2-list', 't2list'); wire('#t2-view', 't2view'); wire('#t2-dim', 't2dim'); wire('#t2-aodim', 't2aodim');
-  wire('#t3-ildim', 't3ildim'); wire('#t3-ffper', 't3ffper'); wire('#t3-ffsort', 't3ffsort'); wire('#t3-shkper', 't3shkper'); wire('#t3-c20yr', 't3c20yr');
+  wire('#t3-ildim', 't3ildim'); wire('#t3-ffper', 't3ffper'); wire('#t3-c52per', 't3ffper'); wire('#c52-sort', 'c52sort'); wire('#t3-ffsort', 't3ffsort'); wire('#t3-shkper', 't3shkper'); wire('#t3-c20yr', 't3c20yr');
   wire('#t4-oord', 't4oord'); wire('#t4-fplan', 't4fplan');
   [['#f-t2status', 't2status'], ['#f-t2item', 't2item'], ['#f-t2kdiv', 't2kdiv'], ['#f-t2ktype', 't2ktype'], ['#f-t2pgrp', 't2pgrp'],
-    ['#f-t2pflag', 't2pflag'], ['#f-t2pr', 't2pr'], ['#f-t3flag', 't3flag'], ['#f-t3tdept', 't3tdept'], ['#f-t3ffdept', 't3ffdept'],
+    ['#f-t2pflag', 't2pflag'], ['#f-t2pr', 't2pr'], ['#f-t2sr', 't2sr'], ['#f-c52dept', 'c52dept'], ['#f-c52band', 'c52band'],['#f-t3flag', 't3flag'], ['#f-t3tdept', 't3tdept'], ['#f-t3ffdept', 't3ffdept'],
     ['#f-t3shkdept', 't3shkdept'], ['#f-t3rsn', 't3rsn'], ['#f-t3idept', 't3idept'], ['#f-t3c20m', 't3c20m'], ['#f-t3c20d', 't3c20d'],
     ['#f-t4odept', 't4odept'], ['#f-t4oway', 't4oway'], ['#f-t4odays', 't4odays'], ['#f-t4fdate', 't4fdate'], ['#f-t4ftype', 't4ftype'], ['#f-t4fdept', 't4fdept']].forEach(([sel, k]) => $(sel).addEventListener('change', (e) => { pick[k] = e.target.value; draw(); }));
   $$('.b68-search').forEach((i) => i.addEventListener('input', () => draw()));
@@ -1609,33 +1713,58 @@
     const cp = p === 'WTD' ? 'WTD' : 'MTD';
     const dv = division() === 'ALL' ? 'Total' : division();
     const key = `${p}|${dv}`;
-    const sd = ok('sales'), md = ok('margin'), cu = ok('customers'), dn = ok('daily_need');
-    const sm = byKey('sales_m').get(key) || {};
+    const sd = ok('sales_baht'), md = ok('margin'), cu = ok('cust_baht'), dn = ok('need_baht');
     const st = (sd || []).find((r) => r.key === key) || {};
     const mt = (md || []).find((r) => r.key === key) || {};
     const ct = (cu || []).find((r) => r.key === `${cp}|Total`) || {};
     const dt = (dn || []).find((r) => r.division === dv) || {};
     cards('#cards-sales', [
-      { title: `Sales Total · ${PL[p]} · ${divLabel()} (ล้านบาท)`, v: M(sm.actual_m), src: 'sales_m', field: 'actual_m', where: `key=${key}`, subs: [
-        { label: 'LY', v: `${M(sm.ly_m)}`, src: 'sales_m', field: 'ly_m', where: `key=${key}` },
-        { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales', field: 'pct_ly', where: `key=${key}` },
-        { label: 'Budget', v: M(sm.budget_m), src: 'sales_m', field: 'budget_m', where: `key=${key}` },
-        { label: 'vs Budget', v: pc(st.pct_budget, 1), cls: tone(st.pct_budget), src: 'sales', field: 'pct_budget', where: `key=${key}` }] },
-      { title: `ส่วนต่างจากปีก่อน · ${PL[p]} (ล้านบาท)`, v: sM(sm.diff_ly_m), cls: tone(sm.diff_ly_m), src: 'sales_m', field: 'diff_ly_m', where: `key=${key}`, subs: [
-        { label: 'ส่วนต่างจากงบ', v: sM(sm.diff_budget_m), cls: tone(sm.diff_budget_m), src: 'sales_m', field: 'diff_budget_m', where: `key=${key}` },
-        { label: '% สัดส่วนยอดขาย', v: n2(st.share) + '%', src: 'sales', field: 'share', where: `key=${key}` }] },
+      { title: `ยอดขาย · ${PL[p]} · ${divLabel()} (บาท)`, v: n0(st.actual), src: 'sales_baht', field: 'actual', where: `key=${key}`, subs: [
+        { label: 'LY', v: n0(st.ly), src: 'sales_baht', field: 'ly', where: `key=${key}` },
+        { label: 'vs LY', v: pc(st.pct_ly, 1), cls: tone(st.pct_ly), src: 'sales_baht', field: 'pct_ly', where: `key=${key}` },
+        { label: 'Budget', v: n0(st.budget), src: 'sales_baht', field: 'budget', where: `key=${key}` },
+        { label: 'vs Budget', v: pc(st.pct_budget, 1), cls: tone(st.pct_budget), src: 'sales_baht', field: 'pct_budget', where: `key=${key}` }] },
+      { title: `ส่วนต่างจาก LY · ${PL[p]} (บาท)`, v: sg(st.diff_ly, 0), cls: tone(st.diff_ly), src: 'sales_baht', field: 'diff_ly', where: `key=${key}`, subs: [
+        { label: 'ส่วนต่างจาก BG', v: sg(st.diff_budget, 0), cls: tone(st.diff_budget), src: 'sales_baht', field: 'diff_budget', where: `key=${key}` },
+        { label: '% สัดส่วนยอดขาย', v: n2(st.share) + '%', src: 'sales_baht', field: 'share', where: `key=${key}` }] },
       { title: `Front Margin · ${PL[p]}`, v: n2(mt.actual) + '%', src: 'margin', field: 'actual', where: `key=${key}`, subs: [
         { label: 'LY', v: n2(mt.ly) + '%', src: 'margin', field: 'ly', where: `key=${key}` },
         { label: 'vs LY', v: sg(mt.var_ly) + ' pt', cls: tone(mt.var_ly), src: 'margin', field: 'var_ly', where: `key=${key}` },
         { label: 'vs Budget', v: sg(mt.var_budget) + ' pt', cls: tone(mt.var_budget), src: 'margin', field: 'var_budget', where: `key=${key}` }] },
-      { title: 'ต้องขายต่อวันให้ถึงงบ (พันบาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'daily_need', field: 'need_day', where: `division=${dv}`, subs: [
-        { label: 'ขายได้เฉลี่ย/วัน', v: n0(dt.avg_day), src: 'daily_need', field: 'avg_day', where: `division=${dv}` },
-        { label: 'งบต่อวัน', v: n0(dt.budget_day), src: 'daily_need', field: 'budget_day', where: `division=${dv}` }] },
-      { title: `Transactions (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'customers', field: 'invoices', where: `key=${cp}|Total`, subs: [
-        { label: '%SPLY', v: pc(ct.invoices_sply), cls: tone(ct.invoices_sply), src: 'customers', field: 'invoices_sply', where: `key=${cp}|Total` },
-        { label: 'Active', v: n0(ct.active), src: 'customers', field: 'active', where: `key=${cp}|Total` },
-        { label: 'Visit/คน', v: n2(ct.visits), src: 'customers', field: 'visits', where: `key=${cp}|Total` }] },
+      { title: 'ต้องขายต่อวันให้ถึง BG · เดือนนี้ (บาท)', v: n0(dt.need_day), cls: dt.avg_day >= dt.need_day ? 'up' : 'down', src: 'need_baht', field: 'need_day', where: `key=${dv}`, subs: [
+        { label: 'ขายได้เฉลี่ย/วัน', v: n0(dt.avg_day), src: 'need_baht', field: 'avg_day', where: `key=${dv}` },
+        { label: 'BG ต่อวัน', v: n0(dt.budget_day), src: 'need_baht', field: 'budget_day', where: `key=${dv}` }] },
+      { title: `จำนวนบิล (TC) · ${cp} · ทั้งร้าน`, v: n0(ct.invoices), src: 'cust_baht', field: 'invoices', where: `key=${cp}|Total`, subs: [
+        { label: '%SPLY', v: pc(ct.invoices_sply), cls: tone(ct.invoices_sply), src: 'cust_baht', field: 'invoices_sply', where: `key=${cp}|Total` },
+        { label: 'Active', v: n0(ct.active), src: 'cust_baht', field: 'active', where: `key=${cp}|Total` },
+        { label: 'Visit/คน', v: n2(ct.visits), src: 'cust_baht', field: 'visits', where: `key=${cp}|Total` }] },
+
+      { title: `ยอดเฉลี่ยต่อบิล · ${cp} · ทั้งร้าน (บาท)`,
+        v: Number.isFinite(ct.sales) && ct.invoices > 0 ? n0(ct.sales / ct.invoices) : '—',
+        subs: [{ label: 'คำนวณจาก', v: 'ยอดขาย ÷ จำนวนบิล' },
+          { label: 'ขอบเขต', v: `Customer · ${cp} · ทั้งร้าน` }] },
     ]);
+
+
+    const watch = [];
+    const finite = v => typeof v === 'number' && Number.isFinite(v);
+    if (finite(dt.need_day) && finite(dt.avg_day) && dt.need_day > dt.avg_day)
+      watch.push(`${divLabel()} · เป้ารายเดือน: ต้องเพิ่มยอดเฉลี่ยต่อวันอีก ${n0(dt.need_day - dt.avg_day)} บาท เพื่อถึง BG`);
+    (sd || []).filter(r => r.period === p && r.division !== 'Total' && (division() === 'ALL' || r.division === division())).forEach(r => {
+      if (finite(r.diff_budget) && r.diff_budget < 0)
+        watch.push(`${r.division} · ${PL[p]}: ยอดขายต่ำกว่า BG ${n0(Math.abs(r.diff_budget))} บาท (${pc(r.pct_budget, 1)})`);
+    });
+    if (finite(ct.visits_sply) && ct.visits_sply < 0)
+      watch.push(`ทั้งร้าน · ${cp}: ความถี่ซื้อเทียบ LY ${pc(ct.visits_sply, 1)}`);
+    if (finite(mt.var_budget) && mt.var_budget < 0)
+      watch.push(`${divLabel()} · ${PL[p]}: Front Margin ต่ำกว่า BG ${n2(Math.abs(mt.var_budget))} จุดเปอร์เซ็นต์`);
+    const list = $('#sales-watch');
+    list.replaceChildren(...(watch.length ? watch : ['ไม่พบรายการต่ำกว่าเป้าจากข้อมูลที่โหลดได้ในขอบเขตนี้']).map(text => {
+      const li = document.createElement('li'); li.textContent = text;
+      if (!watch.length) li.className = 'ok';
+      return li;
+    }));
+    if (!sd || !md || !cu || !dn) list.replaceChildren(Object.assign(document.createElement('li'), { textContent: 'ข้อมูลยังไม่ครบ กรุณารอโหลดหรือตรวจสอบแหล่งข้อมูล' }));
 
     const showDiv = (r) => (division() === 'ALL' ? true : r.division === division());
     const isTotal = (r) => /total/i.test(r.division);
@@ -1649,12 +1778,12 @@
       { f: 'division', l: true }, { f: 'avg_day', fmt: n0 }, { f: 'budget_day', fmt: n0 }, { f: 'pct_var', fmt: (v) => pc(v), tone },
       { f: 'need_day', fmt: n0 }], { total: isTotal });
     const box = $('#ch-sales');
-    if (!failed(box, 'sales') && sd) {
+    if (!failed(box, 'sales_baht') && sd) {
       bicCombo(box, sd.filter((r) => r.period === p && (division() === 'ALL' || r.division === division() || r.division === 'Total'))
         .map((r) => ({ x: r.key, label: r.division, cy: r.actual, ly: r.ly, bud: r.budget, v: r.pct_ly })), { fmt: n0, fmtV: (v) => pc(v, 1) });
     }
-    fillTable('#tb-bottom', ok('bottom_stores'), 'store', [
-      { f: 'store', l: true }, { f: 'variance', fmt: (v) => sg(v), tone }, { f: 'pct_variance', fmt: (v) => pc(v), tone }]);
+    fillTable('#tb-bottom', ok('bottom_baht'), 'store', [
+      { f: 'store', l: true }, { f: 'variance', fmt: (v) => sg(v, 0), tone }, { f: 'pct_variance', fmt: (v) => pc(v), tone }]);
     fillTable('#tb-cust', cu && cu.filter((r) => r.period === cp), 'key', [
       { f: 'group', l: true }, { f: 'invoices', fmt: n0 }, { f: 'invoices_sply', fmt: (v) => pc(v), tone }, { f: 'sales', fmt: n0 },
       { f: 'sales_sply', fmt: (v) => pc(v), tone }, { f: 'active', fmt: n0 }, { f: 'active_sply', fmt: (v) => pc(v), tone },
@@ -1667,17 +1796,17 @@
     const cp = p === 'Daily' ? 'day' : p === 'YTD' ? 'ytd' : 'mtd';
     const CPL = { day: 'วันนี้', mtd: 'MTD', ytd: 'YTD' }[cp];
     $$('.plcat').forEach((el) => { el.textContent = CPL; });
-    $('.catnote').textContent = 'พันบาท' + (p === 'WTD' ? ' · Sheet Category มี วันนี้ / MTD / YTD จึงแสดง MTD แทน WTD' : '');
+    $('.catnote').textContent = 'บาท' + (p === 'WTD' ? ' · Sheet Category มี วันนี้ / MTD / YTD จึงแสดง MTD แทน WTD' : '');
     const ths = $$('#tb-category th');
     ths[2].dataset.field = cp + '_actual'; ths[3].dataset.field = cp + '_budget'; ths[4].dataset.field = cp + '_pct_budget';
     ths[5].dataset.field = cp + '_ly'; ths[6].dataset.field = cp + '_pct_ly';
-    const cat = ok('category');
+    const cat = ok('category_baht');
     const cv = byKey('cat_var');
     // Category groups belong to the store's three divisions; the table's division buttons follow the page Division filter when set
     const CATDIV = { 'DG FOOD': 'DRY FOOD', 'DG NONFOOD': 'DRY FOOD', 'LIQUOR & TOBACCO': 'DRY FOOD', 'FRESH FOOD': 'FRESH FOOD', 'HARDLINE E': 'NON FOOD', 'HARDLINE H': 'NON FOOD' };
     const cdiv = division() !== 'ALL' ? division() : pick.catdiv;
     pressed('#cat-div', cdiv);
-    const inCdiv = (r) => cdiv === 'ALL' || CATDIV[r.division] === cdiv;
+    const inCdiv = (r) => cdiv === 'ALL' || (CATDIV[r.division] || r.store_div) === cdiv;
     const groups = cat ? [...new Set(cat.filter((r) => r.division !== 'ทั้งร้าน' && inCdiv(r)).map((r) => r.division))] : [];
     if (!['ทั้งหมด', ...groups].includes(pick.catgrp)) pick.catgrp = 'ทั้งหมด';
     fillSelect('#f-catgrp', ['ทั้งหมด', ...groups], pick.catgrp);
@@ -1688,18 +1817,18 @@
     const best = members.slice().sort((a, b) => (cv.get(b.key)?.[cp + '_pct_budget'] ?? -1e9) - (cv.get(a.key)?.[cp + '_pct_budget'] ?? -1e9))[0] || {};
     const worst = members.slice().sort((a, b) => (cv.get(a.key)?.[cp + '_pct_budget'] ?? 1e9) - (cv.get(b.key)?.[cp + '_pct_budget'] ?? 1e9))[0] || {};
     cards('#cards-category', [
-      { title: `ยอดขาย ${g === 'ทั้งหมด' ? 'ทั้งร้าน' : g} · ${CPL} (พันบาท)`, v: n0(totRow[cp + '_actual']), src: 'category', field: cp + '_actual', where: `key=${totRow.key}`, subs: [
-        { label: 'งบ', v: n0(totRow[cp + '_budget']), src: 'category', field: cp + '_budget', where: `key=${totRow.key}` },
-        { label: 'ปีก่อน', v: n0(totRow[cp + '_ly']), src: 'category', field: cp + '_ly', where: `key=${totRow.key}` }] },
-      { title: '% เทียบงบ', v: pc(tv[cp + '_pct_budget']), cls: tone(tv[cp + '_pct_budget']), src: 'cat_var', field: cp + '_pct_budget', where: `key=${totRow.key}`, subs: [
-        { label: '% เทียบปีก่อน', v: pc(tv[cp + '_pct_ly']), cls: tone(tv[cp + '_pct_ly']), src: 'cat_var', field: cp + '_pct_ly', where: `key=${totRow.key}` }] },
-      { title: 'Category ดีกว่างบมากสุด', v: best.category || '—', txt: true, src: 'category', field: 'category', where: best.key ? `key=${best.key}` : null, subs: [
-        { label: '% เทียบงบ', v: pc(cv.get(best.key)?.[cp + '_pct_budget']), cls: 'up', src: 'cat_var', field: cp + '_pct_budget', where: best.key ? `key=${best.key}` : null }] },
-      { title: 'Category ต่ำกว่างบมากสุด', v: worst.category || '—', txt: true, src: 'category', field: 'category', where: worst.key ? `key=${worst.key}` : null, subs: [
-        { label: '% เทียบงบ', v: pc(cv.get(worst.key)?.[cp + '_pct_budget']), cls: 'down', src: 'cat_var', field: cp + '_pct_budget', where: worst.key ? `key=${worst.key}` : null }] },
+      { title: `ยอดขาย ${g === 'ทั้งหมด' ? 'ทั้งร้าน' : g} · ${CPL} (บาท)`, v: n0(totRow[cp + '_actual']), src: 'category_baht', field: cp + '_actual', where: `key=${totRow.key}`, subs: [
+        { label: 'BG', v: n0(totRow[cp + '_budget']), src: 'category_baht', field: cp + '_budget', where: `key=${totRow.key}` },
+        { label: 'LY', v: n0(totRow[cp + '_ly']), src: 'category_baht', field: cp + '_ly', where: `key=${totRow.key}` }] },
+      { title: '% เทียบ BG', v: pc(tv[cp + '_pct_budget']), cls: tone(tv[cp + '_pct_budget']), src: 'cat_var', field: cp + '_pct_budget', where: `key=${totRow.key}`, subs: [
+        { label: '% เทียบ LY', v: pc(tv[cp + '_pct_ly']), cls: tone(tv[cp + '_pct_ly']), src: 'cat_var', field: cp + '_pct_ly', where: `key=${totRow.key}` }] },
+      { title: 'Category ดีกว่า BG มากสุด', v: best.category || '—', txt: true, src: 'category_baht', field: 'category', where: best.key ? `key=${best.key}` : null, subs: [
+        { label: '% เทียบ BG', v: pc(cv.get(best.key)?.[cp + '_pct_budget']), cls: 'up', src: 'cat_var', field: cp + '_pct_budget', where: best.key ? `key=${best.key}` : null }] },
+      { title: 'Category ต่ำกว่า BG มากสุด', v: worst.category || '—', txt: true, src: 'category_baht', field: 'category', where: worst.key ? `key=${worst.key}` : null, subs: [
+        { label: '% เทียบ BG', v: pc(cv.get(worst.key)?.[cp + '_pct_budget']), cls: 'down', src: 'cat_var', field: cp + '_pct_budget', where: worst.key ? `key=${worst.key}` : null }] },
     ]);
     const q = query('#q-cat');
-    const VS = { B: ['ทั้งหมด', 'สูงกว่างบ', 'ต่ำกว่างบ'], LY: ['ทั้งหมด', 'เพิ่มขึ้นจากปีก่อน', 'ลดลงจากปีก่อน'] };
+    const VS = { B: ['ทั้งหมด', 'สูงกว่า BG', 'ต่ำกว่า BG'], LY: ['ทั้งหมด', 'เพิ่มขึ้นจาก LY', 'ลดลงจาก LY'] };
     fillSelect('#f-catb', VS.B, pick.catb); fillSelect('#f-catly', VS.LY, pick.catly);
     pressed('#cat-sort', pick.catsort);
     const pb = (r) => cv.get(r.key)?.[cp + '_pct_budget'], pl = (r) => cv.get(r.key)?.[cp + '_pct_ly'];
@@ -1714,17 +1843,17 @@
     if (CSORT[pick.catsort]) shown.sort((a, b) => (a.is_total - b.is_total) || CSORT[pick.catsort](a, b));
     const box = $('#ch-cat');
     const chartRows = g === 'ทั้งหมด' ? (cat || []).filter((r) => r.is_total && r.division !== 'ทั้งร้าน' && inCdiv(r)) : members;
-    if (!failed(box, 'category') && cat) {
+    if (!failed(box, 'category_baht') && cat) {
       bicCombo(box, chartRows.map((r) => ({ x: r.key, label: g === 'ทั้งหมด' ? r.division : r.category, cy: r[cp + '_actual'], ly: r[cp + '_ly'],
         bud: r[cp + '_budget'], v: cv.get(r.key)?.[cp + '_pct_ly'] })), { fmt: n0, fmtV: (v) => pc(v, 1) });
     }
     fillTable('#tb-category', cat && shown, 'key', [
-      { f: 'division', l: true }, { f: 'category', l: true }, { get: (r) => r[cp + '_actual'], fmt: n1 }, { get: (r) => r[cp + '_budget'], fmt: n1 },
-      { get: (r) => cv.get(r.key)?.[cp + '_pct_budget'], fmt: (v) => pc(v), tone }, { get: (r) => r[cp + '_ly'], fmt: n1 },
+      { f: 'division', l: true }, { f: 'category', l: true }, { get: (r) => r[cp + '_actual'], fmt: n0 }, { get: (r) => r[cp + '_budget'], fmt: n0 },
+      { get: (r) => cv.get(r.key)?.[cp + '_pct_budget'], fmt: (v) => pc(v), tone }, { get: (r) => r[cp + '_ly'], fmt: n0 },
       { get: (r) => cv.get(r.key)?.[cp + '_pct_ly'], fmt: (v) => pc(v), tone }]);
     const dvv = byKey('dept_var');
-    const ds = ok('dept_sales');
-    // department table filters use the chosen period (since 1 Jun or YTD); division totals stay unless a result, name or one department is picked
+    const ds = ok('dept_baht');
+    // department table filters use the chosen period (since 1 Jan or YTD); division totals stay unless a result, name or one department is picked
     const ddiv = division() !== 'ALL' ? division() : pick.dptdiv;
     pressed('#dpt-div', ddiv); pressed('#dpt-per', pick.dptper); pressed('#dpt-sort', pick.dptsort);
     const dp = pick.dptper;
@@ -1742,8 +1871,8 @@
       sales: (a, b) => (b[dp + '_actual'] || 0) - (a[dp + '_actual'] || 0) };
     if (DSORT[pick.dptsort]) dRows.sort((a, b) => (a.is_total - b.is_total) || DSORT[pick.dptsort](a, b));
     fillTable('#tb-dept', ds && dRows, 'key', [
-      { f: 'dept', l: true }, { f: 'p_actual', fmt: n1 }, { f: 'p_budget', fmt: n1 }, { get: (r) => dvv.get(r.key)?.p_pct_budget, fmt: (v) => pc(v), tone },
-      { f: 'p_ly', fmt: n1 }, { get: (r) => dvv.get(r.key)?.p_pct_ly, fmt: (v) => pc(v), tone },
+      { f: 'dept', l: true }, { f: 'p_actual', fmt: n0 }, { f: 'p_budget', fmt: n0 }, { get: (r) => dvv.get(r.key)?.p_pct_budget, fmt: (v) => pc(v), tone },
+      { f: 'p_ly', fmt: n0 }, { get: (r) => dvv.get(r.key)?.p_pct_ly, fmt: (v) => pc(v), tone },
       { f: 'ytd_actual', fmt: n0 }, { f: 'ytd_budget', fmt: n0 }, { get: (r) => dvv.get(r.key)?.ytd_pct_budget, fmt: (v) => pc(v), tone },
       { f: 'ytd_ly', fmt: n0 }, { get: (r) => dvv.get(r.key)?.ytd_pct_ly, fmt: (v) => pc(v), tone }]);
   }
@@ -1767,12 +1896,12 @@
       { title: 'ขาดทุนมากสุด', v: pLoss.desc || '—', txt: true, src: 'profit_items', field: 'desc', where: pLoss.key ? `key=${pLoss.key}` : null, subs: [
         { label: 'ขาดทุน (บาท)', v: n0(pLoss.profit), cls: 'down', src: 'profit_items', field: 'profit', where: pLoss.key ? `key=${pLoss.key}` : null }] },
     ]);
-    const cr = ok('class_rank');
+    const cr = ok('class_rank_baht');
     $$('.cr-top').forEach((t) => fillTable('#' + t.id, cr && cr.filter((r) => r.list === t.dataset.list), 'key', [
-      { f: 'class', wrap: true }, { f: 'mtd', fmt: n2 }, { f: 'budget', fmt: n2 }, { f: 'pct_budget', fmt: (v) => pc(v), tone },
-      { f: 'ly', fmt: n2 }, { f: 'pct_ly', fmt: (v) => pc(v), tone }]));
+      { f: 'class', wrap: true }, { f: 'mtd', fmt: n0 }, { f: 'budget', fmt: n0 }, { f: 'pct_budget', fmt: (v) => pc(v), tone },
+      { f: 'ly', fmt: n0 }, { f: 'pct_ly', fmt: (v) => pc(v), tone }]));
     $$('.cr-bottom').forEach((t) => fillTable('#' + t.id, cr && cr.filter((r) => r.list === t.dataset.list), 'key', [
-      { f: 'class', wrap: true }, { f: 'mtd', fmt: n2 }, { f: 'var_ly', fmt: (v) => sg(v), tone }, { f: 'pct_ly', fmt: (v) => pc(v), tone },
+      { f: 'class', wrap: true }, { f: 'mtd', fmt: n0 }, { f: 'var_ly', fmt: (v) => sg(v, 0), tone }, { f: 'pct_ly', fmt: (v) => pc(v), tone },
       { f: 'pct_budget', fmt: (v) => pc(v), tone }]));
     fillTable('#tb-topclass', tc && tc.filter((r) => inDiv(r.division)), 'key', [
       { f: 'division', l: true }, { f: 'rank', fmt: (v) => v ?? 'รวม' }, { f: 'class', wrap: true }, { f: 'sales', fmt: n0 }, { f: 'qty', fmt: n0 },
@@ -1788,12 +1917,18 @@
   }
 
   // ----- 4. Shrinkage
+  const SHKDEPT = { 19: 'FRESH FOOD - D/N, C/N', 21: 'Fresh Premium', 22: 'Dry Premium', 23: 'Hardline Premium', 24: 'Softline Premium' };
   function drawShrink() {
     pressed('#shk-period', pick.shk);
     $$('.psh').forEach((el) => { el.textContent = pick.shk; });
     const per = pick.shk;
     const TOT = { ALL: 'Total Store', 'FRESH FOOD': 'Total Fresh', 'DRY FOOD': 'Total Dry Food', 'NON FOOD': 'Total Non Food' };
-    const sb = ok('shrink_budget'), sc = ok('shrink_code');
+    const sc = ok('shrink_code');
+    // the Shk sheet leaves 22–24 without names and calls 19 FROZEN & DAIRY like 5; names as in Focus Shrinkage
+    const sb = ok('shrink_budget') && ok('shrink_budget').map((r) => {
+      const no = /^\d+/.exec(r.dept || '');
+      return no && SHKDEPT[no[0]] ? { ...r, dept: `${no[0]} ${SHKDEPT[no[0]]}` } : r;
+    });
     const tk = `${per}|${TOT[division()]}`;
     const tot = (sb || []).find((r) => r.key === tk) || {};
     const reasons = division() === 'ALL' ? ((sc || []).find((r) => r.key === `${per}|TOTAL`) || {}) : (byKey('shrink_div').get(`${per}|${division()}`) || {});
@@ -1803,8 +1938,8 @@
       { title: `Shrinkage · ${per} · ${divLabel()} (บาท)`, v: n0(tot.shrink), cls: 'down', src: 'shrink_budget', field: 'shrink', where: `key=${tk}`, subs: [
         { label: 'ยอดขาย', v: n0(tot.sales), src: 'shrink_budget', field: 'sales', where: `key=${tk}` }] },
       { title: '% Shrinkage ต่อยอดขาย', v: n2(tot.pct_sales) + '%', cls: tot.pct_sales < tot.pct_budget ? 'down' : 'up', src: 'shrink_budget', field: 'pct_sales', where: `key=${tk}`, subs: [
-        { label: 'งบ', v: n2(tot.pct_budget) + '%', src: 'shrink_budget', field: 'pct_budget', where: `key=${tk}` }] },
-      { title: 'หมดอายุ (52:Expired)', v: n0(reasons.expired), cls: 'down', src: rsrc, field: 'expired', where: rwhere, subs: [
+        { label: 'BG (Budget)', v: n2(tot.pct_budget) + '%', src: 'shrink_budget', field: 'pct_budget', where: `key=${tk}` }] },
+      { title: 'สินค้าหมดอายุ (52: Expired) · มูลค่า (บาท)', v: n0(reasons.expired), cls: 'down', src: rsrc, field: 'expired', where: rwhere, subs: [
         { label: 'Joblot (20)', v: n0(reasons.joblot), src: rsrc, field: 'joblot', where: rwhere }] },
       { title: 'Sale Markdown (บาท)', v: n0(reasons.markdown), src: rsrc, field: 'markdown', where: rwhere },
     ]);
@@ -1822,10 +1957,10 @@
     const bdepts = bud.filter((r) => !r.is_total).map((r) => r.dept);
     if (!['ทั้งหมด', ...bdepts].includes(pick.shkbdept)) pick.shkbdept = 'ทั้งหมด';
     fillSelect('#f-shkbdept', ['ทั้งหมด', ...bdepts], pick.shkbdept);
-    const ST = ['ทั้งหมด', 'เกินงบ', 'อยู่ในงบ', 'ไม่มี Shrinkage'];
+    const ST = ['ทั้งหมด', 'เกิน BG', 'ไม่เกิน BG', 'ไม่มี Shrinkage'];
     fillSelect('#f-shkbst', ST, pick.shkbst);
     pressed('#shkb-sort', pick.shkbsort);
-    const status = (r) => (!r.shrink ? 'ไม่มี Shrinkage' : r.pct_budget != null && r.pct_sales < r.pct_budget ? 'เกินงบ' : 'อยู่ในงบ');
+    const status = (r) => (!r.shrink ? 'ไม่มี Shrinkage' : r.pct_budget != null && r.pct_sales < r.pct_budget ? 'เกิน BG' : 'ไม่เกิน BG');
     const qb = query('#q-shkb');
     const filtered = pick.shkbdept === 'ทั้งหมด' && pick.shkbst === 'ทั้งหมด' && !qb;
     const brows = bud.filter((r) => (r.is_total ? filtered : (pick.shkbdept === 'ทั้งหมด' || r.dept === pick.shkbdept)
@@ -1877,11 +2012,11 @@
     cards('#cards-stock', [
       stockCard,
       { title: 'สินค้า Aging ทั้งร้าน (พันบาท)', v: n0(agT.stock_k), src: 'aging_status', field: 'stock_k', where: 'status=Total', subs: [
-        { label: 'รายการ', v: n0(agT.items), src: 'aging_status', field: 'items', where: 'status=Total' },
-        { label: '% ของ Stock', v: n2(agT.pct_stock) + '%', src: 'aging_status', field: 'pct_stock', where: 'status=Total' }] },
-      { title: `Top 4000 Stock ติดลบ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus), cls: 'down',
+        { label: '', after: 'Items', v: n0(agT.items), src: 'aging_status', field: 'items', where: 'status=Total' },
+        { label: '', after: 'จาก Total Stock', v: n2(agT.pct_stock) + '%', src: 'aging_status', field: 'pct_stock', where: 'status=Total' }] },
+      { title: `Top 4000 Negative Stock${sk ? ' · ' + sk : ''}`, v: n0(sk ? neg['sku_' + sk.toLowerCase()] : neg.skus), after: 'รายการ',
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Negative Stock' },
-      { title: `Top 4000 Stock เป็นศูนย์ (SKU)${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus), cls: 'down',
+      { title: `Top 4000 Zero Stock${sk ? ' · ' + sk : ''}`, v: n0(sk ? zero['sku_' + sk.toLowerCase()] : zero.skus), after: 'รายการ',
         src: 'top4000', field: sk ? 'sku_' + sk.toLowerCase() : 'skus', where: 'key=Total Zero Stock' },
     ]);
     fillTable('#tb-stockdiv', sdv && sdv.filter((r) => inDiv(r.division)), 'division', [
@@ -1897,7 +2032,10 @@
     fillTable('#tb-aging', ag, 'status', [
       { f: 'status', l: true }, { f: 'stock_k', fmt: n0 }, { f: 'items', fmt: n0 }, { f: 'pct_stock', fmt: (v) => n2(v) + '%' }], { total: (r) => r.status === 'Total' });
     const ai = ok('aging_items');
-    fillTable('#tb-agingitems', ai && ai.filter((r) => inDiv(r.division)), 'key', [
+    const agSt = [...new Set((ai || []).map((r) => r.status).filter(Boolean))].sort();
+    if (!['ทั้งหมด', ...agSt].includes(pick.agst)) pick.agst = 'ทั้งหมด';
+    fillSelect('#f-agst', ['ทั้งหมด', ...agSt], pick.agst);
+    fillTable('#tb-agingitems', ai && ai.filter((r) => inDiv(r.division) && (pick.agst === 'ทั้งหมด' || r.status === pick.agst)), 'key', [
       { f: 'division', l: true }, { f: 'rank' }, { f: 'status', l: true }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'price', fmt: n2 },
       { f: 'qty', fmt: n1 }, { f: 'cost', fmt: n0 }, { f: 'last_sold', l: true }, { f: 'last_received', l: true }]);
     fillTable('#tb-top4000', t4, 'key', [
@@ -1916,19 +2054,19 @@
     const slTone = (v) => (v == null ? '' : v >= 95 ? 'up' : 'down');
     cards('#cards-service', [
       { title: `KVI · ${divLabel()}`, v: n1(kvi.service_level) + '%', cls: slTone(kvi.service_level), src: 'service_level', field: 'service_level', where: `key=KVI|${sk}`, subs: [
-        { label: 'ขาด ยังไม่มี order', v: n0(kvi.oos_not_on_order), cls: kvi.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=KVI|${sk}` }] },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(kvi.oos_not_on_order), cls: kvi.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=KVI|${sk}` }] },
       { title: `Makro Mail · ${divLabel()}`, v: n1(mm.service_level) + '%', cls: slTone(mm.service_level), src: 'service_level', field: 'service_level', where: `key=Makro Mail|${sk}`, subs: [
-        { label: 'ขาด ยังไม่มี order', v: n0(mm.oos_not_on_order), cls: mm.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=Makro Mail|${sk}` }] },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(mm.oos_not_on_order), cls: mm.oos_not_on_order > 0 ? 'down' : '', src: 'service_level', field: 'oos_not_on_order', where: `key=Makro Mail|${sk}` }] },
       { title: `Top 100 · ${divLabel()}`, v: n1(tp.service_level) + '%', cls: slTone(tp.service_level), src: 'top100', field: 'service_level', where: `section=${t100key}`, subs: [
-        { label: 'ขาด ยังไม่มี order', v: n0(tp.oos_not_on_order), cls: tp.oos_not_on_order > 0 ? 'down' : '', src: 'top100', field: 'oos_not_on_order', where: `section=${t100key}` },
-        { label: 'Stock ติดลบ', v: n0(tp.stock_neg), src: 'top100', field: 'stock_neg', where: `section=${t100key}` }] },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(tp.oos_not_on_order), cls: tp.oos_not_on_order > 0 ? 'down' : '', src: 'top100', field: 'oos_not_on_order', where: `section=${t100key}` },
+        { label: 'Stock ติดลบ', after: 'รายการ', v: n0(tp.stock_neg), src: 'top100', field: 'stock_neg', where: `section=${t100key}` }] },
     ]);
     const box = $('#ch-svc');
     if (!failed(box, 'top100') && t1) {
       const cs = getComputedStyle(root);
       hbars(box, t1.filter((r) => !r.is_total && inDiv(r.division)).map((r) => ({ label: r.section, v: r.service_level, ref: 95,
         color: cs.getPropertyValue(r.service_level >= 95 ? '--b-up' : '--b-down').trim(), r })),
-        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['ขาด มี order', n0(it.r.oos_on_order)], ['ขาด ไม่มี order', n0(it.r.oos_not_on_order)]] });
+        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['มี On Order แล้ว', n0(it.r.oos_on_order)], ['ยังไม่มี On Order', n0(it.r.oos_not_on_order)]] });
     }
     fillTable('#tb-svc', sl && sl.filter((r) => division() === 'ALL' || r.division === sk), 'key', [
       { f: 'list', l: true }, { f: 'division', l: true }, { f: 'in_stock', fmt: n0 }, { f: 'oos_not_on_order', fmt: n0, tone: (v) => (v > 0 ? 'down' : '') },
@@ -1949,14 +2087,14 @@
     const s0 = (sh || [])[0] || {};
     const ly = (a, b) => (a > b ? 'up' : a < b ? 'down' : '');
     cards('#cards-o2o', [
-      { title: 'O2O ยอดขาย MTD (พันบาท)', v: n0(gt.mtd_sales), cls: ly(gt.mtd_sales, gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales', where: 'key=Grand Total', subs: [
-        { label: 'ปีก่อน', v: n0(gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales_ly', where: 'key=Grand Total' }] },
-      { title: 'O2O จำนวน Bill MTD', v: n0(gt.mtd_inv), cls: ly(gt.mtd_inv, gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv', where: 'key=Grand Total', subs: [
-        { label: 'ปีก่อน', v: n0(gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv_ly', where: 'key=Grand Total' }] },
-      { title: 'O2O ยอดขายวันนี้ (พันบาท)', v: n1(gt.day_sales), cls: ly(gt.day_sales, gt.day_sales_ly), src: 'o2o', field: 'day_sales', where: 'key=Grand Total', subs: [
-        { label: 'ปีก่อน', v: n1(gt.day_sales_ly), src: 'o2o', field: 'day_sales_ly', where: 'key=Grand Total' }] },
-      { title: 'O2O % ของยอดขายร้าน', v: n2(s0.mtd) + '%', src: 'o2o_share', field: 'mtd', where: 'metric=O2O % of store sales', subs: [
-        { label: 'วันนี้', v: n2(s0.daily) + '%', src: 'o2o_share', field: 'daily', where: 'metric=O2O % of store sales' }] },
+      { title: 'ยอดขาย MTD (พันบาท)', v: n0(gt.mtd_sales), cls: ly(gt.mtd_sales, gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales', where: 'key=Grand Total', subs: [
+        { label: 'LY', v: n0(gt.mtd_sales_ly), src: 'o2o', field: 'mtd_sales_ly', where: 'key=Grand Total' },
+        { label: '% ของยอดขายร้าน MTD', v: n2(s0.mtd) + '%', src: 'o2o_share', field: 'mtd', where: 'metric=O2O % of store sales' }] },
+      { title: 'จำนวน Bill MTD', v: n0(gt.mtd_inv), cls: ly(gt.mtd_inv, gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv', where: 'key=Grand Total', subs: [
+        { label: 'LY', v: n0(gt.mtd_inv_ly), src: 'o2o', field: 'mtd_inv_ly', where: 'key=Grand Total' }] },
+      { title: 'ยอดขายวันนี้ (พันบาท)', v: n1(gt.day_sales), cls: ly(gt.day_sales, gt.day_sales_ly), src: 'o2o', field: 'day_sales', where: 'key=Grand Total', subs: [
+        { label: 'LY', v: n1(gt.day_sales_ly), src: 'o2o', field: 'day_sales_ly', where: 'key=Grand Total' },
+        { label: '% ของยอดขายร้านวันนี้', v: n2(s0.daily) + '%', src: 'o2o_share', field: 'daily', where: 'metric=O2O % of store sales' }] },
     ]);
     const chans = o ? [...new Set(o.filter((r) => !r.is_total).map((r) => r.channel))] : [];
     if (!['ทั้งหมด', ...chans].includes(pick.o2o)) pick.o2o = 'ทั้งหมด';
@@ -1979,7 +2117,7 @@
   const DIV_ALL = (d) => (division() === 'ALL' ? 'Total' : d);
   // a short list of choices for a select, from the rows on screen
   const options = (sel, rows, f, k) => {
-    const vals = [...new Set((rows || []).map((r) => r[f]).filter(Boolean))].sort();
+    const vals = [...new Set((rows || []).map((r) => r[f]).filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), undefined, { numeric: true }));
     if (!['ทั้งหมด', ...vals].includes(pick[k])) pick[k] = 'ทั้งหมด';
     fillSelect(sel, ['ทั้งหมด', ...vals], pick[k]);
   };
@@ -1993,9 +2131,8 @@
       const r = (sm || []).find((x) => x.key === `${l}|${pick.t2view}|${dv}`) || {};
       const w = `key=${l}|${pick.t2view}|${dv}`;
       return { title: `${l} · ${divLabel()} · ${pick.t2view}`, v: n1(r.service_level) + '%', cls: slTone(r.service_level), src: 't2_summary', field: 'service_level', where: w, subs: [
-        { label: 'มีของ', v: n0(r.in_stock), src: 't2_summary', field: 'in_stock', where: w },
-        { label: 'จากทั้งหมด', v: n0(r.total), src: 't2_summary', field: 'total', where: w },
-        { label: 'ขาด ไม่มี order', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : '', src: 't2_summary', field: 'oos_not_on_order', where: w }] };
+        { label: 'มีสินค้า', v: n0(r.in_stock), after: `รายการ จากทั้งหมด ${n0(r.total)} รายการ`, src: 't2_summary', field: 'in_stock', where: w },
+        { label: 'ยังไม่มี On Order', after: 'รายการ', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : '', src: 't2_summary', field: 'oos_not_on_order', where: w }] };
     }));
     const rows = (sm || []).filter((r) => r.view === pick.t2view && (division() === 'ALL' || r.division === division() || r.division === 'Total'));
     const box = $('#ch-t2sum');
@@ -2003,7 +2140,7 @@
       const cs = getComputedStyle(root);
       hbars(box, rows.map((r) => ({ label: `${r.list} · ${r.division}`, v: r.service_level, ref: 95,
         color: cs.getPropertyValue(r.service_level >= 95 ? '--b-up' : '--b-down').trim(), r })),
-        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['มีของ', n0(it.r.in_stock) + ' / ' + n0(it.r.total)], ['ขาด ไม่มี order', n0(it.r.oos_not_on_order)]] });
+        { fmt: (v) => n1(v) + '%', tip: (it) => [[it.label], ['Service level', n1(it.r.service_level) + '%'], ['มีสินค้า', n0(it.r.in_stock) + ' / ' + n0(it.r.total)], ['ยังไม่มี On Order', n0(it.r.oos_not_on_order)]] });
     }
     fillTable('#tb-t2sum', rows, 'key', [
       { f: 'list', l: true }, { f: 'division', l: true }, { f: 'total', fmt: n0 }, { f: 'in_stock', fmt: n0 },
@@ -2011,6 +2148,8 @@
       { total: (r) => r.division === 'Total' });
   }
 
+  // item status as the file writes it → wording on the page
+  const T2ST = { 'ขาด ไม่มี order': 'สินค้าขาดไม่มี On Order', 'ขาด มี order': 'สินค้าขาดที่ On Order แล้ว', 'มีของ': 'มีสินค้า' };
   function drawT2Items() {
     const L = pick.t2list;
     pressed('#t2-list', L);
@@ -2024,10 +2163,10 @@
     const w = `key=${L}|ทุกรายการ|${dv}`;
     cards('#cards-t2items', [
       { title: `Service level · ${divLabel()}`, v: n1(r.service_level) + '%', cls: slTone(r.service_level), src: 't2_summary', field: 'service_level', where: w },
-      { title: 'สินค้าทั้งหมด', v: n0(r.total), src: 't2_summary', field: 'total', where: w, subs: [
-        { label: 'มีของ', v: n0(r.in_stock), src: 't2_summary', field: 'in_stock', where: w }] },
-      { title: 'ขาด · ยังไม่มี order', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : 'up', src: 't2_summary', field: 'oos_not_on_order', where: w },
-      { title: 'ขาด · มี order แล้ว', v: n0(r.oos_on_order), src: 't2_summary', field: 'oos_on_order', where: w },
+      { title: 'มีสินค้า', v: n0(r.in_stock), after: 'รายการ', src: 't2_summary', field: 'in_stock', where: w, subs: [
+        { label: 'จากทั้งหมด', v: n0(r.total), after: 'รายการ', src: 't2_summary', field: 'total', where: w }] },
+      { title: 'สินค้าขาด ยังไม่มี On Order', after: 'รายการ', v: n0(r.oos_not_on_order), cls: r.oos_not_on_order > 0 ? 'down' : 'up', src: 't2_summary', field: 'oos_not_on_order', where: w },
+      { title: 'สินค้าขาด มี On Order แล้ว', after: 'รายการ', v: n0(r.oos_on_order), src: 't2_summary', field: 'oos_on_order', where: w },
     ]);
     options('#f-t2item', all, 'item_status', 't2item');
     const q = query('#q-t2');
@@ -2035,9 +2174,9 @@
     const rows = all.filter((x) => (pick.t2status === 'ทั้งหมด' || x.status === pick.t2status) && (pick.t2item === 'ทั้งหมด' || x.item_status === pick.t2item)
       && (!q || `${x.item} ${x.desc} ${x.dept}`.toLowerCase().includes(q)))
       .sort((a, b) => ORDER[a.status] - ORDER[b.status] || (b.dms || 0) - (a.dms || 0));
-    $('.t2-count').textContent = `แสดง ${n0(rows.length)} รายการ · เรียง: ขาดไม่มี order ก่อน แล้วตามยอดขายต่อวัน (Dms)`;
+    $('.t2-count').textContent = `แสดง ${n0(rows.length)} รายการ · เรียง: สินค้าขาดไม่มี On Order ก่อน แล้วตามยอดขายต่อวัน (Dms)`;
     fillTable('#tb-t2items', rows, 'key', [
-      { f: 'status', l: true, tone: (v) => (v === 'มีของ' ? 'up' : 'down') }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'dms', fmt: n2 },
+      { f: 'status', l: true, fmt: (v) => T2ST[v] || v, tone: (v) => (v === 'มีของ' ? 'up' : 'down') }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'dms', fmt: n2 },
       { f: 'stock', fmt: n1, tone: (v) => (v <= 0 ? 'down' : '') }, { f: 'stock_day', fmt: n0 }, { f: 'on_order', fmt: n0 }, { f: 'reorder', l: true },
       { f: 'last_sale', l: true }, { f: 'last_del', l: true }, { f: 'item_status', l: true }, { f: 'dept' }, { f: 'division', l: true }]);
   }
@@ -2053,8 +2192,8 @@
     const cnt = byKey('t2_kvi_cnt');
     const c = (k) => cnt.get(k) || {};
     cards('#cards-t2survey', [
-      { title: 'สินค้าใน KVI List', v: n0(c('ALL').items), src: 't2_kvi_cnt', field: 'items', where: 'key=ALL' },
-      ...['S', 'SS', 'OB-F3'].map((t) => ({ title: `KVI Type ${t}`, v: n0(c(t).items), src: 't2_kvi_cnt', field: 'items', where: `key=${t}` })),
+      { title: 'สินค้าใน KVI List', after: 'รายการ', v: n0(c('ALL').items), src: 't2_kvi_cnt', field: 'items', where: 'key=ALL' },
+      ...['S', 'SS', 'OB-F3'].map((t) => ({ title: `KVI Type ${t}`, after: 'รายการ', v: n0(c(t).items), src: 't2_kvi_cnt', field: 'items', where: `key=${t}` })),
     ]);
     fillTable('#tb-t2survey', rows, 'key', [
       { f: 'div', l: true }, { f: 'buyer', l: true }, { f: 'class', l: true }, { f: 'item', l: true }, { f: 'name_th', wrap: true }, { f: 'name_en', wrap: true },
@@ -2067,7 +2206,7 @@
     options('#f-t2pflag', pk, 'flag', 't2pflag');
     const cnt = byKey('t2_pack_cnt');
     cards('#cards-t2pack', ['ALL', 'Component มีของ', 'Component หมด', 'Pack มีของ'].map((k) => ({
-      title: k === 'ALL' ? 'Pack ทั้งหมด' : k, v: n0((cnt.get(k) || {}).items ?? 0), cls: k === 'Component หมด' ? 'down' : '',
+      title: k === 'ALL' ? 'Pack ทั้งหมด' : k, after: 'รายการ', v: n0((cnt.get(k) || {}).items ?? 0), cls: k === 'Component หมด' ? 'down' : '',
       src: 't2_pack_cnt', field: 'items', where: `key=${k}` })));
     const q = query('#q-t2p');
     const rows = pk.filter((r) => (pick.t2pgrp === 'ทั้งหมด' || r.group === pick.t2pgrp) && (pick.t2pflag === 'ทั้งหมด' || r.flag === pick.t2pflag)
@@ -2089,12 +2228,9 @@
     const t = (k) => tot.get(k) || {};
     const dv = division();
     cards('#cards-t2short', [
-      { title: 'บรรทัด order ที่ส่งไม่ครบ · MTD (ทั้งร้าน)', v: n0(t('MTD').lines), cls: 'down', src: 't2_short_tot', field: 'lines', where: 'key=MTD' },
-      { title: `ส่งไม่ครบ · วันล่าสุด · ${divLabel()}`, v: n0(t(dv).lines), cls: 'down', src: 't2_short_tot', field: 'lines', where: `key=${dv}`, subs: [
-        { label: 'จำนวนที่ขาด', v: n1(t(dv).short), src: 't2_short_tot', field: 'short', where: `key=${dv}` }] },
-      { title: 'สาเหตุอันดับ 1 · วันล่าสุด', v: t(dv).top_reason || '—', txt: true, src: 't2_short_tot', field: 'top_reason', where: `key=${dv}`, subs: [
-        { label: 'บรรทัด', v: n0(t(dv).top_reason_lines), src: 't2_short_tot', field: 'top_reason_lines', where: `key=${dv}` }] },
-      { title: 'Order ที่ส่งไม่ครบ · MTD', v: n0(((ok('t2_short_div') || []).find((r) => r.division === 'Grand Total') || {}).orders), src: 't2_short_div', field: 'orders', where: 'division=Grand Total' },
+      { title: 'Total Order ที่สั่งไม่ครบ MTD', v: n0(((ok('t2_short_div') || []).find((r) => r.division === 'Grand Total') || {}).orders), cls: 'down', src: 't2_short_div', field: 'orders', where: 'division=Grand Total' },
+      { title: `Order ที่สั่งไม่ครบ วันล่าสุด${dv === 'ALL' ? '' : ' · ' + dv}`, v: n0(t(dv).lines), cls: 'down', src: 't2_short_tot', field: 'lines', where: `key=${dv}` },
+      { title: `สาเหตุอันดับ 1 วันล่าสุด${dv === 'ALL' ? '' : ' · ' + dv}`, v: t(dv).top_reason || '—', txt: true, src: 't2_short_tot', field: 'top_reason', where: `key=${dv}` },
     ]);
     const bd = ok('t2_short_by_day');
     const box = $('#ch-t2day');
@@ -2116,7 +2252,11 @@
     pressed('#t2-dim', pick.t2dim);
     fillTable('#tb-t2bd', (ok('t2_short_breakdown') || []).filter((r) => r.dim === pick.t2dim), 'key', [
       { f: 'value', wrap: true }, { f: 'lines', fmt: n0 }, { f: 'short', fmt: n1 }]);
-    fillTable('#tb-t2lines', sl.slice().sort((a, b) => b.short - a.short), 'key', [
+    options('#f-t2sr', sl, 'reason', 't2sr');
+    const ql = query('#q-t2l');
+    const ls = sl.filter((r) => (pick.t2sr === 'ทั้งหมด' || r.reason === pick.t2sr) && (!ql || `${r.item} ${r.desc}`.toLowerCase().includes(ql)));
+    $('#t2l-n').textContent = `${ls.length.toLocaleString()} รายการ`;
+    fillTable('#tb-t2lines', ls.sort((a, b) => b.short - a.short), 'key', [
       { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'division', l: true }, { f: 'ordered', fmt: n2 }, { f: 'shipped', fmt: n2 },
       { f: 'short', fmt: n2, tone: () => 'down' }, { f: 'pct', fmt: (v) => n1(v) + '%' }, { f: 'reason', wrap: true }]);
   }
@@ -2128,8 +2268,8 @@
     const s = sum.get(dv) || {};
     cards('#cards-t2pick', [
       { title: `OOS รอบล่าสุด · ${divLabel()}`, v: n0(s.items), cls: 'down', src: 't2_oos_sum', field: 'items', where: `key=${dv}` },
-      { title: 'Out of shelf', v: n0(s.out_of_shelf), src: 't2_oos_sum', field: 'out_of_shelf', where: `key=${dv}` },
-      { title: 'Zero Stock', v: n0(s.zero_stock), src: 't2_oos_sum', field: 'zero_stock', where: `key=${dv}` },
+      { title: 'ไม่มีของบนชั้นวาง', v: n0(s.out_of_shelf), src: 't2_oos_sum', field: 'out_of_shelf', where: `key=${dv}` },
+      { title: 'Stock เป็น 0', v: n0(s.zero_stock), src: 't2_oos_sum', field: 'zero_stock', where: `key=${dv}` },
       { title: 'เหตุผลอื่น', v: n0(s.other), src: 't2_oos_sum', field: 'other', where: `key=${dv}` },
     ]);
     const col = getComputedStyle(root).getPropertyValue('--b-down').trim();
@@ -2159,13 +2299,13 @@
     const tot = byKey('t2_ao_tot');
     const t = (k) => tot.get(k) || {};
     cards('#cards-t2ao', [
-      { title: 'Orders ทั้งหมดใน File', v: n0(t('ALL').orders), src: 't2_ao_tot', field: 'orders', where: 'key=ALL', subs: [
+      { title: 'Total Orders', v: n0(t('ALL').orders), src: 't2_ao_tot', field: 'orders', where: 'key=ALL', subs: [
         { label: 'ตั้งแต่', v: t('ALL').first || '—', src: 't2_ao_tot', field: 'first', where: 'key=ALL' },
         { label: 'ถึง', v: t('ALL').last || '—', src: 't2_ao_tot', field: 'last', where: 'key=ALL' }] },
-      { title: 'Invoice Amount (บาท)', v: n0(t('ALL').amount), src: 't2_ao_tot', field: 'amount', where: 'key=ALL' },
-      { title: 'เฉลี่ยต่อ Order (บาท)', v: n0(t('ALL').avg), src: 't2_ao_tot', field: 'avg', where: 'key=ALL' },
-      { title: 'Orders วันล่าสุด', v: n0(t('LAST').orders), src: 't2_ao_tot', field: 'orders', where: 'key=LAST', subs: [
-        { label: 'บาท', v: n0(t('LAST').amount), src: 't2_ao_tot', field: 'amount', where: 'key=LAST' }] },
+      { title: 'Total Invoice Amount (บาท)', v: n0(t('ALL').amount), src: 't2_ao_tot', field: 'amount', where: 'key=ALL' },
+      { title: `จำนวน Orders วันล่าสุด · ${t('ALL').last || '—'}`, v: n0(t('LAST').orders), src: 't2_ao_tot', field: 'orders', where: 'key=LAST', subs: [
+        { v: n0(t('LAST').amount), after: 'บาท', src: 't2_ao_tot', field: 'amount', where: 'key=LAST' }] },
+      { title: 'ยอดขายเฉลี่ยต่อ Order (บาท)', v: n0(t('ALL').avg), src: 't2_ao_tot', field: 'avg', where: 'key=ALL' },
     ]);
     const box = $('#ch-t2ao');
     if (!failed(box, 't2_ao_day') && ad) {
@@ -2211,22 +2351,25 @@
     return rows.slice(0, n);
   };
   const metaVal = (k) => ((ok('t3_meta') || []).find((r) => r.key === k) || {}).value || '—';
-  const BAD = new Set(['Stock ติดลบ', 'หมด มี Order', 'หมด ไม่มี Order']);
-  const FLAGS = ['Stock ติดลบ', 'หมด ไม่มี Order', 'หมด มี Order', 'มีของ ไม่มี Order', 'มีของ In Transit', 'มีของ มี Order'];
+  // Top 1000 status as the file writes it → wording on the page
+  const FLAGTH = { 'หมด ไม่มี Order': 'สินค้าหมด ยังไม่มี On Order', 'หมด มี Order': 'สินค้าหมด มี On Order', 'มีของ ไม่มี Order': 'มีสินค้า ยังไม่มี On Order',
+    'มีของ In Transit': 'มีสินค้า กำลัง In Transit', 'มีของ มี Order': 'มีสินค้า มี On Order' };
+  const BAD = new Set(['Stock ติดลบ', 'สินค้าหมด มี On Order', 'สินค้าหมด ยังไม่มี On Order']);
+  const FLAGS = ['Stock ติดลบ', 'สินค้าหมด ยังไม่มี On Order', 'สินค้าหมด มี On Order', 'มีสินค้า ยังไม่มี On Order', 'มีสินค้า กำลัง In Transit', 'มีสินค้า มี On Order'];
 
   function drawT3Top() {
     const dv = division();
-    const td = (ok('t3_top_items') || []).filter((r) => inDiv(r.division));
+    const td = (ok('t3_top_items') || []).filter((r) => inDiv(r.division)).map((r) => ({ ...r, flag: FLAGTH[r.flag] || r.flag }));
     const sm = ok('t3_top_sum') || [];
     const s = sm.find((r) => r.division === dv) || {};
     const w = `division=${dv}`;
     cards('#cards-t3top', [
-      { title: `On Order · ${divLabel()}`, v: n0(s.on_order), src: 't3_top_sum', field: 'on_order', where: w, subs: [
-        { label: 'In Transit', v: n0(s.in_transit), src: 't3_top_sum', field: 'in_transit', where: w }] },
-      { title: 'Zero Stock', v: n0(s.zero_stock), cls: s.zero_stock > 0 ? 'down' : '', src: 't3_top_sum', field: 'zero_stock', where: w, subs: [
-        { label: 'ในนี้มี Order แล้ว', v: n0(s.zero_on_order), src: 't3_top_sum', field: 'zero_on_order', where: w }] },
-      { title: 'NO ORDER', v: n0(s.no_order), cls: s.no_order > 0 ? 'down' : '', src: 't3_top_sum', field: 'no_order', where: w },
-      { title: 'Negative stock', v: n0(s.negative), cls: s.negative > 0 ? 'down' : '', src: 't3_top_sum', field: 'negative', where: w },
+      { title: `จำนวน On Order ทั้งหมด · ${divLabel()}`, v: n0(s.on_order), after: 'รายการ', src: 't3_top_sum', field: 'on_order', where: w, subs: [
+        { label: 'In Transit', v: n0(s.in_transit), after: 'รายการ', src: 't3_top_sum', field: 'in_transit', where: w }] },
+      { title: 'Negative Stock', v: n0(s.negative), after: 'รายการ', cls: s.negative > 0 ? 'down' : '', src: 't3_top_sum', field: 'negative', where: w },
+      { title: 'Zero Stock', v: n0(s.zero_stock), after: 'รายการ', cls: s.zero_stock > 0 ? 'down' : '', src: 't3_top_sum', field: 'zero_stock', where: w, subs: [
+        { label: 'มี On Order แล้ว', v: n0(s.zero_on_order), after: 'รายการ', src: 't3_top_sum', field: 'zero_on_order', where: w }] },
+      { title: 'ยังไม่มี On Order', v: n0(s.no_order), after: 'รายการ', cls: s.no_order > 0 ? 'down' : '', src: 't3_top_sum', field: 'no_order', where: w },
     ]);
     const cs = getComputedStyle(root);
     const box = $('#ch-t3flag');
@@ -2289,16 +2432,16 @@
     const w = `key=${per}`;
     const L = per === 'Daily' ? 'วันนี้' : 'MTD';
     cards('#cards-t3ff', [
-      { title: `TT Sale FF · ${L} (บาท)`, v: n0(t.tt_sale), src: 't3_ff_tot', field: 'tt_sale', where: w, subs: [
-        { label: 'Sale ปกติ', v: n0(t.sale), src: 't3_ff_tot', field: 'sale', where: w },
+      { title: `TT Sale FF · ${L} (พันบาท)`, v: n0(t.tt_sale), src: 't3_ff_tot', field: 'tt_sale', where: w, subs: [
+        { label: 'Normal Sale', v: n0(t.sale), src: 't3_ff_tot', field: 'sale', where: w },
         { label: 'EM Sale', v: n0(t.em_sale), src: 't3_ff_tot', field: 'em_sale', where: w }] },
       { title: '%TT Profit', v: pc(t.tt_pct), cls: tone(t.tt_pct), src: 't3_ff_tot', field: 'tt_pct', where: w, subs: [
-        { label: '%Profit ปกติ', v: pc(t.profit_pct), src: 't3_ff_tot', field: 'profit_pct', where: w },
+        { label: '% Normal Profit', v: pc(t.profit_pct), cls: tone(t.profit_pct), src: 't3_ff_tot', field: 'profit_pct', where: w },
         { label: '%Profit EM', v: pc(t.em_pct), cls: tone(t.em_pct), src: 't3_ff_tot', field: 'em_pct', where: w }] },
-      { title: 'Code 52 (บาท)', v: n0(t.c52), cls: tone(t.c52), src: 't3_ff_tot', field: 'c52', where: w, subs: [
-        { label: '% ต่อยอดขาย', v: pc(t.c52_pct), src: 't3_ff_tot', field: 'c52_pct', where: w }] },
-      { title: 'Loss Margin (บาท)', v: n0(t.loss_margin), cls: tone(t.loss_margin), src: 't3_ff_tot', field: 'loss_margin', where: w, subs: [
-        { label: 'TT Profit', v: n0(t.tt_profit), src: 't3_ff_tot', field: 'tt_profit', where: w }] },
+      { title: 'Code 52 (พันบาท)', v: n0(t.c52), cls: tone(t.c52), src: 't3_ff_tot', field: 'c52', where: w, subs: [
+        { label: '% to Sale', v: pc(t.c52_pct), cls: tone(t.c52_pct), src: 't3_ff_tot', field: 'c52_pct', where: w }] },
+      { title: 'Loss Margin (พันบาท)', v: n0(t.loss_margin), cls: tone(t.loss_margin), src: 't3_ff_tot', field: 'loss_margin', where: w, subs: [
+        { label: 'TT Profit', v: n0(t.tt_profit), cls: tone(t.tt_profit), src: 't3_ff_tot', field: 'tt_profit', where: w }] },
     ]);
     const fs = (ok('t3_ff_sum') || []).filter((r) => r.period === per);
     const box = $('#ch-t3ff');
@@ -2321,8 +2464,41 @@
       { f: 'dept', l: true }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'dms', fmt: n2 }, { f: 'stock', fmt: n2 }, { f: 'sale', fmt: n0 },
       { f: 'profit_pct', fmt: (v) => pc(v), tone }, { f: 'em_sale', fmt: n0 }, { f: 'em_profit', fmt: n0, tone }, { f: 'c52', fmt: n0, tone },
       { f: 'tt_sale', fmt: n0 }, { f: 'tt_profit', fmt: n0, tone }, { f: 'tt_pct', fmt: (v) => pc(v), tone }]);
-    fillTable('#tb-t3c52', (ok('t3_ff_c52') || []).filter((r) => r.period === per && match(r)).sort((a, b) => a.cost - b.cost).slice(0, 300), 'key', [
-      { f: 'dept', l: true }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'qty', fmt: n2 }, { f: 'cost', fmt: n0, tone }]);
+  }
+
+  // Code 52 write-offs against the same item's TT Sale (t3_ff_items shares the period|item key)
+  const C52BAND = ['ไม่มียอดขาย', 'มากกว่า 50%', '20–50%', '10–20%', 'ไม่เกิน 10%'];
+  function drawT3C52() {
+    const per = pick.t3ffper;
+    pressed('#t3-c52per', per); pressed('#c52-sort', pick.c52sort);
+    const im = byKey('t3_ff_items');
+    const all = (ok('t3_ff_c52') || []).filter((r) => r.period === per).map((r) => {
+      const sale = (im.get(r.key) || {}).tt_sale || 0;
+      const pct = sale > 0 ? r.cost / sale * 100 : null;
+      const a = Math.abs(pct);
+      return { ...r, sale, pct, band: pct == null ? C52BAND[0] : a > 50 ? C52BAND[1] : a > 20 ? C52BAND[2] : a > 10 ? C52BAND[3] : C52BAND[4] };
+    });
+    const t = byKey('t3_ff_tot').get(per) || {};
+    const w = `key=${per}`;
+    const nos = all.filter((r) => r.pct == null);
+    cards('#cards-t3c52', [
+      { title: `Code 52 · ${per === 'Daily' ? 'วันนี้' : 'MTD'} (พันบาท)`, v: n0(t.c52), cls: tone(t.c52), src: 't3_ff_tot', field: 'c52', where: w, subs: [
+        { label: 'TT Sale', v: n0(t.tt_sale), src: 't3_ff_tot', field: 'tt_sale', where: w }] },
+      { title: '% to Sale (ทำทิ้ง ÷ ยอดขาย)', v: pc(t.c52_pct), cls: tone(t.c52_pct), src: 't3_ff_tot', field: 'c52_pct', where: w },
+      { title: 'สินค้าที่ทำทิ้ง', v: n0(all.length), after: 'รายการ', subs: [{ label: 'ไม่มียอดขายเลย', v: n0(nos.length), cls: 'down', after: 'รายการ' }] },
+      { title: 'ทำทิ้งเกิน 50% ของยอดขาย', v: n0(all.filter((r) => r.band === C52BAND[1]).length), cls: 'down', after: 'รายการ' },
+    ]);
+    deptSel('#f-c52dept', all, 'c52dept');
+    if (!['ทั้งหมด', ...C52BAND].includes(pick.c52band)) pick.c52band = 'ทั้งหมด';
+    fillSelect('#f-c52band', ['ทั้งหมด', ...C52BAND], pick.c52band);
+    const q = query('#q-c52');
+    const rows = all.filter((r) => (pick.c52dept === 'ทั้งหมด' || r.dept === pick.c52dept) && (pick.c52band === 'ทั้งหมด' || r.band === pick.c52band)
+      && (!q || `${r.item} ${r.desc}`.toLowerCase().includes(q)));
+    // most money first, or the worst share of sales first (no sales at all counts as worst)
+    rows.sort(pick.c52sort === 'pct' ? (a, b) => (a.pct ?? -1e9) - (b.pct ?? -1e9) || a.cost - b.cost : (a, b) => a.cost - b.cost);
+    fillTable('#tb-t3c52', capRows(rows, 300, '#c52-n'), 'key', [
+      { f: 'dept', l: true }, { f: 'item', l: true }, { f: 'desc', wrap: true }, { f: 'qty', fmt: n2 }, { f: 'cost', fmt: n0, tone },
+      { get: (r) => r.sale, fmt: n0 }, { get: (r) => r.pct, fmt: (v) => (v == null ? 'ไม่มียอดขาย' : pc(v)), tone: () => 'down' }]);
   }
 
   function drawT3Shk() {
@@ -2337,11 +2513,11 @@
     cards('#cards-t3shk', [
       { title: `Shrinkage · ${L} · ${divLabel()} (บาท)`, v: n0(t[p + '_shrink']), cls: tone(t[p + '_shrink']), src: 't3_shk_tot', field: p + '_shrink', where: w, subs: [
         { label: 'Sales', v: n0(t[p + '_sales']), src: 't3_shk_tot', field: p + '_sales', where: w }] },
-      { title: '% ต่อยอดขาย', v: pc(t[p + '_pct']), cls: p !== 'd' && t[p + '_pct'] < t[p + '_budget'] ? 'down' : 'up', src: 't3_shk_tot', field: p + '_pct', where: w,
-        subs: p === 'd' ? [] : [{ label: 'งบ', v: pc(t[p + '_budget']), src: 't3_shk_tot', field: p + '_budget', where: w }] },
-      { title: 'แผนกที่เกินงบมากสุด', v: worst ? worst.desc : (p === 'd' ? 'ไม่มีงบรายวัน' : 'ไม่มี'), txt: true, src: worst ? 't3_shk_dept' : null, field: 'desc', where: worst ? `key=${worst.key}` : null,
-        subs: worst ? [{ label: '% จริง', v: pc(worst[p + '_pct']), cls: 'down', src: 't3_shk_dept', field: p + '_pct', where: `key=${worst.key}` },
-          { label: 'งบ', v: pc(worst[p + '_budget']), src: 't3_shk_dept', field: p + '_budget', where: `key=${worst.key}` }] : [] },
+      { title: '% Shrinkage เทียบ Budget', v: pc(t[p + '_pct']), cls: p !== 'd' && t[p + '_pct'] < t[p + '_budget'] ? 'down' : 'up', src: 't3_shk_tot', field: p + '_pct', where: w,
+        subs: p === 'd' ? [] : [{ label: 'BG', v: pc(t[p + '_budget']), src: 't3_shk_tot', field: p + '_budget', where: w }] },
+      { title: 'แผนกที่ Shrinkage เกิน BG มากที่สุด', v: worst ? worst.desc : (p === 'd' ? 'ไม่มี BG รายวัน' : 'ไม่มี'), txt: true, src: worst ? 't3_shk_dept' : null, field: 'desc', where: worst ? `key=${worst.key}` : null,
+        subs: worst ? [{ label: 'Actual', v: pc(worst[p + '_pct']), cls: 'down', src: 't3_shk_dept', field: p + '_pct', where: `key=${worst.key}` },
+          { label: 'Budget', v: pc(worst[p + '_budget']), src: 't3_shk_dept', field: p + '_budget', where: `key=${worst.key}` }] : [] },
     ]);
     const box = $('#ch-t3shk');
     if (!failed(box, 't3_shk_dept')) {
@@ -2358,7 +2534,7 @@
     const last = p === 'd' ? 'budget_pct' : 'ly';
     const ths = $$('#tb-t3cls th');
     ['sales', 'adj', 'count', 'damage', 'stolen', 'markdown', 'donation', 'shrink', 'pct', last].forEach((f, i) => { ths[i + 2].dataset.field = `${p}_${f}`; });
-    ths[11].textContent = p === 'd' ? 'งบ %' : 'LY';
+    ths[11].textContent = p === 'd' ? 'BG %' : 'LY';
     const cl = (ok('t3_shk_class') || []).filter((r) => inDiv(r.division) && (r[p + '_sales'] || r[p + '_shrink']));
     deptSel('#f-t3shkdept', cl, 't3shkdept');
     const qc = query('#q-t3cls');
@@ -2383,13 +2559,12 @@
     const w = 'key=YTD';
     const worse = (v) => (v == null ? '' : v > 0 ? 'down' : 'up');
     cards('#cards-t3c20', [
-      { title: `Code 20 ปี 2026 · ${y.months || 0} เดือน (บาท)`, v: n0(y.shrink), cls: 'down', src: 't3_c20_ytd', field: 'shrink', where: w, subs: [
-        { label: '2025 เดือนเดียวกัน', v: n0(y.shrink_ly), src: 't3_c20_ytd', field: 'shrink_ly', where: w },
-        { label: 'เปลี่ยน', v: pc(y.change, 1), cls: worse(y.change), src: 't3_c20_ytd', field: 'change', where: w }] },
-      { title: '% ต่อยอดขาย 2026', v: pc(y.pct, 3), src: 't3_c20_ytd', field: 'pct', where: w, subs: [
-        { label: '2025', v: pc(y.pct_ly, 3), src: 't3_c20_ytd', field: 'pct_ly', where: w }] },
+      { title: 'YTD Code 20 : 2026 (บาท)', v: n0(y.shrink), cls: 'down', src: 't3_c20_ytd', field: 'shrink', where: w, subs: [
+        { label: 'Diff LY', v: pc(y.change, 1), cls: worse(y.change), src: 't3_c20_ytd', field: 'change', where: w }] },
+      { title: '% ต่อยอดขาย', v: pc(y.pct, 3), src: 't3_c20_ytd', field: 'pct', where: w, subs: [
+        { label: 'LY', v: pc(y.pct_ly, 3), src: 't3_c20_ytd', field: 'pct_ly', where: w }] },
       { title: `เดือนล่าสุด · ${y.last_month || '—'} (บาท)`, v: n0(y.last_shrink), src: 't3_c20_ytd', field: 'last_shrink', where: w, subs: [
-        { label: 'ปีก่อน', v: n0(y.last_shrink_ly), src: 't3_c20_ytd', field: 'last_shrink_ly', where: w }] },
+        { label: 'LY', v: n0(y.last_shrink_ly), src: 't3_c20_ytd', field: 'last_shrink_ly', where: w }] },
     ]);
     const cm = ok('t3_c20_month');
     const box = $('#ch-t3c20');
@@ -2505,13 +2680,13 @@
   // ----- Topic 5: pages built from one layout (cards, charts, tables with filters)
   // Category divisions of the Sales by Category file belong to the store's three divisions
   const T5DIV = { 'DG FOOD': 'DRY FOOD', 'DG NONFOOD': 'DRY FOOD', 'LIQUOR & TOBACCO': 'DRY FOOD', 'HARDLINE E': 'NON FOOD', 'HARDLINE H': 'NON FOOD' };
-  const t5div = (r) => T5DIV[r.division] || r.division;
+  const t5div = (r) => T5DIV[r.division] || r.store_div || r.division;
   const DIVSEC = { 'FRESH FOOD': 'FF', 'DRY FOOD': 'DF', 'NON FOOD': 'NF', ALL: 'Total' };
   // one summary calc per list: count and sums by division and ALL
-  const t5tot = (id, src, fields, title) => dash.calc(id, {
+  const t5tot = (id, src, fields, title, kf = []) => dash.calc(id, {
     inputs: [src],
     title,
-    description: `จำนวนรายการ (n) และผลรวม ${fields.join(', ')} ของ ${src} ตาม Division และทั้งหมด (ALL)`,
+    description: `จำนวนรายการ (n) และผลรวม ${fields.join(', ')} ของ ${src} ตาม Division และทั้งหมด (ALL)${kf.length ? `; ${kf.join(', ')} เป็นพันบาท` : ''}`,
     fn: (rows) => {
       const out = new Map();
       rows.forEach((r) => [t5div(r), 'ALL'].forEach((k) => {
@@ -2520,23 +2695,33 @@
         o.n += 1; fields.forEach((f) => { o[f] = Math.round((o[f] + (r[f] || 0)) * 100) / 100; });
         out.set(k, o);
       }));
-      return [...out.values()];
+      return [...out.values()].map((o) => { kf.forEach((f) => { o[f] = Math.round(o[f] / 10) / 100; }); return o; });
     },
   });
+  // item lists shown in thousand baht: cy, ly, var / 1,000 (2 decimals)
+  const kOf = (id, src, fs = ['cy', 'ly', 'var']) => dash.calc(id, {
+    inputs: [src],
+    title: `${src} (พันบาท)`,
+    description: `${src} ที่ช่อง ${fs.join(', ')} หาร 1,000 เป็นพันบาท ช่องอื่นเหมือนเดิม`,
+    fn: (rows) => rows.map((r) => ({ ...r, ...Object.fromEntries(fs.map((f) => [f, Math.round((r[f] || 0) / 10) / 100])) })),
+  });
+  ['t5_sale_item', 't5_drop_type', 't5_drop_item', 't5_drop_cust'].forEach((s) => kOf(s + '_k', s));
+  kOf('t5_top50_k', 't5_top50', ['amount', 'mtd', 'lmtd', 'diff']);
   t5tot('t5_mu13_tot', 't5_mu13', ['qty', 'cost', 'on_order'], 'Stock 1-3 MU รวม');
   t5tot('t5_mu15_tot', 't5_mu15', ['stock', 'amount', 'on_order'], 'Stock 1-5 MU รวม');
   t5tot('t5_aging_tot', 't5_aging_items', ['cost', 'qty'], 'Aging items รวม');
-  t5tot('t5_top50_tot', 't5_top50', ['qty', 'amount', 'mtd', 'lmtd', 'diff'], 'Top 50 FF รวม');
-  t5tot('t5_sale_tot', 't5_sale_item', ['cy', 'ly', 'var'], 'Sale by item รวม');
-  t5tot('t5_drop_tot', 't5_drop_type', ['customers', 'lost', 'cy', 'ly', 'var'], 'Top drop customer รวม');
+  t5tot('t5_top50_tot', 't5_top50', ['qty', 'amount', 'mtd', 'lmtd', 'diff'], 'Top 50 FF รวม', ['amount', 'mtd', 'lmtd', 'diff']);
+  t5tot('t5_sale_tot', 't5_sale_item', ['cy', 'ly', 'var'], 'Sale by item รวม', ['cy', 'ly', 'var']);
+  t5tot('t5_drop_tot', 't5_drop_type', ['customers', 'lost', 'cy', 'ly', 'var'], 'Top drop customer รวม', ['cy', 'ly', 'var']);
   t5tot('t5_shk_tot', 't5_shk_code', ['c10', 'c11', 'c20', 'c21', 'c52', 'c53', 'c60', 'c61', 'tc41', 'qty', 'shrink', 'sale'], 'Shrinkage by code รวม');
   t5tot('t5_neg_tot', 't5_neg_items', ['value', 'on_order'], 'Negative stock รวม');
   t5tot('t5_gone_tot', 't5_gone_items', ['stock_amt', 'sales_amt', 'on_order'], 'Gone Forever รวม');
   t5tot('t5_soft_tot', 't5_soft', ['soft_qty', 'soft_amt', 'chk_qty', 'chk_amt', 'durian_amt', 'qty', 'amount'], 'Soft-serve & Rotisserie รวม');
+  t5tot('t5_repl_tot', 't5_repl', ['act', 'zero', 'below', 'over', 'err'], 'Central Replenishment รวม');
 
   const t5s = {};
   const t5get = (k, d) => (k in t5s ? t5s[k] : d);
-  const FM = { n0, n1, n2, pc: (v) => pc(v), pc3: (v) => pc(v, 3), txt: (v) => v ?? '', div: (v) => SHORT[v] || v };
+  const FM = { n0, n1, n2, sg1: (v) => sg(v, 1), pc: (v) => pc(v), pc3: (v) => pc(v, 3), txt: (v) => v ?? '', div: (v) => SHORT[v] || v };
   const TONE = { sign: tone, neg: (v) => (v < 0 ? 'down' : ''), pos: (v) => (v > 0 ? 'down' : ''), bad: () => 'down' };
   const el = (tag, attrs = {}, kids = []) => {
     const e = document.createElement(tag);
@@ -2548,7 +2733,19 @@
   const segBox = (id, opts) => el('div', { class: 'b68-seg', role: 'group', id }, opts.map(([v, l]) => el('button', { type: 'button', 'data-v': v, text: l })));
   const sumBy = (rows, key, f) => d3.rollups(rows, (v) => Math.round(d3.sum(v, (r) => r[f] || 0)), key);
   const cssv = (n) => getComputedStyle(root).getPropertyValue(n).trim();
+  // days since an item last sold, counted from the dashboard data date; red from 1 day without a sale
+  const idleDays = (d) => {
+    const t = Date.parse(((ok('kpi') || []).find((r) => r.metric === 'Data date') || {}).value);
+    return d && t ? Math.max(0, Math.round((t - Date.parse(d)) / 864e5)) : null;
+  };
+  const idleCol = (f) => ['idle', 'ไม่ได้ขายมาแล้ว (วัน)', 'n0', { get: (r) => idleDays(r[f]), tone: (v) => (v >= 1 ? 'down' : '') }];
+  // Top 50 FF sections carry the department number (Dept.1_Veg) or a frozen butchery / fish shelf
+  const FFDEPT = { 1: 'FRUIT & VEG', 2: 'BUTCHERY', 3: 'FISH', 4: 'BAKERY', 5: 'FROZEN & DAIRY' };
+  const secName = (s) => { const m = /Dept\.?\s*(\d)/.exec(s) || (/But/i.test(s) ? [0, 2] : /Fish/i.test(s) ? [0, 3] : null); return m ? `${s} · ${FFDEPT[m[1]]}` : s; };
+  // open a T5 table with one filter set, then bring it into view
+  const t5show = (tid, k, v) => { t5s[T5SEL(tid, k)] = v; draw(); document.getElementById(tid).closest('.b68-panel').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 
+  const SHKCODES = [['c10', '10 Adjust (-)'], ['c11', '11 Adjust (+)'], ['c20', '20 Damaged'], ['c21', '21 Damaged (+)'], ['c52', '52 Expired'], ['c53', '53 Expired (+)'], ['c60', '60 Stolen'], ['c61', '61 Stolen (+)'], ['tc41', 'TC-41 Stock count']];
   const T5 = {
     t5stock: {
       title: 'Stock Days', intro: () => `มูลค่า Stock (บาท) และจำนวนวันที่ Stock พอขาย ตาม Division และแผนก Fresh Food ข้อมูล ณ ${metaT5('Stock Days date')} · รายการที่รับเข้าครั้งล่าสุดเมื่อ 30 วันก่อน · File Stock Days by division, Stock Days by division by dept, Stock Last Received Date 30 Day`,
@@ -2579,17 +2776,19 @@
         const w = `key=${dv}`;
         return [{ title: `Stock 1-3 MU · ${divLabel()} (รายการ)`, v: n0(a.n), src: 't5_mu13_tot', field: 'n', where: w, subs: [{ label: 'EOH Cost', v: n0(a.cost), src: 't5_mu13_tot', field: 'cost', where: w }] },
           { title: 'Stock 1-5 MU (รายการ)', v: n0(b.n), src: 't5_mu15_tot', field: 'n', where: w, subs: [{ label: 'Stock Amt', v: n0(b.amount), src: 't5_mu15_tot', field: 'amount', where: w }] },
-          { title: '1-5 MU ยังไม่มี On Order', v: n0((ok('t5_mu15') || []).filter((r) => inDiv(r.division) && !(r.on_order > 0)).length), cls: 'down' }];
+          { title: '1-5 MU ยังไม่มี On Order', v: n0((ok('t5_mu15') || []).filter((r) => inDiv(r.division) && !(r.on_order > 0)).length), cls: 'down', after: 'รายการ',
+            go: () => t5show('tb-t5mu15', 'oo', 'ยังไม่มี On Order') }];
       },
       charts: [{ id: 'ch-t5mu', band: 'Stock 1-3 MU ตามแผนก (รายการ)', src: 't5_mu13',
         data: () => d3.rollups((ok('t5_mu13') || []).filter((r) => inDiv(r.division)), (v) => v.length, (r) => `${r.dept} ${r.dept_name}`).sort((a, b) => b[1] - a[1])
           .map(([k, n]) => ({ label: k, v: n, color: cssv('--b-cy'), tip: [] })), fmt: n0 }],
       tables: [
         { id: 'tb-t5mu13', band: 'Stock 1-3 MU', src: 't5_mu13', dept: true, filters: [['aging', 'Aging Status']], q: ['item', 'desc', 'cls_name'],
-          sorts: [['Cover Days น้อยสุด', (a, b) => (a.cover ?? 1e9) - (b.cover ?? 1e9)], ['EOH Cost สูงสุด', (a, b) => (b.cost || 0) - (a.cost || 0)]],
+          sorts: [['Cover Days น้อยสุด', (a, b) => (a.cover ?? 1e9) - (b.cover ?? 1e9)], ['EOH Cost สูงสุด', (a, b) => (b.cost || 0) - (a.cost || 0)], ['ไม่ได้ขายนานสุด', (a, b) => (a.last_sold || '9').localeCompare(b.last_sold || '9')]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }],
-            ['last_recv', 'รับล่าสุด', 'txt'], ['last_sold', 'ขายล่าสุด', 'txt'], ['aging', 'Aging', 'txt'], ['on_order', 'On Order', 'n0'], ['cover', 'Cover Days', 'n0'], ['qty', 'EOH Qty', 'n0'], ['cost', 'EOH Cost', 'n0']] },
+            ['last_recv', 'รับล่าสุด', 'txt'], ['last_sold', 'ขายล่าสุด', 'txt'], idleCol('last_sold'), ['aging', 'Aging', 'txt'], ['on_order', 'On Order', 'n0'], ['cover', 'Cover Days', 'n0'], ['qty', 'EOH Qty', 'n0'], ['cost', 'EOH Cost', 'n0']] },
         { id: 'tb-t5mu15', band: 'Stock 1-5 MU', src: 't5_mu15', dept: true, filters: [['oo', 'On Order', (r) => (r.on_order > 0 ? 'มี On Order' : 'ยังไม่มี On Order')]], q: ['item', 'desc'],
+          sorts: [['Stock น้อยสุด (ใกล้หมดก่อน)', (a, b) => (a.stock ?? 1e9) - (b.stock ?? 1e9)], ['Stock Amt สูงสุด', (a, b) => (b.amount || 0) - (a.amount || 0)]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['price', 'ราคา (รวม VAT)', 'n2'],
             ['stock', 'Stock', 'n2'], ['amount', 'Stock Amt', 'n0'], ['on_order', 'On Order', 'n2', { tone: (v) => (v > 0 ? '' : 'down') }]] }],
     },
@@ -2601,9 +2800,9 @@
         const s = DIVSEC[dv];
         const w = `key=${last.key}`;
         return [{ title: `Aging · ${divLabel()} · ${last.date || ''} (บาท)`, v: n0(last['ag_' + s]), src: 't5_ag_trend', field: 'ag_' + s, where: w,
-          subs: [{ label: 'วันก่อนหน้า', v: n0(prev['ag_' + s]), src: 't5_ag_trend', field: 'ag_' + s, where: `key=${prev.key}` }] },
+          subs: [{ label: 'Previous Day', v: n0(prev['ag_' + s]), src: 't5_ag_trend', field: 'ag_' + s, where: `key=${prev.key}` }] },
         { title: 'NBS (บาท)', v: n0(last['nbs_' + s]), src: 't5_ag_trend', field: 'nbs_' + s, where: w,
-          subs: [{ label: 'วันก่อนหน้า', v: n0(prev['nbs_' + s]), src: 't5_ag_trend', field: 'nbs_' + s, where: `key=${prev.key}` }] },
+          subs: [{ label: 'Previous Day', v: n0(prev['nbs_' + s]), src: 't5_ag_trend', field: 'nbs_' + s, where: `key=${prev.key}` }] },
         { title: 'สินค้า Aging (รายการ)', v: n0((byKey('t5_aging_tot').get(dv) || {}).n), src: 't5_aging_tot', field: 'n', where: `key=${dv}` }];
       },
       charts: [
@@ -2641,82 +2840,89 @@
       ],
     },
     t5top50: {
-      title: 'Top 50 Fresh Food', intro: () => `สินค้าขายดีของแต่ละ Section ใน Fresh Food · ยอดวันนี้ ราคา Stock ยอด MTD เทียบปีก่อน · ข้อมูล ณ ${metaT5('Top 50 FF date')} · File St.68 Top50FF · หน้านี้มีเฉพาะ FRESH FOOD`,
+      title: 'Top 50 Fresh Food', intro: () => `สินค้าขายดีของแต่ละ Section ใน Fresh Food · ยอดวันนี้ ราคา Stock ยอด MTD เทียบ LY (พันบาท) · ข้อมูล ณ ${metaT5('Top 50 FF date')} · File St.68 Top50FF · หน้านี้มีเฉพาะ FRESH FOOD`,
       cards: () => {
         const t = byKey('t5_top50_tot').get('ALL') || {};
         return [{ title: 'สินค้าใน Top 50 ทุก Section', v: n0(t.n), src: 't5_top50_tot', field: 'n', where: 'key=ALL' },
-          { title: 'ยอดขายวันนี้ (บาท)', v: n0(t.amount), src: 't5_top50_tot', field: 'amount', where: 'key=ALL' },
-          { title: 'ยอดขาย MTD (บาท)', v: n0(t.mtd), src: 't5_top50_tot', field: 'mtd', where: 'key=ALL', subs: [{ label: 'ปีก่อน', v: n0(t.lmtd), src: 't5_top50_tot', field: 'lmtd', where: 'key=ALL' }] },
-          { title: 'ส่วนต่างจากปีก่อน (บาท)', v: n0(t.diff), cls: tone(t.diff), src: 't5_top50_tot', field: 'diff', where: 'key=ALL' }];
+          { title: 'ยอดขายวันนี้ (พันบาท)', v: n0(t.amount), src: 't5_top50_tot', field: 'amount', where: 'key=ALL' },
+          { title: 'ยอดขาย MTD (พันบาท)', v: n0(t.mtd), src: 't5_top50_tot', field: 'mtd', where: 'key=ALL', subs: [{ label: 'LY', v: n0(t.lmtd), src: 't5_top50_tot', field: 'lmtd', where: 'key=ALL' }] },
+          { title: 'ส่วนต่าง LY (พันบาท)', v: sg(t.diff, 0), cls: tone(t.diff), src: 't5_top50_tot', field: 'diff', where: 'key=ALL' }];
       },
-      charts: [{ id: 'ch-t5t50', band: 'ยอด MTD ตาม Section (บาท) · ขีดดำ = ปีก่อน', src: 't5_top50',
-        data: () => { const d = ok('t5_top50') || []; const ly = new Map(sumBy(d, (r) => r.section, 'lmtd')); return sumBy(d, (r) => r.section, 'mtd').map(([k, v]) => ({ label: k, v, ref: ly.get(k), color: cssv('--b-cy'), tip: [['ปีก่อน', n0(ly.get(k))]] })); }, fmt: n0 }],
-      tables: [{ id: 'tb-t5t50', band: 'รายการ', src: 't5_top50', nodiv: true, filters: [['section', 'Section']], q: ['item', 'desc'],
-        sorts: [['ตามอันดับ', (a, b) => (a.section < b.section ? -1 : a.section > b.section ? 1 : a.no - b.no)], ['ลดลงจากปีก่อนมากสุด', (a, b) => (a.diff || 0) - (b.diff || 0)]],
-        cols: [['section', 'Section', 'txt'], ['no', 'No', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['qty', 'ขายวันนี้', 'n2'], ['amount', 'บาท', 'n0'], ['price', 'ราคา', 'n2'],
-          ['stock', 'Stock', 'n2'], ['avg28', 'Avg 28 วัน', 'n2'], ['mtd', 'MTD', 'n0'], ['lmtd', 'MTD ปีก่อน', 'n0'], ['diff', 'Diff', 'n0', { tone: TONE.sign }], ['pct', '%', 'pc', { tone: TONE.sign }], ['reorder', 'Reorder', 'txt']] }],
+      charts: [{ id: 'ch-t5t50', band: 'ยอด MTD ตาม Section และแผนก (พันบาท) · ขีดดำ = LY (Last Year)', src: 't5_top50_k',
+        data: () => { const d = ok('t5_top50_k') || []; const ly = new Map(sumBy(d, (r) => r.section, 'lmtd')); return sumBy(d, (r) => r.section, 'mtd').map(([k, v]) => ({ label: secName(k), v, ref: ly.get(k), color: cssv('--b-cy'), tip: [['LY', n0(ly.get(k))]] })); }, fmt: n0 }],
+      tables: [{ id: 'tb-t5t50', band: 'รายการ (พันบาท)', src: 't5_top50_k', nodiv: true, filters: [['section', 'Section · แผนก', (r) => secName(r.section)]], q: ['item', 'desc'],
+        sorts: [['ตามอันดับ', (a, b) => (a.section < b.section ? -1 : a.section > b.section ? 1 : a.no - b.no)], ['ลดลงจาก LY มากสุด', (a, b) => (a.diff || 0) - (b.diff || 0)]],
+        cols: [['section', 'Section · แผนก', 'txt', { get: (r) => secName(r.section) }], ['no', 'No', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['qty', 'ขายวันนี้', 'n2'], ['amount', 'ยอดขายวันนี้', 'n1'], ['price', 'ราคา', 'n2'],
+          ['stock', 'Stock', 'n2'], ['avg28', 'Avg 28 วัน', 'n2'], ['mtd', 'MTD', 'n1'], ['lmtd', 'MTD LY', 'n1'], ['diff', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }], ['pct', '%', 'pc', { tone: TONE.sign }], ['reorder', 'Reorder', 'txt']] }],
     },
     t5cat: {
       title: 'Sales by Category', seg: { k: 'per', def: 'm', opts: [['d', 'วันนี้'], ['m', 'MTD'], ['y', 'YTD']] },
-      intro: () => `ยอดขายตาม Category Division / Category / Class เทียบงบและปีก่อน · หน่วยพันบาท · ข้อมูล ณ ${metaT5('Sales by Category date')} · DG FOOD, DG NONFOOD, LIQUOR นับเป็น DRY FOOD และ HARDLINE นับเป็น NON FOOD เมื่อเลือก Division · File ST.68 Sales By Category`,
+      intro: () => `ยอดขายตาม Category Division / Category / Class เทียบ BG และ LY · หน่วยบาท · ข้อมูล ณ ${metaT5('Sales by Category date')} · DG FOOD, DG NONFOOD, LIQUOR นับเป็น DRY FOOD และ HARDLINE นับเป็น NON FOOD เมื่อเลือก Division · File ST.68 Sales By Category`,
       cards: (dv, st) => {
         const p = st.per;
-        const rows = ok('t5_cat_div') || [];
+        const rows = ok('t5_cat_div_baht') || [];
         const r = rows.find((x) => x.key === 'ALL') || {};
         const w = 'key=ALL';
-        return [{ title: `ยอดขายทั้งร้าน · ${{ d: 'วันนี้', m: 'MTD', y: 'YTD' }[p]} (พันบาท)`, v: n0(r[p + '_a']), src: 't5_cat_div', field: p + '_a', where: w,
-          subs: [{ label: 'งบ', v: n0(r[p + '_b']), src: 't5_cat_div', field: p + '_b', where: w }, { label: 'ปีก่อน', v: n0(r[p + '_ly']), src: 't5_cat_div', field: p + '_ly', where: w }] },
-        { title: '% เทียบงบ', v: pc(r[p + '_pct_b']), cls: tone(r[p + '_pct_b']), src: 't5_cat_div', field: p + '_pct_b', where: w },
-        { title: '% เทียบปีก่อน', v: pc(r[p + '_pct_ly']), cls: tone(r[p + '_pct_ly']), src: 't5_cat_div', field: p + '_pct_ly', where: w }];
+        return [{ title: `ยอดขายทั้งร้าน · ${{ d: 'วันนี้', m: 'MTD', y: 'YTD' }[p]} (บาท)`, v: n0(r[p + '_a']), src: 't5_cat_div_baht', field: p + '_a', where: w,
+          subs: [{ label: 'BG', v: n0(r[p + '_b']), src: 't5_cat_div_baht', field: p + '_b', where: w }, { label: 'LY', v: n0(r[p + '_ly']), src: 't5_cat_div_baht', field: p + '_ly', where: w }] },
+        { title: '% เทียบ BG', v: pc(r[p + '_pct_b']), cls: tone(r[p + '_pct_b']), src: 't5_cat_div_baht', field: p + '_pct_b', where: w },
+        { title: '% เทียบ LY', v: pc(r[p + '_pct_ly']), cls: tone(r[p + '_pct_ly']), src: 't5_cat_div_baht', field: p + '_pct_ly', where: w }];
       },
-      charts: [{ id: 'ch-t5cat', band: 'ยอดขายตาม Category Division (พันบาท) · เทา = ปีก่อน, น้ำเงิน = ปีนี้, จุด = งบ', src: 't5_cat_div', kind: 'bic',
-        data: (st) => (ok('t5_cat_div') || []).filter((r) => r.key !== 'ALL' && inDiv(t5div(r))).map((r) => ({ x: r.key, label: r.division, cy: r[st.per + '_a'], ly: r[st.per + '_ly'], bud: r[st.per + '_b'], v: r[st.per + '_pct_ly'] })) }],
+      charts: [{ id: 'ch-t5cat', band: 'ยอดขายตาม Category Division (บาท) · เทา = LY (Last Year), น้ำเงิน = CY (Current Year), จุด = BG (Budget)', src: 't5_cat_div_baht', kind: 'bic',
+        data: (st) => (ok('t5_cat_div_baht') || []).filter((r) => r.key !== 'ALL' && inDiv(t5div(r))).map((r) => ({ x: r.key, label: r.division, cy: r[st.per + '_a'], ly: r[st.per + '_ly'], bud: r[st.per + '_b'], v: r[st.per + '_pct_ly'] })) }],
       tables: [
-        { id: 'tb-t5cd', band: 'ตาม Category Division', src: 't5_cat_div', total: (r) => r.key === 'ALL', rows: (d) => d.filter((r) => r.key === 'ALL' || inDiv(t5div(r))),
-          cols: [['division', 'Division', 'txt'], ['a', 'ปีนี้', 'n0', { per: true }], ['b', 'งบ', 'n0', { per: true }], ['pct_b', '% เทียบงบ', 'pc', { per: true, tone: TONE.sign }], ['ly', 'ปีก่อน', 'n0', { per: true }], ['pct_ly', '% เทียบปีก่อน', 'pc', { per: true, tone: TONE.sign }]] },
-        { id: 'tb-t5cc', band: 'ตาม Category', src: 't5_cat_cat', filters: [['division', 'Division']],
-          cols: [['division', 'Division', 'txt'], ['category', 'Category', 'txt'], ['a', 'ปีนี้', 'n0', { per: true }], ['b', 'งบ', 'n0', { per: true }], ['pct_b', '% เทียบงบ', 'pc', { per: true, tone: TONE.sign }], ['ly', 'ปีก่อน', 'n0', { per: true }], ['pct_ly', '% เทียบปีก่อน', 'pc', { per: true, tone: TONE.sign }]] },
-        { id: 'tb-t5ccl', band: 'ตาม Class', src: 't5_cat_cls', filters: [['division', 'Division'], ['category', 'Category']], q: ['cls', 'desc'],
-          sorts: [['ต่ำกว่างบมากสุด', (a, b, st) => (a[st.per + '_var_b'] || 0) - (b[st.per + '_var_b'] || 0)], ['ยอดขายสูงสุด', (a, b, st) => (b[st.per + '_a'] || 0) - (a[st.per + '_a'] || 0)]],
-          cols: [['category', 'Category', 'txt'], ['cls', 'Class', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['a', 'ปีนี้', 'n1', { per: true }], ['b', 'งบ', 'n1', { per: true }], ['var_b', 'ส่วนต่างงบ', 'n1', { per: true, tone: TONE.sign }],
-            ['pct_b', '% เทียบงบ', 'pc', { per: true, tone: TONE.sign }], ['ly', 'ปีก่อน', 'n1', { per: true }], ['pct_ly', '% เทียบปีก่อน', 'pc', { per: true, tone: TONE.sign }]] }],
+        { id: 'tb-t5cd', band: 'ตาม Category Division', src: 't5_cat_div_baht', total: (r) => r.key === 'ALL', rows: (d) => d.filter((r) => r.key === 'ALL' || inDiv(t5div(r))),
+          cols: [['division', 'Division', 'txt'], ['a', 'CY', 'n0', { per: true }], ['b', 'BG', 'n0', { per: true }], ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n0', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] },
+        { id: 'tb-t5cc', band: 'ตาม Category', src: 't5_cat_cat_baht', filters: [['division', 'Division']],
+          cols: [['division', 'Division', 'txt'], ['category', 'Category', 'txt'], ['a', 'CY', 'n0', { per: true }], ['b', 'BG', 'n0', { per: true }], ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n0', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] },
+        { id: 'tb-t5ccl', band: 'ตาม Class', src: 't5_cat_cls_baht', filters: [['division', 'Division'], ['category', 'Category']], q: ['cls', 'desc'],
+          sorts: [['ต่ำกว่า BG มากสุด', (a, b, st) => (a[st.per + '_var_b'] || 0) - (b[st.per + '_var_b'] || 0)], ['ยอดขายสูงสุด', (a, b, st) => (b[st.per + '_a'] || 0) - (a[st.per + '_a'] || 0)]],
+          cols: [['category', 'Category', 'txt'], ['cls', 'Class', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['a', 'CY', 'n0', { per: true }], ['b', 'BG', 'n0', { per: true }], ['var_b', 'ส่วนต่าง BG', 'n0', { per: true, tone: TONE.sign }],
+            ['pct_b', '% เทียบ BG', 'pc', { per: true, tone: TONE.sign }], ['ly', 'LY', 'n0', { per: true }], ['pct_ly', '% เทียบ LY', 'pc', { per: true, tone: TONE.sign }]] }],
     },
     t5item: {
-      title: 'Sale by Item & Top Drop Customer', intro: () => 'ยอดขายรายสินค้าปีนี้เทียบปีก่อน (บาท) และสินค้าที่ลูกค้าซื้อลดลง สรุปจำนวนลูกค้าและยอดที่หายไป · ไม่แสดงชื่อหรือรหัสลูกค้า · File Sale by item, Top drop Customer by class1',
+      title: 'Sale by Item & Top Drop Customer', intro: () => `ยอดขายรายสินค้า CY เทียบ LY (พันบาท) และสินค้าที่ลูกค้าซื้อลดลง สรุปจำนวนลูกค้าและยอดที่หายไป${ok('t5_drop_cust') ? ' พร้อมรายชื่อลูกค้า' : ''} · File Sale by item, Top drop Customer by class1`,
       cards: (dv) => {
         const s = byKey('t5_sale_tot').get(dv) || {}, d = byKey('t5_drop_tot').get(dv) || {};
         const w = `key=${dv}`;
-        return [{ title: `ยอดขายปีนี้ · ${divLabel()} (บาท)`, v: n0(s.cy), src: 't5_sale_tot', field: 'cy', where: w, subs: [{ label: 'ปีก่อน', v: n0(s.ly), src: 't5_sale_tot', field: 'ly', where: w }] },
-          { title: 'ส่วนต่าง (บาท)', v: n0(s.var), cls: tone(s.var), src: 't5_sale_tot', field: 'var', where: w },
+        return [{ title: `ยอดขาย CY${dv === 'ALL' ? '' : ' · ' + dv} (พันบาท)`, v: n0(s.cy), src: 't5_sale_tot', field: 'cy', where: w, subs: [{ label: 'LY', v: n0(s.ly), src: 't5_sale_tot', field: 'ly', where: w }] },
+          { title: 'ส่วนต่าง LY (พันบาท)', v: sg(s.var, 0), cls: tone(s.var), src: 't5_sale_tot', field: 'var', where: w },
           { title: 'ลูกค้าที่ซื้อลดลง (ครั้ง)', v: n0(d.customers), src: 't5_drop_tot', field: 'customers', where: w, subs: [{ label: 'ไม่ซื้อเลยปีนี้', v: n0(d.lost), cls: 'down', src: 't5_drop_tot', field: 'lost', where: w }] },
-          { title: 'ยอดที่หายไป (บาท)', v: n0(d.var), cls: 'down', src: 't5_drop_tot', field: 'var', where: w }];
+          { title: 'ยอดที่หายไป (พันบาท)', v: n0(d.var), cls: 'down', src: 't5_drop_tot', field: 'var', where: w }];
       },
-      charts: [{ id: 'ch-t5drop', band: 'ยอดที่หายไปตามประเภทลูกค้า (บาท)', src: 't5_drop_type',
-        data: () => sumBy((ok('t5_drop_type') || []).filter((r) => inDiv(r.division)), (r) => r.type, 'var').sort((a, b) => a[1] - b[1]).map(([k, v]) => ({ label: k, v, color: cssv('--b-down'), tip: [] })), fmt: n0 }],
+      charts: [{ id: 'ch-t5drop', band: 'ยอดที่หายไปตามประเภทลูกค้า (พันบาท)', src: 't5_drop_type_k',
+        data: () => sumBy((ok('t5_drop_type_k') || []).filter((r) => inDiv(r.division)), (r) => r.type, 'var').sort((a, b) => a[1] - b[1]).map(([k, v]) => ({ label: k, v, color: cssv('--b-down'), tip: [] })), fmt: n0 }],
       tables: [
-        { id: 'tb-t5si', band: 'ยอดขายรายสินค้า', src: 't5_sale_item', dept: true, q: ['item', 'desc', 'cls_name'],
+        { id: 'tb-t5si', band: 'ยอดขายรายสินค้า (พันบาท)', src: 't5_sale_item_k', dept: true, q: ['item', 'desc', 'cls_name'],
           sorts: [['ลดลงมากสุด', (a, b) => (a.var || 0) - (b.var || 0)], ['เพิ่มขึ้นมากสุด', (a, b) => (b.var || 0) - (a.var || 0)], ['ขายสูงสุด', (a, b) => (b.cy || 0) - (a.cy || 0)]],
-          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
-        { id: 'tb-t5dt', band: 'ลูกค้าที่ซื้อลดลง ตามประเภท', src: 't5_drop_type', rows: (d) => d.slice().sort((a, b) => a.var - b.var),
-          cols: [['division', 'Div', 'div'], ['type', 'ประเภทลูกค้า', 'txt'], ['customers', 'ลูกค้า (ครั้ง)', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'], ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] },
-        { id: 'tb-t5di', band: 'สินค้าที่ลูกค้าซื้อลดลง', src: 't5_drop_item', dept: true, q: ['item', 'desc', 'cls_name'], sorts: [['ยอดหายมากสุด', (a, b) => a.var - b.var], ['ลูกค้าหายมากสุด', (a, b) => b.lost - a.lost]],
+          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] },
+        { id: 'tb-t5dt', band: 'ลูกค้าที่ซื้อลดลง ตามประเภท (พันบาท)', src: 't5_drop_type_k', rows: (d) => d.slice().sort((a, b) => a.var - b.var),
+          cols: [['division', 'Div', 'div'], ['type', 'ประเภทลูกค้า', 'txt'], ['customers', 'ลูกค้า (ครั้ง)', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'], ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] },
+        { id: 'tb-t5di', band: 'สินค้าที่ลูกค้าซื้อลดลง (พันบาท)', src: 't5_drop_item_k', dept: true, q: ['item', 'desc', 'cls_name'], sorts: [['ยอดหายมากสุด', (a, b) => a.var - b.var], ['ลูกค้าหายมากสุด', (a, b) => b.lost - a.lost]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['customers', 'ลูกค้า', 'n0'], ['lost', 'ไม่ซื้อเลย', 'n0'],
-            ['cy', 'ปีนี้', 'n0'], ['ly', 'ปีก่อน', 'n0'], ['var', 'ส่วนต่าง', 'n0', { tone: TONE.sign }]] }],
+            ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] },
+        // customer names exist only on the private claude.ai dashboard; where the dataset is absent the panel is hidden
+        { id: 'tb-t5dc', band: 'ลูกค้าที่ซื้อลดลง · รายคน (พันบาท)', src: 't5_drop_cust_k', optional: true, dept: true,
+          filters: [['type', 'ประเภทลูกค้า'], ['st', 'สถานะ', (r) => (r.lost ? 'ไม่ซื้อเลยปีนี้' : 'ยังซื้ออยู่แต่ลดลง')]], q: ['cust_name', 'cust_no', 'item', 'desc'],
+          sorts: [['ยอดหายมากสุด', (a, b) => (a.var || 0) - (b.var || 0)], ['ตามอันดับใน Class', (a, b) => (a.cls < b.cls ? -1 : a.cls > b.cls ? 1 : a.rank - b.rank)]],
+          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['cls_name', 'Class', 'txt'], ['rank', 'อันดับ', 'n0'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }],
+            ['type', 'ประเภท', 'txt'], ['cust_no', 'รหัสลูกค้า', 'txt'], ['cust_name', 'ชื่อลูกค้า', 'txt', { wrap: true }], ['cy', 'CY', 'n1'], ['ly', 'LY', 'n1'], ['var', 'ส่วนต่าง LY', 'sg1', { tone: TONE.sign }]] }],
     },
     t5shk: {
       title: 'Shrinkage by Code MTD', intro: () => 'Shrinkage เดือนนี้รายสินค้า แยกตาม Reason Code (บาท) · 10/11 Adjust, 20/21 Damaged Joblot, 52/53 Expired, 60/61 Stolen, TC-41 Stock count · % = Shrinkage ต่อยอดขาย · File Shrinkage_by_code_by_Div_MTD',
       cards: (dv) => {
         const t = byKey('t5_shk_tot').get(dv) || {};
         const w = `key=${dv}`;
-        return [{ title: `Shrinkage MTD · ${divLabel()} (บาท)`, v: n0(t.shrink), cls: tone(t.shrink), src: 't5_shk_tot', field: 'shrink', where: w, subs: [{ label: 'รายการ', v: n0(t.n), src: 't5_shk_tot', field: 'n', where: w }] },
+        return [{ title: `Shrinkage MTD · ${divLabel()} (บาท)`, v: n0(t.shrink), cls: tone(t.shrink), src: 't5_shk_tot', field: 'shrink', where: w, subs: [{ v: n0(t.n), after: 'รายการ', src: 't5_shk_tot', field: 'n', where: w }] },
           { title: '52 Expired (บาท)', v: n0(t.c52), cls: tone(t.c52), src: 't5_shk_tot', field: 'c52', where: w },
           { title: '20 Damaged (บาท)', v: n0(t.c20), cls: tone(t.c20), src: 't5_shk_tot', field: 'c20', where: w },
           { title: 'TC-41 Stock count (บาท)', v: n0(t.tc41), cls: tone(t.tc41), src: 't5_shk_tot', field: 'tc41', where: w }];
       },
       charts: [{ id: 'ch-t5shk', band: 'Shrinkage ตาม Reason Code (บาท)', src: 't5_shk_code',
-        data: () => { const t = byKey('t5_shk_tot').get(division()) || {}; return [['c10', '10 Adjust (-)'], ['c11', '11 Adjust (+)'], ['c20', '20 Damaged'], ['c21', '21 Damaged (+)'], ['c52', '52 Expired'], ['c53', '53 Expired (+)'], ['c60', '60 Stolen'], ['c61', '61 Stolen (+)'], ['tc41', 'TC-41 Stock count']]
+        data: () => { const t = byKey('t5_shk_tot').get(division()) || {}; return SHKCODES
           .filter(([f]) => t[f]).map(([f, l]) => ({ label: l, v: t[f], color: cssv(t[f] < 0 ? '--b-down' : '--b-up'), tip: [] })); }, fmt: n0 }],
       tables: [{ id: 'tb-t5shk', band: 'รายสินค้า', src: 't5_shk_code', dept: true, q: ['item', 'desc'],
+        filters: [['code', 'Code', (r) => SHKCODES.filter(([f]) => r[f]).map(([, l]) => l)]],
         sorts: [['Shrinkage รวม', (a, b) => (a.shrink || 0) - (b.shrink || 0)], ['52 Expired', (a, b) => (a.c52 || 0) - (b.c52 || 0)], ['20 Damaged', (a, b) => (a.c20 || 0) - (b.c20 || 0)], ['10 Adjust', (a, b) => (a.c10 || 0) - (b.c10 || 0)], ['TC-41', (a, b) => (a.tc41 || 0) - (b.tc41 || 0)]],
         cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['c10', '10', 'n0', { tone: TONE.sign }], ['c11', '11', 'n0'], ['c20', '20', 'n0', { tone: TONE.sign }],
           ['c52', '52', 'n0', { tone: TONE.sign }], ['c60', '60', 'n0', { tone: TONE.sign }], ['tc41', 'TC-41', 'n0', { tone: TONE.sign }], ['shrink', 'รวม', 'n0', { tone: TONE.sign }], ['sale', 'Sale', 'n0'], ['pct', '%', 'pc3', { tone: TONE.sign }]] }],
@@ -2741,11 +2947,11 @@
         { id: 'tb-t5ngs', band: 'Negative stock · สรุป', src: 't5_neg_sum', half: true, total: (r) => r.key === 'Total',
           cols: [['section', 'Section', 'txt'], ['count', 'Negative stock', 'n0'], ['adjusted', 'ปรับแล้ว', 'n0'], ['open', 'ยังไม่ปรับ', 'n0', { tone: TONE.sign }]] },
         { id: 'tb-t5l3', band: 'ขายล่าสุด 3 วันก่อน · รายการ', src: 't5_last3', dept: true, filters: [['band', 'Stock']], q: ['item', 'desc'],
-          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['last_sold', 'ขายล่าสุด', 'txt'], ['soh', 'SOH', 'n2'], ['on_order', 'On Order', 'n2'], ['band', 'Stock', 'txt']] },
+          cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['last_sold', 'ขายล่าสุด', 'txt'], idleCol('last_sold'), ['soh', 'SOH', 'n2'], ['on_order', 'On Order', 'n2'], ['band', 'Stock', 'txt']] },
         { id: 'tb-t5ng', band: 'Negative stock · รายการ', src: 't5_neg_items', dept: true, filters: [['status', 'Item Status'], ['reorder', 'Reorder Way']], q: ['item', 'desc'],
           sorts: [['มูลค่าติดลบมากสุด', (a, b) => (a.value || 0) - (b.value || 0)]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['asoh', 'ASOH', 'n2', { tone: TONE.sign }], ['price', 'ราคา', 'n2'], ['value', 'มูลค่า (บาท)', 'n0', { tone: TONE.sign }],
-            ['on_order', 'On Order', 'n2'], ['avg28', 'Avg 28 วัน', 'n2'], ['last_sale', 'ขายล่าสุด', 'txt'], ['last_del', 'ส่งล่าสุด', 'txt'], ['reorder', 'Reorder', 'txt'], ['status', 'Status', 'txt']] }],
+            ['on_order', 'On Order', 'n2'], ['avg28', 'Avg 28 วัน', 'n2'], ['last_sale', 'ขายล่าสุด', 'txt'], idleCol('last_sale'), ['last_del', 'ส่งล่าสุด', 'txt'], ['reorder', 'Reorder', 'txt'], ['status', 'Status', 'txt']] }],
     },
     t5gone: {
       title: 'Gone Forever & Discontinue', intro: () => 'สินค้า Gone Forever และ Discontinue ที่ต้องเคลียร์ Stock · Stock ตั้งต้นเทียบปัจจุบัน และยอดขายรายวันเดือนนี้ · File ST68 Gone Forever Sales Oct, ST68 Sales Discontinue',
@@ -2754,7 +2960,7 @@
         const d = (ok('t5_disc_sum') || []).find((r) => r.key === 'ALL') || {};
         const w = `key=${dv}`;
         return [{ title: `Gone Forever · Stock ปัจจุบัน · ${divLabel()} (บาท)`, v: n0(g.now_amt), src: 't5_gone_sum', field: 'now_amt', where: w,
-          subs: [{ label: 'ตั้งต้น', v: n0(g.start_amt), src: 't5_gone_sum', field: 'start_amt', where: w }, { label: 'ลดลง', v: pc(g.pct_amt), cls: 'up', src: 't5_gone_sum', field: 'pct_amt', where: w }] },
+          subs: [{ label: 'Start', v: n0(g.start_amt), src: 't5_gone_sum', field: 'start_amt', where: w }, { label: 'ลดลง', v: pc(g.pct_amt), cls: 'down', src: 't5_gone_sum', field: 'pct_amt', where: w }] },
         { title: 'Gone Forever · ยอดขาย (บาท)', v: n0(g.sales_amt), src: 't5_gone_sum', field: 'sales_amt', where: w },
         { title: 'Discontinue · Stock ปัจจุบัน (บาท)', v: n0(d.now_amt), src: 't5_disc_sum', field: 'now_amt', where: 'key=ALL',
           subs: [{ label: 'ยอดขาย', v: n0(d.sales_amt), src: 't5_disc_sum', field: 'sales_amt', where: 'key=ALL' }] }];
@@ -2763,7 +2969,7 @@
         data: () => (ok('t5_gone_day') || []).map((r) => ({ x: r.date, label: r.date.slice(8), cy: r.amount })) }],
       tables: [
         { id: 'tb-t5gs', band: 'Gone Forever · สรุป', src: 't5_gone_sum', total: (r) => r.key === 'ALL', rows: (d) => d.filter((r) => r.key === 'ALL' || inDiv(r.division)),
-          cols: [['division', 'Division', 'txt'], ['start_amt', 'Stock ตั้งต้น (บาท)', 'n0'], ['now_amt', 'Stock ปัจจุบัน', 'n0'], ['var_amt', 'ลดลง', 'n0'], ['pct_amt', '%', 'pc'], ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0']] },
+          cols: [['division', 'Division', 'txt'], ['start_amt', 'Start Stock (บาท)', 'n0'], ['now_amt', 'Stock ปัจจุบัน', 'n0'], ['var_amt', 'ลดลง', 'n0'], ['pct_amt', '%', 'pc'], ['sales_qty', 'ขาย (ชิ้น)', 'n0'], ['sales_amt', 'ขาย (บาท)', 'n0']] },
         { id: 'tb-t5gi', band: 'Gone Forever · รายการ', src: 't5_gone_items', dept: true, filters: [['st', 'Stock', (r) => (r.stock_qty > 0 ? 'ยังมี Stock' : 'หมดแล้ว')]], q: ['item', 'desc'],
           sorts: [['Stock มากสุด', (a, b) => (b.stock_amt || 0) - (a.stock_amt || 0)], ['ขายได้มากสุด', (a, b) => (b.sales_amt || 0) - (a.sales_amt || 0)]],
           cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['item', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['on_order', 'On Order', 'n0', { tone: TONE.pos }], ['stock_qty', 'Stock', 'n0'], ['stock_amt', 'Stock (บาท)', 'n0'],
@@ -2776,15 +2982,29 @@
       cards: () => {
         const t = byKey('t5_soft_tot').get('ALL') || {};
         const w = 'key=ALL';
-        return [{ title: `ยอดรวม ${n0(t.n)} วัน (บาท)`, v: n0(t.amount), src: 't5_soft_tot', field: 'amount', where: w },
-          { title: 'Soft-serve (บาท)', v: n0(t.soft_amt), src: 't5_soft_tot', field: 'soft_amt', where: w, subs: [{ label: 'ชิ้น', v: n0(t.soft_qty), src: 't5_soft_tot', field: 'soft_qty', where: w }] },
-          { title: 'Rotisserie chicken (บาท)', v: n0(t.chk_amt), src: 't5_soft_tot', field: 'chk_amt', where: w, subs: [{ label: 'ตัว', v: n0(t.chk_qty), src: 't5_soft_tot', field: 'chk_qty', where: w }] },
-          { title: 'Durian (บาท)', v: n0(t.durian_amt), src: 't5_soft_tot', field: 'durian_amt', where: w }];
+        return [{ title: 'ยอดขายรวม (บาท)', v: n0(t.amount), src: 't5_soft_tot', field: 'amount', where: w },
+          { title: 'Sale Soft Serve (บาท)', v: n0(t.soft_amt), src: 't5_soft_tot', field: 'soft_amt', where: w, subs: [{ label: 'QTY', v: n0(t.soft_qty), src: 't5_soft_tot', field: 'soft_qty', where: w }] },
+          { title: 'Sale Rotisserie Chicken (บาท)', v: n0(t.chk_amt), src: 't5_soft_tot', field: 'chk_amt', where: w, subs: [{ label: 'QTY', v: n0(t.chk_qty), src: 't5_soft_tot', field: 'chk_qty', where: w }] },
+          { title: 'Sale Durian (บาท)', v: n0(t.durian_amt), src: 't5_soft_tot', field: 'durian_amt', where: w }];
       },
       charts: [{ id: 'ch-t5soft', band: 'ยอดขายรวมรายวัน (บาท)', src: 't5_soft', kind: 'bic',
         data: () => (ok('t5_soft') || []).map((r) => ({ x: r.date, label: r.label, cy: r.amount })) }],
       tables: [{ id: 'tb-t5soft', band: 'รายวัน', src: 't5_soft', nodiv: true,
-        cols: [['label', 'วัน', 'txt'], ['soft_qty', 'Soft-serve ชิ้น', 'n0'], ['soft_amt', 'Soft-serve บาท', 'n0'], ['chk_qty', 'ไก่อบ ตัว', 'n0'], ['chk_amt', 'ไก่อบ บาท', 'n0'], ['durian_qty', 'ทุเรียน', 'n0'], ['durian_amt', 'ทุเรียน บาท', 'n0'], ['qty', 'รวม ชิ้น', 'n0'], ['amount', 'รวม บาท', 'n0']] }],
+        cols: [['label', 'วัน', 'txt'], ['soft_qty', 'Soft Serve QTY', 'n0'], ['soft_amt', 'Sale Soft Serve', 'n0'], ['chk_qty', 'Rotisserie QTY', 'n0'], ['chk_amt', 'Sale Rotisserie', 'n0'], ['durian_qty', 'Durian QTY', 'n0'], ['durian_amt', 'Sale Durian', 'n0'], ['qty', 'Total QTY', 'n0'], ['amount', 'Total Sale', 'n0']] }],
+    },
+    t5repl: {
+      title: 'Central Replenishment', intro: () => `Stock เทียบ Min-Max ของสินค้า Active / Inactive และสินค้าที่ยังมี Stock หรือ On Order · Error Min-Max = Min เท่ากับ Max ต้องแก้ไขด่วน · File ST.68 CentralReplenishmentList_Report (${metaT5('Central Replenishment date')})`,
+      cards: (dv) => {
+        const t = byKey('t5_repl_tot').get(dv) || {};
+        const c = (title, f, cls) => ({ title, v: n0(t[f]), cls, after: 'รายการ', src: 't5_repl_tot', field: f, where: `key=${dv}` });
+        return [c('Active Items', 'act'), c('Stock 0', 'zero'), c('Below Min', 'below'), c('Over Max', 'over'), c('Error Min-Max (Min = Max)', 'err', 'down')];
+      },
+      charts: [],
+      tables: [{ id: 'tb-t5rp', band: 'รายการ', src: 't5_repl', dept: true, filters: [['flag', 'Stock vs Min-Max'], ['remark', 'Error'], ['status', 'Status'], ['source', 'Source']], q: ['key', 'desc', 'supplier'],
+        sorts: [['Avg Sale สูงสุด', (a, b) => (b.avg28 || 0) - (a.avg28 || 0)], ['Stock Day มากสุด', (a, b) => (b.stock_day || 0) - (a.stock_day || 0)]],
+        cols: [['division', 'Div', 'div'], ['dept', 'Dept', 'txt'], ['key', 'Item', 'txt'], ['desc', 'Description', 'txt', { wrap: true }], ['supplier', 'Supplier', 'txt', { wrap: true }], ['source', 'Source', 'txt'], ['status', 'Status', 'txt'],
+          ['avg28', 'Avg Sale 28 วัน', 'n2'], ['stock', 'Stock', 'n0', { tone: TONE.sign }], ['on_order', 'On Order', 'n0'], ['stock_day', 'Stock Day', 'n1'], ['min', 'Min', 'n0'], ['max', 'Max', 'n0'],
+          ['flag', 'Stock vs Min-Max', 'txt'], ['remark', 'Error', 'txt'], ['aging', 'Aging', 'txt'], ['schedule', 'Order Day', 'txt'], ['delivery', 'Delivery Day', 'txt']] }],
     },
   };
 
@@ -2841,6 +3061,12 @@
       else hbars(box, rows.filter((r) => r.v != null), { fmt: c.fmt || n0, tip: (it) => [[it.label], ['ค่า', (c.fmt || n0)(it.v)], ...(it.tip || [])] });
     });
     P.tables.forEach((t) => {
+      if (t.optional) {
+        const s = dash.data(t.src).status;
+        const panel = document.getElementById(t.id).closest('.b68-panel');
+        panel.hidden = s === 'error' || s === 'missing';
+        if (panel.hidden) return;
+      }
       let rows = ok(t.src) || [];
       if (!t.nodiv && !t.rows) rows = rows.filter((r) => r.division == null || inDiv(t5div(r)));
       if (t.rows) rows = t.rows(rows);
@@ -2856,10 +3082,10 @@
       (t.filters || []).forEach(([k, , get]) => {
         const g = get || ((r) => r[k]);
         const s = document.getElementById(T5SEL(t.id, k));
-        const vals = [...new Set(rows.map(g).filter((v) => v != null && v !== ''))].sort();
+        const vals = [...new Set(rows.flatMap((r) => [].concat(g(r))).filter((v) => v != null && v !== ''))].sort();
         let cur = t5get(T5SEL(t.id, k), 'ทั้งหมด'); if (!vals.includes(cur)) cur = 'ทั้งหมด';
         fillSelect('#' + CSS.escape(T5SEL(t.id, k)), ['ทั้งหมด', ...vals], cur);
-        if (cur !== 'ทั้งหมด') rows = rows.filter((r) => g(r) === cur);
+        if (cur !== 'ทั้งหมด') rows = rows.filter((r) => [].concat(g(r)).includes(cur));
       });
       const qi = document.getElementById(T5SEL(t.id, 'q'));
       const q = qi ? qi.value.trim().toLowerCase() : '';
@@ -2883,6 +3109,7 @@
     const p = period();
     $$('#period button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.p === p)));
     $('#f-div').value = division();
+    $('#f-sum').textContent = `ตัวกรองหลัก: ช่วงเวลา ${PL[p]} · Division ${divLabel()} · ตารางที่มีช่วงเวลาเฉพาะระบุไว้ในหัวข้อ`;
     $$('.pl').forEach((el) => { el.textContent = PL[p]; });
     $$('.plc').forEach((el) => { el.textContent = p === 'WTD' ? 'WTD' : 'MTD'; });
     const kpi = ok('kpi');
@@ -2913,6 +3140,7 @@
     if (page === 't3top') drawT3Top();
     if (page === 't3il') drawT3Il();
     if (page === 't3ff') drawT3Ff();
+    if (page === 't3c52') drawT3C52();
     if (page === 't3shk') drawT3Shk();
     if (page === 't3c20') drawT3C20();
     if (page.startsWith('t4')) { setText($('#t4-overdate'), t4meta('Over Stock file')); setText($('#t4-floordate'), t4meta('On order run')); }
